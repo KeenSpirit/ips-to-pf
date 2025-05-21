@@ -1,0 +1,67 @@
+IPS,MAPPING_FILE,PF_MODEL
+7PG21 (SOLKOR-RF),SOLKOR-RF_Energex_to_Solkor R-Rf,Solkor R-Rf
+7SG18 (SOLKOR-N),SOLKOR-N_Energex_to_Solkor N,Solkor N
+ADVC PTCC,ADVC PTCC_to_ADVC N-Series Recloser,ADVC N-Series Recloser
+ADVC2 WSOS5 V5.13.26 ,WSOS5_Energex_to_ADVC N-Series Recloser,ADVC N-Series Recloser
+ARGUS1 Compatibility_Energex,ARGUS1 Compatibility_Energex_to_ARGUS1_DCD42_2P+E+SE,ARGUS1_DCD42_2P+E+SE
+ARGUS1 ReyDisp Evolution v6.4t.3.4_Energex,ARGUS1 Compatibility_Energex_to_ARGUS1_DCD42_2P+E+SE,ARGUS1_DCD42_2P+E+SE
+ARGUS1 ReyDisp Evolution v8,ARGUS1 ReyDisp Evolution v8_to_ARGUS1_DCD42_2P+E+SE,ARGUS1_DCD42_2P+E+SE
+CAPM2_Energex,CAPM2_Energex_to_CAPM N-Series Recloser,CAPM N-Series Recloser
+CAPM4 CAPM5,CAPM4 CAPM5_to_CAPM N-Series Recloser,CAPM N-Series Recloser
+CDG61,CDG61_to_CDG61 A & B,CDG61 A & B
+CMS_2.8.2,CMS_2.8.2_to_Noja Recloser,Noja Recloser
+EQL_ADVC3_ADVC2_5.16,EQL_ADVC3_ADVC2_5.16_to_ADVC N-Series Recloser,ADVC N-Series Recloser
+EQL_RC10_RC20,Ergon_CMS_3.1.0.0_to_Noja Recloser,Noja Recloser
+Ergon_CMS_3.1.0.0,Ergon_CMS_3.1.0.0_to_Noja Recloser,Noja Recloser
+Ergon_CMU,Ergon_CMU_to_Generic SEF Relay,Generic SEF Relay
+Ergon_RI,Ergon_RI_to_ASEA RI 3OC,ASEA RI 3OC
+E-Type Recloser,E-Type Recloser_to_E-Type Recloser,E-Type Recloser
+Generic Overcurrent_Energex,MCSU 01_to_MCSU,MCSU
+I> 1Ph I in A + I>> in xIs + T in %_Energex,BBR ICM21_to_BBR ICM21,BBR ICM21_Phase
+I> 1Ph I in A + I>> in xIs + T in %_Energex_Earth,BBR ICM21N_to_BBR ICM21N,BBR ICM21_N
+I> 2Ph +IE>1Ph I in A + T in TMS_Energex,I 2Ph IE1Ph I in A  T in TMS_Energex_to_CDG31 A C,CDG31 A & C
+I> 2Ph I in A + T in TMS_Energex,CDG26_to_CDG26,CDG26_Phase
+I> 2Ph I in A + T in TMS_Energex_Earth,CDG26_N_to_CDG26-5A (0.5-2),CDG26_N
+I>+ I>> 1Ph I in % + T in TMS_Energex,TJM11_A_to_TJM11_A,TJM11_Phase
+I>+ I>> 1Ph I in % + T in TMS_Energex_Earth,TJM11_N_to_TJM11_N,TJM11_N
+I>+ I>> 2Ph +IE>+IE>> I in A + T in TMS_Energex,Idmt Inst 2Ph IE_to_CDG66 A C,CDG66 A & C
+IE> 1Ph I in % T in s_Energex,2C136_SEF_to_Generic SEF Relay,Generic SEF Relay
+IE> 1Ph I in A + T in s_Energex,CMGR12_SEF_to_Generic SEF Relay,Generic SEF Relay
+KCGG142_Energex,KCGG142_Energex_to_KCGG142-1A,KCGG142
+MCGG21,MCGG-22_to_MCGG22,MCGG-21_Phase
+MCGG21_Earth,MCGG22_E_to_MCGG-22 Earth,MCGG-21 Earth
+MCGG22,MCGG-22_to_MCGG22,MCGG-22_Phase
+MCGG22_Earth,MCGG22_E_to_MCGG-22 Earth,MCGG-22 Earth
+MCSU 01,MCSU 01_to_MCSU,MCSU
+NILSTAT_Energex,NILSTAT_Energex_to_C21A1,C21A1
+P123 V13 V14 HEX,P123_Energex_to_P12x,P12x
+P123_Energex,P123_Energex_to_P12x,P12x
+P127 V3-V6 HEX,P127 V3-V6 HEX_to_P127 57-130V,P127 57-130V
+P142 050A,P142 050A_to_P142,P142
+P142 090B 150A 150C 170C 210G 300J,P142 090B 150A 150C 170C 210G 300J_to_P142,P142
+P142 430J 43?J,P142 430J 43J_to_P14x 100-120 V,P142
+P142 430J 43?J 440J 460J 46?J 468J 469J 500J_obsolete,P142 430J 43J 440J 460J 46J 468J 469J 500J_obsolete_to_P14x 100-120 V,P142
+P142 B00L B20L B2?L B4?L,P142 B00L B20L B2L B4L_to_P142,P142
+RC01ES_Energex,RC01ES_Energex_to_Noja Recloser_a,Noja Recloser
+RED615 2.6 - 2.8,RED615 2.6 - 2.8_to_RED 615,RED 615
+RXIDF,RXIDF_to_RXIDF 2H_Phase,RXIDF 2H_Phase
+RXIDF_Earth,RXIDF_to_RXIDF 2H_Phase,RXIDF 2H_EF
+SEL-351 -5 -6 -7,SEL-351 -5 -6 -7_to_Generic SEL351 Relay,Generic SEL351 Relay
+SEL351-6 SEL5010_Energex,SEL351-6 SEL5010_Energex_to_Generic SEL351 Relay,Generic SEL351 Relay
+SEL-351S -5 -6 -7   001 - 010,SEL-351S -5 -6 -7   001 - 010_to_Generic SEL351 Relay,Generic SEL351 Relay
+SOLKOR-N_Energex,SOLKOR-N_Energex_to_Solkor N,Solkor N
+SOLKOR-RF_Energex,SOLKOR-RF_Energex_to_Solkor R-Rf,Solkor R-Rf
+SPAJ140,SPAJ140_to_SPAJ 140C,SPAJ 140C
+SPAJ140_Energex,SPAJ140_Energex_to_SPAJ 140C,SPAJ 140C
+swer_ADVC PTCC,swer ADVC PTCC_to_ADVC W-Series Recloser,ADVC W-Series Recloser
+swer_CAPM4 CAPM5,swer_CAPM4 CAPM5_to_CAPM W-Series Recloser,CAPM W-Series Recloser
+swer_EQL_ADVC3_ADVC2_5.16,swer_EQL_ADVC3_ADVC2_5.16_to_ADVC W-Series Recloser,ADVC W-Series Recloser
+swer_E-Type Recloser,swer_E-Type Recloser_to_E-Type Recloser,E-Type Recloser
+WSOS4_Energex,WSOS4_Energex_to_CAPM N-Series Recloser,CAPM N-Series Recloser
+WSOS5_Energex,WSOS5_Energex_to_ADVC N-Series Recloser,ADVC N-Series Recloser
+7SG111 (ARGUS 1),7SG111 (ARGUS 1)_to_ARGUS1_DCD42_2P+E+SE,ARGUS1_DCD42_2P+E+SE
+SEL-351A   003 - 008,SEL-351A   003 - 008_to_Generic SEL351 Relay,Generic SEL351 Relay
+SEL-351A   009 - 011,SEL-351A   009 - 011_to_Generic SEL351 Relay,Generic SEL351 Relay
+SEL-351-6,SEL-351-6_to_Generic SEL351 Relay,Generic SEL351 Relay
+P142 320J 350J 360J 400J 410J 420J,P142 320J 350J 360J 400J 410J 420J_to_P142,P142
+swer_Ergon_HR Recloser,Ergon_HR Recloser_to_Ergon_HR Recloser,Ergon_HR Recloser

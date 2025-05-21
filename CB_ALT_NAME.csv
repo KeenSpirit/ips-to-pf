@@ -1,0 +1,554 @@
+PROJECT,GRID,SUBSTATION,CB_NAME,NEW_NAME
+Abermain,BDB,CAL,BB_11/13,Not Needed
+Abermain,Boundary Subs,AMH,BDB6(1)_CB,Not Needed
+Abermain,Boundary Subs,BDB,BDB6B_CB,BDB6A+B_CB2
+Abermain,BDB,BDB,BDBBRW3B_CB,BDBBRW3A+B_CB
+Abermain,Boundary Subs,BRW,BDBBRW3B_CB,BDBBRW3A+B_CB
+Abermain,BDB,BRW,BDBBRW8(1)_CB,BDBRBW8A+B_CB_1
+Abermain,BDB,BRW,BDBBRW8(2)_CB,BDBRBW8A+B_CB_2
+Abermain,Boundary Subs,BDB,BDBBRW8A_CB,BDBRBW8A+B_CB_1
+Abermain,Boundary Subs,BDB,BDBBRW8B_CB,BDBRBW8A+B_CB_1
+Abermain,BDB,BDB,BDBCAL10B_CB,BDBCAL10A+B_CB_2
+Abermain,Boundary Subs,CAL,BDBCAL10B_CB,BDBCAL10A+B_CB_2
+Abermain,BDB,CAL,BDBCAL12B_CB,BDBCAL12A+B_CB_2
+Abermain,Boundary Subs,BDB,BDBCAL12B_CB,BDBCAL12A+B_CB_2
+Abermain,BDB,CAL,BDBCAL2A(1)_CB,BDBCAL2A+B_CB1
+Abermain,BDB,CAL,BDBCAL2B(1)_CB,BDBCAL2A+B_CB2
+Abermain,Boundary Subs,BDB,BDBCAL2B_CB,BDBCAL2A+B_CB2
+Abermain,BDB,CAL,CAL_BB12/13,Not Needed
+Abermain,RWD,EZR,EZRRWD4(1)_CB,EZR4_CB
+Abermain,MCW,MCW,MCW4(1)_CB,MCW4A+CP1_CB
+Abermain,MCW,MCW,MCWWTP3B_CB,MCWWTP3A+B_CB
+Abermain,MCW,WTP,MCWWTP3B_CB,Not Needed
+Abermain,MCW,MCW,MCWWTP6B_CB,MCWWTP6A+B_CB
+Abermain,MCW,WTP,MCWWTP6B_CB,Not Needed
+Abermain,RWD,RWD,RWD1B_CB,Not Needed
+Archerfield,AFD,CIG,AFDCIG15_CB,Not Needed
+Archerfield,AFD,AFD,AFDCIG15_CB,No active setting
+Archerfield,SBY,GCL,GCLSBY10(1)_CB,GCLSBY10_CB
+Archerfield,OXL,RCL,GEN(154)_CB,Not Needed
+Ashgrove West,Boundary Subs,GAP,GAP_BB11/12,Not Needed
+Ashgrove West,Boundary Subs,TRG,STL4TRG_CB,STLTRG4_CB
+Ashgrove West,Boundary Subs,TRG,TRG3B_CB,No active setting
+Ashgrove West,Boundary Subs,TRG,TRGTWG12OLD_CB,TRGTWG12_CB
+Ashgrove West,TWG,TWG,TWG13B_CB,No active setting
+Ashgrove West,TWG,TWG,TWG15A_CB,TWG15_CB
+Beaudesert,IPL,IPL,IPL3_CB,No active setting
+Beenleigh,BLH,BLH,BLH11B_CB,BLH11A+B_CB
+Beenleigh,BLH,BLH,BLH13B_CB,BLH13A+B_CB
+Beenleigh,BLH,BLH,BLH15B_CB,BLH15A+B_CB
+Beenleigh,BLH,BLH,BLH9B_CB,BLH9A+B_CB
+Beenleigh,BLH,BLH,BLHSTN16_CB,No active setting
+Beenleigh,LHM,LHM,LHM8B_CB,LHM8A+B_CB
+Belmont,BBS,SG865510,BBS7A_CB,Not Needed
+Belmont,SRD,SSCDS,CDS_BB11/12,Not Needed
+Belmont,SRD,SSCDS,CDS4_CB,Wrong Sub Name
+Belmont,UMG,GCT,CGT_BB11/12,Not Needed
+Belmont,SRD,SSCDS,CSD2_CB,Wrong Sub Name
+Belmont,UMG,SSGCX,GCX_BB11/12,Not Needed
+Belmont,Boundary Subs,SRD,RPN_BB11/13,Not Needed
+Belmont,Boundary Subs,SRD,RPN_BB12/13,Not Needed
+Belmont,Boundary Subs,UMG,UMG27A_CB,UMG27B_CB
+Brendale,ACR,ARC,ACR2B_CB,ARC2_CB
+Brendale,ACR,ARC,ACR3A_CB,ACR3_CB
+Brendale,AHL,AHL,AHL4A_CB,No active setting
+Brendale,Boundary Subs,BHL,BHL_BB11/12,Not Needed
+Brendale,Boundary Subs,BHL,BHL1B_CB,BHL1A+B_CB
+Brendale,BRD,BRD,BRD10B_CB,BRD10A+B_CB
+Brendale,Boundary Subs,SFD,SFD10_CB,No active setting
+Brendale,Boundary Subs,SFD,SFD11_CB,No active setting
+Brendale,Boundary Subs,SFD,SFD3_CB,No active setting
+Brendale,Boundary Subs,SFD,SFD4_CB,No active setting
+Brendale,Boundary Subs,SFD,SFD5_CB,No active setting
+Brendale,Boundary Subs,SFD,SFD6B_CB,SFD6_CB
+Brendale,Boundary Subs,SFD,SFD7A_CB,SFD7_A
+Brendale,Boundary Subs,SFD,SFD8_CB,No active setting
+Brendale,Boundary Subs,SFD,SFD9_CB,No active setting
+Brendale,SPE,WSP,WSP_BB11/12,Not Needed
+Brisbane CBD,ATC,ACH,ACHAPH2(1)_CB,ACHAPH2_CB
+Brisbane CBD,MST_MST_WED_WED,ACI,ACI9_CB,ACIWED9_CB
+Brisbane CBD,MST_MST_WED_WED,ACI,ACICTC1(1)_CB,ACICTC1_CB
+Brisbane CBD,MST_MST_WED_WED,ACI,ACIWED9B(1)_CB,Not Needed
+Brisbane CBD,MST_MST_WED_WED,WED,ACIWED9B_CB,ACIWED9A+B_CB
+Brisbane CBD,CST_CST,ACS,ACSCST3(1)_CB,ACSCST3_CB
+Brisbane CBD,CST_CST,CST,ACSCST3_CB,Not Needed
+Brisbane CBD,AST,ADS,ADSCTH6(1)_CB,ADSCTH6_CB
+Brisbane CBD,MST_MST_WED_WED,AET,AETMST6(1)_CB,AETMST6_CB
+Brisbane CBD,MST_MST_WED_WED,AET,AETSGB2(1)_CB,AETSGB2_CB
+Brisbane CBD,AST,AFE,AFECPY8(1)_CB,AFECPY8_CB
+Brisbane CBD,MST_MST_WED_WED,AFT,AFT2_CB,Not Needed
+Brisbane CBD,MST_MST_WED_WED,MBF,AFTMBF12(1)_CB,AFTMBF12_CB
+Brisbane CBD,MST_MST_WED_WED,AFT,AFTMBF12(1)_CB,AFTMBF12_CB
+Brisbane CBD,AST,EGE,AHTEGE1(1)_CB,AHTEGE1_CB
+Brisbane CBD,MLS,BAB,AJVBAB3(1)_CB,AJVBAB3_CB
+Brisbane CBD,MLS,AJV,AJVBAB3_CB,Not Needed
+Brisbane CBD,CST_CST,AMC,AMCCST16(1)_CB,AMCCST16A+B_CB1
+Brisbane CBD,CST_CST,CST,AMCCST16(1)_CB,AMCCST16_CB
+Brisbane CBD,CST_CST,AMC,AMCCST16(2)_CB,AMCCST16A+B_CB2
+Brisbane CBD,AST,AMI,AMICPZ23(1)_CB,AMICPZ23_CB
+Brisbane CBD,CST_CST,AMS,AMSPRL2_CB,Not Needed
+Brisbane CBD,MLS,AMV,AMVMLS92(1)_CB,AMVMLS92_CB
+Brisbane CBD,MST_MST_WED_WED,LAW,ANSLAW8(1)_CB,ANSLAW8_CB
+Brisbane CBD,ATC,APH,APHATC18(1)_CB,APHATC18_CB
+Brisbane CBD,ATC,ECW,APHECW4_CB,Not Needed
+Brisbane CBD,ATC,APH,APHTR2H_CB,Not Needed
+Brisbane CBD,MLS,APO,APOAVH1(1)_CB,APOAVH1_CB
+Brisbane CBD,MLS,APO,APOCTS3(1)_CB,APOCTS3_CB
+Brisbane CBD,MLS,APO,APOMLS92(1)_CB,APOMLS92_CB
+Brisbane CBD,CST_CST,AQE,AQEHTH5(1)_CB,AQEHTH5_CB
+Brisbane CBD,CST_CST,AQE,AQEPHS4(1)_CB,AQEPHS4_CB
+Brisbane CBD,MST_MST_WED_WED,AQM,AQM28A_CB,Unknown
+Brisbane CBD,MST_MST_WED_WED,MBF,AQMMBF28(1)_CB,AQMMBF28_CB
+Brisbane CBD,AST,CCO,ASTCCO14(1)_CB,ASTCCO14_CB
+Brisbane CBD,AST,CML,ASTCML31(1)_CB,ASTCML31_CB
+Brisbane CBD,AST,CMP,ASTCMP24(1)_CB,ASTCMP24_CB
+Brisbane CBD,AST,CMU,ASTCMU9(1)_CB,ASTCMU9_CB
+Brisbane CBD,AST,CQE,ASTCQE37(1)_CB,ASTCQE37_CB
+Brisbane CBD,AST,GAS,ASTGAS6(1)_CB,ASTGAS6_CB
+Brisbane CBD,AST,PAS,ASTPAS23(1)_CB,ASTPAS23_CB
+Brisbane CBD,AST,QAZ,ASTQAZ5(1)_CB,ASTQAZ5_CB
+Brisbane CBD,AST,TAX,ASTTAX41(1)_CB,ASTTAX41_CB
+Brisbane CBD,AST,WHS,ASTWHS27(1)_CB,ASTWHS27_CB
+Brisbane CBD,AST,WIB,ASTWIB19(1)_CB,ASTWIB19_CB
+Brisbane CBD,AST,WQU,ASTWQU21(1)_CB,ASTWQU21_CB
+Brisbane CBD,CST_CST,CSA,ATCCSA4(1)_CB,ATCCSA4_CB
+Brisbane CBD,ATC,ECW,ATCECW9(1)_CB,Unknown
+Brisbane CBD,Boundary Subs,ATC,ATCECW9_CB,Unknown
+Brisbane CBD,ATC,FPV,ATCFPV25(1)_CB,ATCFPV25(1)_CB
+Brisbane CBD,ATC,HSH,ATCHSH14(1)_CB,ATCHSH14_CB
+Brisbane CBD,ATC,HSH,ATCHSH3(1)_CB,ATCHSH3_CB
+Brisbane CBD,ATC,MTS,ATCMTS40(1)_CB,ATCMTS40_CB
+Brisbane CBD,ATC,QAC,ATCQAC8(1)_CB,ATCQAC8_CB
+Brisbane CBD,Boundary Subs,ATC,ATCSGO42(1)_CB,ATCSGO42_CB
+Brisbane CBD,CST_CST,SGO,ATCSGO42_CB,Not Needed
+Brisbane CBD,AST,AWE,AWCCQE1(1)_CB,AWCCQE1_CB
+Brisbane CBD,AST,CQE,AWCCQE1(1)_CB,AWCCQE1_CB
+Brisbane CBD,MLS,BAB,BABMLS10(1)_CB,BABMLS10_CB
+Brisbane CBD,Boundary Subs,MLS,BABMLS10_CB,Not Needed
+Brisbane CBD,MST_MST_WED_WED,BAC,BACGAN2(1)_CB,Not Needed
+Brisbane CBD,MST_MST_WED_WED,BAC,BASMST9_CB,BACMST9_CB
+Brisbane CBD,CST_CST,BFB,BFBECC2(1)_CB,BFBECC2_CB
+Brisbane CBD,CST_CST,GSB,BFBGSB3(1)_CB,BFBGSB3_CB
+Brisbane CBD,CST_CST,BFB,BFBGSB3(1)_CB,BFBGSB3_CB
+Brisbane CBD,MST_MST_WED_WED,BLC,BLCLPZ15(1)_CB,BLCLPZ15_CB
+Brisbane CBD,MST_MST_WED_WED,BLC,BLCMST16(1)_CB,BLCMST16_CB
+Brisbane CBD,CST_CST,CBQ,BNWCBQ_CB,BNWCBQ5_CB
+Brisbane CBD,AST,BNZ,BNZ57_CB,No Active Setting
+Brisbane CBD,AST,CGA,BNZCGA57(1)_CB,BNZCGA57_CB
+Brisbane CBD,CST_CST,BOQ,BOQTAT1(1)_CB,BOQTAT1_CB
+Brisbane CBD,CST_CST,TAT,BOQTAT1(1)_CB,BOQTAT1_CB
+Brisbane CBD,MST_MST_WED_WED,BRC,BRCKGS5(1)_CB,BRCKGS5_CB
+Brisbane CBD,MST_MST_WED_WED,BRC,BRCRFW35(1)_CB,BRCRFW35_CB
+Brisbane CBD,CST_CST,GBD,CABGBD8(1)_CB,CABGBD8_CB
+Brisbane CBD,CST_CST,QAG,CASQAG4(1)_CB,CASQAG4_CB
+Brisbane CBD,CST_CST,CAS,CASQAG4(1)_CB,CASQAG4_CB
+Brisbane CBD,CST_CST,CTG,CASTCTG1_CB,Not Needed
+Brisbane CBD,MST_MST_WED_WED,CBA,CBAMST25(1)_CB,CBAMST25_CB
+Brisbane CBD,CST_CST,CST,CCECST1_CB,Unknown
+Brisbane CBD,CST_CST,CEA,CEACST21(1)_CB,CEACST21_CB
+Brisbane CBD,CST_CST,ESR,CEAESR1(1)_CB,CEAESR1_CB
+Brisbane CBD,VPK,CEP,CEP6_CB,Unknown
+Brisbane CBD,VPK,CEP,CEP7_CB,Unknown
+Brisbane CBD,VPK,CEP,CEPHHC17_CB,Unknown
+Brisbane CBD,VPK,HHC,CEPHHC17_CB,Unknown
+Brisbane CBD,VPK,CEP,CEPHHC41_CB,Unknown
+Brisbane CBD,VPK,HHC,CEPHHC41_CB,Unknown
+Brisbane CBD,AST,RGA,CGARGA84(1)_CB,CGARGA84_CB
+Brisbane CBD,CST_CST,CGS,CGSCST11(1)_CB,CGSCST11_CB
+Brisbane CBD,Boundary Subs,CGT,CGTMLS4(1)_CB,CGTMLS4_CB
+Brisbane CBD,Boundary Subs,CGT,CGTNSG21_CB,CGTNSD21_CB
+Brisbane CBD,CST_CST,SAM,CHTSAM46(1)_CB,CHTSAM46_CB
+Brisbane CBD,CST_CST,CLT,CLTPHS17(1)_CB,CLTPHS17_CB
+Brisbane CBD,CST_CST,CMB,CMBCST9(1)_CB,CMBCST9_CB
+Brisbane CBD,CST_CST,FAC,CMBFAC6(1)_CB,CMBFAC6_CB
+Brisbane CBD,MLT,CME,CMEMLT2(1)_CB,CMEMLT2_CB
+Brisbane CBD,MLT,CME,CMEMLT8(1)_CB,CMEMLT8_CB
+Brisbane CBD,MLT,CME,CMEMST12_CB,CMEMLT12_CB
+Brisbane CBD,AST,CMP,CMP8_CB,Unknown
+Brisbane CBD,AST,CMP,CMPCQE8(1)_CB,CMPCQE8_CB
+Brisbane CBD,AST,WTW,CPXWTW1(1)_CB,CPXWTW1_CB
+Brisbane CBD,AST,TAX,CPZTAX18(1)_CB,CPZTAX18_CB
+Brisbane CBD,AST,CPZ,CPZTAX18(1)_CB,CPZTAX18_CB
+Brisbane CBD,AST,CQS,CQSEEX23(1)_CB,CQSEEX23_CB
+Brisbane CBD,MST_MST_WED_WED,CRT,CRTMGC22(1)_CB,CRTMGC22_CB
+Brisbane CBD,MST_MST_WED_WED,CRT,CRTSEQ4_CB,Unknown
+Brisbane CBD,CST_CST,CSA,CSASGO3(1)_CB,CSASGO3_CB
+Brisbane CBD,ATC,QAC,CSQQAC1(1)_CB,CSQQAC1_CB
+Brisbane CBD,ATC,CSQ,CSQSTP5_CB,Not Required
+Brisbane CBD,CST_CST,CTW,CSTCTW11(1)_CB,CSTCTW11_CB
+Brisbane CBD,CST_CST,GTC,CSTGTC19(1)_CB,CSTGTC19_CB
+Brisbane CBD,CST_CST,MKT,CSTMKT23(1)_CB,CSTMKT23_CB
+Brisbane CBD,CST_CST,NME,CSTNME10(1)_CB,CSTNME10_CB
+Brisbane CBD,CST_CST,PMH,CSTPMH22(1)_CB,CSTPMH22_CB
+Brisbane CBD,CST_CST,QEE,CSTQEE10(1)_CB,CSTQEE10_CB
+Brisbane CBD,CST_CST,QEE,CSTQEE14(1)_CB,CSTQEE14_CB
+Brisbane CBD,CST_CST,SAM,CSTSAM24(1)_CB,CSTSAM24_CB
+Brisbane CBD,CST_CST,SGC,CSTSGC12(1)_CB,CSTSGC12_CB
+Brisbane CBD,CST_CST,HAW,CSTWAW26_CB,CSTHAW26_CB
+Brisbane CBD,MST_MST_WED_WED,MST,CTCMST19_CB,Not Needed
+Brisbane CBD,MST_MST_WED_WED,MST,CTCMST29_CB,Not Needed
+Brisbane CBD,AST,RGA,CTHRGA3(1)_CB,CTHRGA3_CB
+Brisbane CBD,AST,EEX,EEXMPA4(1)_CB,EEXMPA4_CB
+Brisbane CBD,AST,MPA,EEXMPA4(1)_CB,EEXMPA4_CB
+Brisbane CBD,AST,WIB,EEXWIB2(1)_CB,EEXWIB2_CB
+Brisbane CBD,AST,EGE,EGENDC2(1)_CB,EGENDC2_CB
+Brisbane CBD,CST_CST,SAM,EGTSAM5(1)_CB,EGTSAM5_CB
+Brisbane CBD,CST_CST,EGT,EGTSQB3(1)_CB,EGTSQB3_CB
+Brisbane CBD,NSD_NSD,ENS,ENSNSD23_CB,Unknown
+Brisbane CBD,CST_CST,ESR,ESRFLW48(1)_CB,ESRFLW48_CB
+Brisbane CBD,MST_MST_WED_WED,EVL,EVLLAW4(1)_CB,EVLLAW4_CB
+Brisbane CBD,MST_MST_WED_WED,MCT,EVLMCT5(1)_CB,EVLMCT5_CB
+Brisbane CBD,MST_MST_WED_WED,FGS,FGSMST17(1)_CB,FGSMST17_CB
+Brisbane CBD,MST_MST_WED_WED,FGS,FGSMST26(1)_CB,FGSMST26_CB
+Brisbane CBD,CST_CST,LJM,FHLLJM1(1)_CB,FHLLJM1_CB
+Brisbane CBD,CST_CST,FHL,FHLLJM1_CB,Not Needed
+Brisbane CBD,MST_MST_WED_WED,FHS,FHS6_CB,Unknown
+Brisbane CBD,CST_CST,MHS,FLWMHS27(1)_CB,FLWMHS27_CB
+Brisbane CBD,MLS,FVY,FPT1_CB,FPTFVY1_CB
+Brisbane CBD,ATC,FPV,FPVTMT21(1)_CB,FPVTMT21_CB
+Brisbane CBD,MST_MST_WED_WED,GAR,GANGAR1(1)_CB,GANGAR1_CB
+Brisbane CBD,MST_MST_WED_WED,GAR,GANGAR3(1)_CB,GANGAR3_CB
+Brisbane CBD,Boundary Subs,NBT,GANNBT5(1)_CB,GANNBT5_CB
+Brisbane CBD,MST_MST_WED_WED,GAR,GARMST14(1)_CB,GARMST14_CB
+Brisbane CBD,AST,GAS,GASMMI1(1)_CB,GASMMI1_CB
+Brisbane CBD,CST_CST,GSB,GSB3_CB,Unknown
+Brisbane CBD,MLS,GSC,GSCMLS91(1)_CB,GSCMLS91_CB
+Brisbane CBD,MLS,GSN,GSNMLS92_CB,Unknown
+Brisbane CBD,CST_CST,GSB,GSTSTM2_CB,Not Needed
+Brisbane CBD,CST_CST,HAW,HAWPMH8(1)_CB,HAWPMH8_CB
+Brisbane CBD,VPK,HHC,HHC10_CB,Unknown
+Brisbane CBD,VPK,HHC,HHC12_CB,Unknown
+Brisbane CBD,VPK,HHC,HHC18_CB,Unknown
+Brisbane CBD,VPK,HHC,HHC20_CB,Unknown
+Brisbane CBD,VPK,HHC,HHC21_CB,Unknown
+Brisbane CBD,VPK,HHC,HHC23_CB,Unknown
+Brisbane CBD,VPK,HHC,HHC7_CB,Unknown
+Brisbane CBD,VPK,HHC,HHC9_CB,Unknown
+Brisbane CBD,VPK,RBH,HHCRBH10(1)_CB,HHCRBH10_CB
+Brisbane CBD,VPK,HHC,HHCRBH10(1)_CB,HHCRBH10_CB
+Brisbane CBD,VPK,RBH,HHCRBH2(1)_CB,HHCRBH2_CB
+Brisbane CBD,VPK,HHC,HHCRBH2(1)_CB,Not Needed
+Brisbane CBD,ATC,HSH,HSH6_CB,Unknown
+Brisbane CBD,ATC,HSH,HSHT1_CB,Not Needed
+Brisbane CBD,ATC,HSH,HSHT2_CB,Not Needed
+Brisbane CBD,MST_MST_WED_WED,SCB,IFYSCB23_CB,Unknown
+Brisbane CBD,MST_MST_WED_WED,INB,INBMST30(1)_CB,INBMST30_CB
+Brisbane CBD,MST_MST_WED_WED,IOC,IOC2_CB,Unknown
+Brisbane CBD,MST_MST_WED_WED,IOC,IOCLPZ2(1)_CB,IOCLPZ2_CB
+Brisbane CBD,MST_MST_WED_WED,IOC,IOCMST26(1)_CB,Not Needed
+Brisbane CBD,VPK,KTE,KTESAH2(1)_CB,Unknown
+Brisbane CBD,VPK,SAH,KTESAH2_CB,Unknown
+Brisbane CBD,Boundary Subs,KVG,KVG_BB11/12,Not Needed
+Brisbane CBD,Boundary Subs,KVG,KVG_BB12/14,Not Needed
+Brisbane CBD,Boundary Subs,KVG,KVG_BB14/15,Not Needed
+Brisbane CBD,Boundary Subs,KVG,KVG2A_CB,No Active Setting
+Brisbane CBD,MST_MST_WED_WED,TKS,LAWTKS5(1)_CB,LAWTKS5_CB
+Brisbane CBD,VPK,SAB,LBCSAB2(1)_CB,LBCSAB2_CB
+Brisbane CBD,VPK,LBC,LBCSAB2(1)_CB,LBCSAB2_CB
+Brisbane CBD,CST_CST,LJM,LJMMAC2(1)_CB,LJMMAC2_CB
+Brisbane CBD,CST_CST,MAC,LJMMAC2_CB,Not Needed
+Brisbane CBD,MST_MST_WED_WED,MUF,LPZMUF16(1)_CB,LPZMUF16_CB
+Brisbane CBD,MST_MST_WED_WED,LPZ,LPZMUF16_CB,No Active Setting
+Brisbane CBD,MLS,MAA,MAA6_CB,Unknown
+Brisbane CBD,CST_CST,MHS,MACMHS1(1)_CB,MACMHS1_CB
+Brisbane CBD,MST_MST_WED_WED,MBF,MBF27A_CB,Unknown
+Brisbane CBD,MST_MST_WED_WED,MCT,MCTMST2(1)_CB,Unknown
+Brisbane CBD,MST_MST_WED_WED,MST,MCTMST2_CB,Unknown
+Brisbane CBD,MST_MST_WED_WED,MHP,MHPWED19(1)_CB,MHPWED19_CB
+Brisbane CBD,MST_MST_WED_WED,MHP,MHPWED5(1)_CB,MHPWED5_CB
+Brisbane CBD,CST_CST,MHS,MHSWAC43_CB,Decommisioned
+Brisbane CBD,CST_CST,MKT,MKTQEC1(1)_CB,MKTQEC1_CB
+Brisbane CBD,MST_MST_WED_WED,MLE,MLEMST17(1)_CB,MLEMST17_CB
+Brisbane CBD,MST_MST_WED_WED,MLE,MLERFW1(1)_CB,MLERFW1_CB
+Brisbane CBD,MST_MST_WED_WED,MLG,MLGMST21(1)_CB,MLGMST21_CB
+Brisbane CBD,Boundary Subs,MLS,MLS14A(3)_CB,Unknown
+Brisbane CBD,Boundary Subs,NFM,MLS15A(1)_CB,Not Needed
+Brisbane CBD,MLS,MAA,MLS6A_CB,Not Needed
+Brisbane CBD,Boundary Subs,MLS,MLSaflc_CB,Not Needed
+Brisbane CBD,MLS,MKV,MLSMYV26(1)_CB,MLSMYV26_CB
+Brisbane CBD,MLT,MLT,MLT41VPK_CB,MLTVPK41_CB
+Brisbane CBD,MLT,WHP,MLTWHP12(1)_CB,MLTWHP12_CB
+Brisbane CBD,MLT,WHP,MLTWHP5(1)_CB,MLTWHP5_CB
+Brisbane CBD,MLT,WHP,MLTWHP6(1)_CB,MLTWHP6_CB
+Brisbane CBD,MST_MST_WED_WED,NBG,MSTNBG12(1)_CB,MSTNBG12_CB
+Brisbane CBD,MST_MST_WED_WED,MST,MSTNBG12_CB,Not Needed
+Brisbane CBD,Boundary Subs,NBT,MSTNBT4(1)_CB,MSTNBT4_CB
+Brisbane CBD,MST_MST_WED_WED,PLR,MSTPLR14(1)_CB,MSTPLR14_CB
+Brisbane CBD,MST_MST_WED_WED,SGI,MSTSGI11(1)_CB,MSTSGI11_CB
+Brisbane CBD,MST_MST_WED_WED,MUF,MUF17_CB,Unknown
+Brisbane CBD,CST_CST,MYS,MYSWTR18(1)_CB,MYSWTR18_CB
+Brisbane CBD,MST_MST_WED_WED,NBG,NBGTKS49(1)_CB,NBGTKS49_CB
+Brisbane CBD,CST_CST,NME,NMEWGC5(1)_CB,NMEWGC5_CB
+Brisbane CBD,NMK,NMK,NMK17A_CB,No Active Setting
+Brisbane CBD,MST_MST_WED_WED,NPM,NPM33_CB,Unknown
+Brisbane CBD,NSD_NSD,NSD,NSD30B_CB,NSD30A+B_CB
+Brisbane CBD,VPK,QMR,OHCQMR3_CB,Unknown
+Brisbane CBD,WRD,PAH,PAHWRD26A(1)_CB,Not Needed
+Brisbane CBD,WRD,PAH,PAHWRD26B(1)_CB,Not Needed
+Brisbane CBD,Boundary Subs,WRD,PAHWRD26B_CB,PAHWRD26A+B_CB
+Brisbane CBD,WRD,PAH,PAHWRD27(1)_CB,PAHWRD27_CB
+Brisbane CBD,Boundary Subs,WRD,PAHWRD27_CB,Not Needed
+Brisbane CBD,MST_MST_WED_WED,PLR,PLRTTE22(1)_CB,PLRTTE22_CB
+Brisbane CBD,MST_MST_WED_WED,PMB,PMBWED19(1)_CB,PMBWED19_CB
+Brisbane CBD,MST_MST_WED_WED,PMB,PMBWED4(1)_CB,PMBWED4_CB
+Brisbane CBD,MST_MST_WED_WED,PMB,PMBWED7(1)_CB,PMBWED7_CB
+Brisbane CBD,AST,TGA,PQSRGA85(1)_CB,PQSRGA85_CB
+Brisbane CBD,CST_CST,SGC,QAGSGC1(1)_CB,QAGSGC1_CB
+Brisbane CBD,AST,WQU,QAYWQU4(1)_CB,QAYWQU4_CB
+Brisbane CBD,WRD,QCH,QCHWRD13(1)_CB,QCHWRD13_CB
+Brisbane CBD,WRD,QCH,QCHWRD4(1)_CB,QCHWRD4_CB
+Brisbane CBD,WRD,QCH,QCHWRD7(1)_CB,QCHWRD7_CB
+Brisbane CBD,VPK,QMR,QMR3_CB,Unknown
+Brisbane CBD,VPK,QNP,QNPTR2_CB,Not Needed
+Brisbane CBD,CST_CST,QSC,QSC1_CB,Unknown
+Brisbane CBD,CST_CST,QSC,QSC2_CB,Unknown
+Brisbane CBD,CST_CST,QSC,QSC3_CB,Unknown
+Brisbane CBD,CST_CST,QSC,QSC4_CB,Unknown
+Brisbane CBD,VPK,RBH,RBHVPK12(1)_CB,RBHVPK12_CB
+Brisbane CBD,Boundary Subs,VPK,RBHVPK12_CB,Not Needed
+Brisbane CBD,VPK,RBH,RBHVPK15(1)_CB,RBHVPK15_CB
+Brisbane CBD,Boundary Subs,VPK,RBHVPK15_CB,Not Needed
+Brisbane CBD,VPK,RRD,RRD1_CB,Unknown
+Brisbane CBD,VPK,RRD,RRDVPK47_CB,Not Needed
+Brisbane CBD,VPK,SAB,SABSAH1(1)_CB,SABSAH1_CB
+Brisbane CBD,VPK,SAB,SABVPK31_CB,Not Needed
+Brisbane CBD,CST_CST,SAM,SAMTR3H_CB,Not Needed
+Brisbane CBD,AST,SCC,SCCSHN67(1)_CB,SCCSHN67_CB
+Brisbane CBD,AST,SHN,SCCSHN67(1)_CB,SCCSHN67_CB
+Brisbane CBD,MST_MST_WED_WED,SGA,SGASGI10(1)_CB,SGASGI10_CB
+Brisbane CBD,MST_MST_WED_WED,SGI,SGASGI10(1)_CB,SGASGI10_CB
+Brisbane CBD,MST_MST_WED_WED,SGA,SGASGI9(1)_CB,SGASGI9_CB
+Brisbane CBD,MST_MST_WED_WED,SGI,SGASGI9(1)_CB,SGASGI9_CB
+Brisbane CBD,MST_MST_WED_WED,SGA,SGBSGI4(1)_CB,SGBSGI4_CB
+Brisbane CBD,MST_MST_WED_WED,SGI,SGBSGI4(1)_CB,SGBSGI4_CB
+Brisbane CBD,CST_CST,SGC,SGCSGM28(1)_CB,SGCSGM28_CB
+Brisbane CBD,AST,PAS,SSTPAS5_CB,Unknown
+Brisbane CBD,CST_CST,STM,STMTCD1(1)_CB,STMTCD1_CB
+Brisbane CBD,CST_CST,TCD,STMTCD1_CB,Not Needed
+Brisbane CBD,ATC,TMT,TMTWTC1_CB,Not Needed
+Brisbane CBD,ATC,ANZ,TTF76(1)_CB,Not Needed
+Brisbane CBD,ATC,ANZ,TTF77(1)_CB,Not Needed
+Brisbane CBD,ATC,CWO,TTF77(2)_CB,Not Needed
+Brisbane CBD,ATC,CCB,TTF77(3)_CB,Not Needed
+Brisbane CBD,ATC,ANZ,TTF78(1)_CB,Not Needed
+Brisbane CBD,Boundary Subs,VPK,VPK_BB11/12,Not Needed
+Brisbane CBD,Boundary Subs,VPK,VPK_BB13(1),Not Needed
+Brisbane CBD,Boundary Subs,VPK,VPK_BB14/15,Not Needed
+Brisbane CBD,Boundary Subs,VPK,VPK_BB15/16,Not Needed
+Brisbane CBD,WRD,WEX,WEXWRD12(1)_CB,WEXWRD12_CB
+Brisbane CBD,WRD,WEX,WEXWRD8(1)_CB,WEXWRD8_CB
+Brisbane CBD,CST_CST,WFP,WFP9_CB,No Active Setting
+Brisbane CBD,MLT,WHP,WHP10(1)_CB,WHP10_CB
+Brisbane CBD,MLT,WHP,WHP7(1)_CB,WHP7_CB
+Brisbane CBD,Boundary Subs,WRD,WRD_BB11/12,Not Required
+Brisbane CBD,Boundary Subs,WRD,WRD_BB12/13,Not Required
+Brisbane CBD,Boundary Subs,WRD,WRD_BB13/14,Not Required
+Brisbane CBD,Boundary Subs,WRD,WRD16B_CB,WRD16A_CB
+Brisbane CBD,Boundary Subs,WRD,WRD22B_CB,No Active Setting
+Brisbane CBD,Boundary Subs,WRD,WRD8A_CB,Unknown
+Browns Plains,Boundary Subs,BPN,BPN2A_CB,No Active Setting
+Browns Plains,Boundary Subs,Bpn,BPN6_CB,No Active Setting
+Browns Plains,HWD,WWL,HWD15A(1)_CB,Not Needed
+Browns Plains,HWD,WWL,HWD2B(3)_CB,Not Needed
+Burleigh Heads,Boundary Subs,BHD,BHD29A_CB,BHD29B_CB
+Burleigh Heads,KRA,KRA,GCAKRA5_CB,Not Needed
+Burleigh Heads,MAI,MAI,MAI5A_CB,No Active Setting
+Burleigh Heads,Boundary Subs,MGP,MGP2_CB,MGPCK11+MGP2A+B_CB
+Burleigh Heads,CRB,THP,THP_BB12/13,Not Needed
+Caboolture,BIS,BIS,BISTPT3_CB,Unknown
+Caboolture,MFD,MFD,MFD11B_CB,MFD11A+B_CB
+Caboolture,WMR,WMR,WMR3_CB,No Active Setting
+Cleveland,CPB,CPB,CPB9OLD_CB,CPB9_CP12_CB
+Cleveland,Boundary Subs,RBY,RBY_BB11/12,Not Needed
+Cleveland,Boundary Subs,RBY,RBY_BB11/12(1),Not Needed
+Cleveland,Boundary Subs,RBY,RBY_BB13/12(1),Not Needed
+Cleveland,Boundary Subs,RBY,RBY7A_CB,RBY7_CB
+Cleveland,Boundary Subs,RBY,RBY9A_CB,RBY9_CB
+Cleveland,VPT,VPT,VPT5B_CB,VPT5A+B_CB
+Coomera,Boundary Subs,HIS,HIS12B_CB,HIS12A+B_CB
+Coomera,Boundary Subs,HIS,HIS16A_CB,Unknown
+Coomera,Boundary Subs,HIS,HIS1B(1)_CB,HIS1B_CB
+Coorparoo,Boundary Subs,CHL,CHL_BB11/12,Not Needed
+Coorparoo,Boundary Subs,CHL,CHL10(1)_CB,CHL10_CB
+Coorparoo,Boundary Subs,CHL,CHL11A_CB,CHL11_CB
+Coorparoo,HPK,HPK,HPK8A_CB,No Active Setting
+Doboy,BLB,BLB,BLB9B_CB,No Active Setting
+Doboy,HMT,HMT,HMT5A_CB,Unknown
+Doboy,HMT,HMT,HMT7A_CB,Unknown
+Doboy,QPT,QPT,QPT13A_CB,QPT13_CB1
+Doboy,QPT,QPT,QPT13B_CB,QPT13_CB2
+Doboy,QPT,QPT,QPT24B_CB,QPT24A+B_CB
+Gatton-Postmans Ridge,CPD,CPD,CPD1A_CB,CPD1_CB
+Gatton-Postmans Ridge,CPD,CPD,CPD2A_CB,CPD2_CB
+Gatton-Postmans Ridge,GTN,GTN,GTN3B_CB,GTN3A+B_CB
+Gatton-Postmans Ridge,PRG,PRG,PRG2B_CB,PRG2A+B_CB
+GoldCoast-Mudgeeraba-Molendinar,SPD,ANA,ANACGI14_CB,ANAGCI14_CB
+GoldCoast-Mudgeeraba-Molendinar,SPD,CGI,ANACGI14_CB,ANAGCI14_CB
+GoldCoast-Mudgeeraba-Molendinar,ARL,ARL,ARL12B_CB,No Active Setting
+GoldCoast-Mudgeeraba-Molendinar,ARL,ARL,ARL13B_CB,No Active Setting
+GoldCoast-Mudgeeraba-Molendinar,ARL,ARL,ARL2B_CB,No Active Setting
+GoldCoast-Mudgeeraba-Molendinar,ARL,ARL,ARL3B_CB,No Active Setting
+GoldCoast-Mudgeeraba-Molendinar,BBH,TSW,BBH3A_CB,Not Needed
+GoldCoast-Mudgeeraba-Molendinar,Boundary Subs,ORW,BBH7A_CB,Not Needed
+GoldCoast-Mudgeeraba-Molendinar,Boundary Subs,BBH,BBHPGS11_CB,Not Needed
+GoldCoast-Mudgeeraba-Molendinar,Boundary Subs,BDL,BDL13A_CB,No Active Setting
+GoldCoast-Mudgeeraba-Molendinar,Boundary Subs,BDL,BDL15A_CB,No Active Setting
+GoldCoast-Mudgeeraba-Molendinar,Boundary Subs,BDL,BDL16A_CB,No Active Setting
+GoldCoast-Mudgeeraba-Molendinar,Boundary Subs,BDL,BDL7A_CB,No Active Setting
+GoldCoast-Mudgeeraba-Molendinar,Boundary Subs,BDL,BDL9A_CB,No Active Setting
+GoldCoast-Mudgeeraba-Molendinar,Boundary Subs,UPC,CCYUPC17_CB,CCYUPC17A_CB
+GoldCoast-Mudgeeraba-Molendinar,CCY,CCY,CCYUPC17_CB,Not Needed
+GoldCoast-Mudgeeraba-Molendinar,Boundary Subs,SPD,CDRSPD12(1)_CB,CDRSPD12_CB
+GoldCoast-Mudgeeraba-Molendinar,Boundary Subs,SPD,CDRSPD9(1)_CB,CDRSPD9_CB
+GoldCoast-Mudgeeraba-Molendinar,SPD,CDR,CDRT3_CB,Not Needed
+GoldCoast-Mudgeeraba-Molendinar,PKW,GHP,GHPPKW17(1)_CB,Not Needed
+GoldCoast-Mudgeeraba-Molendinar,PKW,GHP,GHPPKW43_CB,Not Needed
+GoldCoast-Mudgeeraba-Molendinar,PKW,GHP,GHPPKW46_CB,Not Needed
+GoldCoast-Mudgeeraba-Molendinar,PKW,GHP,GHPPKW9_CB,Not Needed
+GoldCoast-Mudgeeraba-Molendinar,Boundary Subs,MGP,MGP2_CB,Unknown
+GoldCoast-Mudgeeraba-Molendinar,MMC,MMC,MMC_BB13/14,Not Needed
+GoldCoast-Mudgeeraba-Molendinar,Boundary Subs,NRG,NRG_BB11/12,Not Needed
+GoldCoast-Mudgeeraba-Molendinar,Boundary Subs,NRG,NRG_BB13/14,Not Needed
+GoldCoast-Mudgeeraba-Molendinar,SPD,OCD,OCDTR5H_CB,Not Needed
+GoldCoast-Mudgeeraba-Molendinar,SPD,OCD,OCDTR6_CB,Not Needed
+GoldCoast-Mudgeeraba-Molendinar,SPD,PCB,PCB1_CB,Unknown
+GoldCoast-Mudgeeraba-Molendinar,BBH,PGS,PGS3_CB,No Active Setting
+GoldCoast-Mudgeeraba-Molendinar,PKW,PKW,PKW15A_CB,No Active Setting
+GoldCoast-Mudgeeraba-Molendinar,PKW,PKW,PKW5A_CB,No Active Setting
+GoldCoast-Mudgeeraba-Molendinar,PKW,PKW,PKW7A_CB,No Active Setting
+GoldCoast-Mudgeeraba-Molendinar,RBA_RBA,RHP,RBARHP_CB,Unknown
+GoldCoast-Mudgeeraba-Molendinar,SPD,SOL,SOLSPH5(1)_CB,SOLSPH5_CB
+GoldCoast-Mudgeeraba-Molendinar,SPO,WEL,SPOWEL13(1)_CB,SPOWEL13_CB
+GoldCoast-Mudgeeraba-Molendinar,Boundary Subs,SPO,SPOWEL13_CB,Not Needed
+GoldCoast-Mudgeeraba-Molendinar,SPO,WHI,SSSWHI12_CB,Not Needed
+GoldCoast-Mudgeeraba-Molendinar,CCY,UPC,UPC_BB11D/11A,Not Needed
+Griffin-Hays Inlet,Boundary Subs,DBY,DBY_BB11/12,Not Needed
+Griffin-Hays Inlet,Boundary Subs,MHL,MHL22B_CB,No Active Setting
+Griffin-Hays Inlet,Boundary Subs,MHL,MHL23A_CB,No Active Setting
+Griffin-Hays Inlet,Boundary Subs,MHL,MHL25A_CB,No Active Setting
+Griffin-Hays Inlet,NRA,NRA,NRA12A_CB,No Active Setting
+Griffin-Hays Inlet,NRA,NRA,NRA2A_CB,No Active Setting
+Griffin-Hays Inlet,NRA,NRA,NRA3B_CB,No Active Setting
+Griffin-Hays Inlet,NRA,NRA,NRA5A_CB,No Active Setting
+Griffin-Hays Inlet,RCF,RCF,RCF5A_CB,No Active Setting
+Lockrose,Boundary Subs,GGR,GGR_BB11A/11B,Not Needed
+Lockrose,Boundary Subs,LLY,LLY_BB11A/11B,Not Needed
+Lockrose,Boundary Subs,LLY,LLY2B_CB,Unknown
+Lockrose,LRE,LRE,LRE4A_CB,No Active Setting
+Lockrose,LRE,LRE,LRE6A_CB,No Active Setting
+Lockrose,LRE,LRE,LRE7A_CB,No Active Setting
+Lockrose,LRE,LRE,LRE8A_CB,No Active Setting
+Lockrose,Boundary Subs,TRP,TRP_BB11A/11B,Not Needed
+Loganlea,KSN,KSN,KSN8(1)_CB,KSN8_CB
+Loganlea,Boundary Subs,NSW,NSW_BB11/12,Not Needed
+Loganlea,Boundary Subs,NSW,NSW_BB13/14,Not Needed
+Loganlea,Boundary Subs,NSW,NSW22B_CB,NSW22A+B_CB
+Lytton,GIS,APF,APFGIS17_CB,No Active Setting
+Lytton,LYT,LYT,APLLYT10B_CB,APLLYT10A+B_CB
+Lytton,LYT,LYT,APLLYT16A_CB,Unknown
+Lytton,LYT,LYT,APLLYT6B_CB,APLLYT6A+B_CB
+Lytton,LYT,LYT,APLYT13B_CB,APLYT13A+B_CB
+Lytton,LYT,CTX,CTXLYT16A_CB,Not Needed
+Lytton,LYT,CTX,CTXLYT16B_CB,Not Needed
+Lytton,LYT,CTX,CTXLYT7A_CB,Not Needed
+Lytton,LYT,LYT,CTXLYT7A_CB,CTXLYT7+LTY7B_CB1
+Lytton,LYT,CTX,CTXLYT7B_CB,Not Needed
+Lytton,LYT,LYT,CTXLYT7B_CB,CTXLYT7+LTY7B_CB2
+Lytton,Boundary Subs,FIS,FBSFIS13(1)_CB,Not Needed
+Lytton,FBS,FBS,FBSSSC31A_CB,Unknown
+Lytton,FBS,FBS,FBSSSC31B_CB,Unknown
+Lytton,FIS,PBA,FISPBA11_CB,Not Needed
+Lytton,FIS,PBA,FISPBA9_CB,Not Needed
+Lytton,FIS,PBA,PBA_BB11/12,Not Needed
+Lytton,FIS,PBA,PBA_BB11/12(1),Not Needed
+Meeandah-Myrtletown,MDH,MDH,MDH11A_CB,Unknown
+Meeandah-Myrtletown,MDH,MDH,MDH7A_CB,Unknown
+Meeandah-Myrtletown,MTN,MDH,MTN7B_CB,Unknown
+Meeandah-Myrtletown,MTN,WLP,MTNWLP5(1)_CB,Not Needed
+Meeandah-Myrtletown,MTN,MTN,MTNWLP5B_CB,MTNWLP5A+B_CB
+Meeandah-Myrtletown,MTN,WLP,MTNWLP6(1)_CB,Unknown
+Meeandah-Myrtletown,MTN,MTN,MTNWLP6_CB,Unknown
+Nudgee,Boundary Subs,AMW,CGN5_CB,Unknown
+Nudgee,Boundary Subs,AMW,GBG24A(1)_CB,GBG24A_CB
+Nudgee,NGE,GCN,GCNNGE15(1)_CB,GCNNGE15_CB
+Nudgee,NGE,GCN,GCNNGE9(1)_CB,GCNNGE9_CB
+Nudgee,HDA,HAD,HDA3B_CB,HDA3A+B_CB
+Nudgee,Boundary Subs,TST,HDATST7(1)_CB,HDATST7_CB
+Nudgee,HTN,HHB,HHBHTN21(1)_CB,HHBHTN21_CB
+Nudgee,HTN,HTN,HHBHTN21_CB,Not Needed
+Nudgee,HTN,HTN,HMRHTN7_CB,Unknown
+Nudgee,HTN,HMR,HMRHTN7_CB,Unknown
+Nudgee,HTN,HTN,HTN25A_CB,Unknown
+Nudgee,HTN,HTN,HTN6A_CB,HTN6_CB
+Nudgee,NDH,NDH,NDH5A_CB,NDH5+CP1_CB
+Nudgee,Boundary Subs,TST,NDHTST4(1)_CB,NDHTST4_CB
+Nudgee,Boundary Subs,TST,TST_BB11/12,Not Needed
+Raceview,IPS,IPS,IPS13YMT_CB,IPSYMT13A_CB
+Richlands,Boundary Subs,SMR,SMR_BB11/12,Not Needed
+Richlands,Boundary Subs,BDG,WCL2_CB,Not Needed
+Richlands,Boundary Subs,BDG,WSO16A_CB,Not Needed
+Runcorn,Boundary Subs,EMP,EMP_BB11/13,Not Needed
+Runcorn,Boundary Subs,EMP,EMPGDR21_CB,Unknown
+Runcorn,SBK,GCL,GCLSBK26(2)_CB,GCLSBK26_CB
+Runcorn,SBK,GCL,GCLSBY10(1)_CB,GCLSBY10_CB1
+Runcorn,SBK,GCL,GCLSBY10(2)_CB,GCLSBY10_CB2
+Runcorn,SBK,QEH,GUVQEH_CB,GUVQEH3_CB
+Runcorn,SBK,GUV,GUVSBK28(1)_CB,GUVSBK28_CB
+Runcorn,SBK,KMS,KMSTR3H_CB,Not Needed
+Runcorn,SBK,KMS,KMSTR4H_CB,Not Needed
+Runcorn,SBK,KMS,KMSTR5H_CB,Not Needed
+Runcorn,SBK,QEH,QEHSBK13(1)_CB,QEHSBK13_CB
+Runcorn,RCN,RCN,RCN11A(1)_CB,RCN11A_CB1
+Runcorn,RCN,RCN,RCN4A_CB,No Active Setting
+Runcorn,RCN,RCN,RCN9_CB,Unknown
+Runcorn,SBK,SBK,SBK1A_CB,Unknown
+Runcorn,SBK,SBK,UMG2A_CB,Wrong Sub Name
+Sandgate,SGT,SGT,BSCSGT27_CB,Unknown
+Sandgate,ZMR,ZMR,ZMR4A_CB,ZMR4_CB
+Stafford,Boundary Subs,CSE,CSE10(1)_CB,CSE10A_CB
+Stafford,Boundary Subs,CSE,CSE23A_CB,CSE23_CB
+Stafford,CSE,WCE,CSEWCE18(1)_CB,CSEWCE18_CB
+Stafford,CSE,WCE,CSEWCE20(1)_CB,CSEWCE20_CB
+Stafford,KRN,KRN,KRN13B_CB,KRN13A+B_CB
+Stafford,KRN,KRN,KRN3B_CB,KRN3A+B_CB
+Stafford,Boundary Subs,CSE,KRN8A_CB,Not Needed
+Stafford,Boundary Subs,SFD,SFD10_CB,No Active Setting
+Stafford,Boundary Subs,SFD,SFD11_CB,No Active Setting
+Stafford,Boundary Subs,SFD,SFD3_CB,No Active Setting
+Stafford,Boundary Subs,SFD,SFD4_CB,No Active Setting
+Stafford,Boundary Subs,SFD,SFD5_CB,No Active Setting
+Stafford,Boundary Subs,SFD,SFD6B_CB,SFD6_CB
+Stafford,Boundary Subs,SFD,SFD7A_CB,SFD7_CB
+Stafford,Boundary Subs,SFD,SFD8_CB,No Active Setting
+Stafford,Boundary Subs,SFD,SFD9_CB,No Active Setting
+Stafford,CSE,WCS,WCS_BUS11/12,Not Needed
+Stafford,CSE,WCS,WCS_BUS12/13,Not Needed
+Stradbroke Island,Boundary Subs,IBS,HLG1(1)_CB,Not Needed
+Stradbroke Island,HLG,RWG,HLG1_CB,Not Needed
+Stradbroke Island,Boundary Subs,IBS,IBS1_CB,Unknown
+SunCoast,AHD_AHD,AHD,AHD15B_CB,AHD15A+B_CB
+SunCoast,Boundary Subs,CLD,CLD_BB11/12,Not Needed
+SunCoast,Boundary Subs,CLD,CLD_BB13/14,Not Needed
+SunCoast,Boundary Subs,CLD,CLD1A_CB,CLD1+C1_CB
+SunCoast,Boundary Subs,CLD,CLD22A_CB,No Active Setting
+SunCoast,Boundary Subs,CMD,CMD_BB11/12,Not Needed
+SunCoast,Boundary Subs,KWA,KWA_BB11/12,Not Needed
+SunCoast,Boundary Subs,MLB,MLB_BB11/12,Not Needed
+SunCoast,Boundary Subs,WMD,WMD_BB11/12,Not Needed
+SunCoast,Boundary Subs,WMD,WMD13A_CB,No Active Setting
+Tennyson,Boundary Subs,MRK,ALY4MRK_CB,ALYMRK4_CB
+Tennyson,Boundary Subs,MRK,ALYMRK10A_CB,ALYMRK10_CB1
+Tennyson,ALY,ALY,ALYMRK10A_CB,ALYMRK10_CB1
+Tennyson,Boundary Subs,MRK,ALYMRK10B_CB,ALYMRK10_CB2
+Tennyson,ALY,ALY,ALYMRK10B_CB,ALYMRK10_CB2
+Tennyson,STL,CBB,CBBUSTIE1,Not Needed
+Tennyson,STL,CBB,CBBUSTIE2,Not Needed
+Tennyson,IDY,IDY,IDY9B_CB,IDY9A+B_CB
+Tennyson,KMR,KMR,KMR_BB13/14,Not Needed
+Tennyson,Boundary Subs,KMR,MRK_BB11/12,Not Needed
+Tennyson,Boundary Subs,MRK,MRK6_CB,No Active Setting
+Tennyson,Boundary Subs,MRK,MRK8_CB,No Active Setting
+Tennyson,STL,QUBSL,QUBSL13_CB,QUBSTL13_CB
+Tennyson,TRG,TRG,STL4TRG_CB,STLTRG4_CB
+Tennyson,TRG,TRG,TRG3B_CB,No Active Setting
+Tennyson,TRG,TRG,TRGTWG12OLD_CB,TRGTWG12_CB
