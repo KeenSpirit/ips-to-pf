@@ -8,7 +8,7 @@ ARGUS1 ReyDisp Evolution v6.4t.3.4_Energex,ARGUS1 Compatibility_Energex_to_ARGUS
 ARGUS1 ReyDisp Evolution v8,ARGUS1 ReyDisp Evolution v8_to_ARGUS1_DCD42_2P+E+SE,ARGUS1_DCD42_2P+E+SE
 CAPM2_Energex,CAPM2_Energex_to_CAPM N-Series Recloser,CAPM N-Series Recloser
 CAPM4 CAPM5,CAPM4 CAPM5_to_CAPM N-Series Recloser,CAPM N-Series Recloser
-CDG61,CDG61_to_CDG61 A & B,CDG61 A & B
+CDG61,CDG61_to_CDG61,CDG61
 CMS_2.8.2,CMS_2.8.2_to_Noja Recloser,Noja Recloser
 EQL_ADVC3_ADVC2_5.16,EQL_ADVC3_ADVC2_5.16_to_ADVC N-Series Recloser,ADVC N-Series Recloser
 EQL_RC10_RC20,Ergon_CMS_3.1.0.0_to_Noja Recloser,Noja Recloser
@@ -65,3 +65,20 @@ SEL-351A   009 - 011,SEL-351A   009 - 011_to_Generic SEL351 Relay,Generic SEL351
 SEL-351-6,SEL-351-6_to_Generic SEL351 Relay,Generic SEL351 Relay
 P142 320J 350J 360J 400J 410J 420J,P142 320J 350J 360J 400J 410J 420J_to_P142,P142
 swer_Ergon_HR Recloser,Ergon_HR Recloser_to_Ergon_HR Recloser,Ergon_HR Recloser
+KCGG142,KCGG142_to_KCGG142,KCGG142
+SDND103,SDND103_to_SDND103,SDND103
+Ergon_KF_KFE Recloser,Ergon_KF_KFE Recloser_to_Ergon_KF_KFE Recloser,Ergon_KF_KFE Recloser
+Ergon_CDG61,Ergon_CDG61_to_CDG61,CDG61
+CDG21,CDG21_to_CDG21_Phase,CDG21_Phase
+CDG21_Earth,CDG21_Earth_to_CDG21_Earth,CDG21_Earth
+MCGG63,MCGG63_to_Ergon_MCGG63,Ergon_MCGG63
+MCGG52,MCGG52_to_Ergon_MCGG-52,Ergon_MCGG-52
+CDG31_old2,CDG31_old2_to_CDG31 A&B&C,CDG31 A&B&C
+CDG31_old2_Earth,CDG31_old2_to_CDG31 2_Phase & Earth,CDG31 2_Phase & Earth
+CDG31_Earth,CDG31_to_CDG31 2_Phase & Earth,CDG31 2_Phase & Earth
+CDG31,CDG31_to_CDG31 A&B&C,CDG31 A&B&C
+CDG24,CDG24_to_CDG24_Phase,CDG24_Phase
+CDG24_Earth,CDG24_Earth_to_CDG24_Earth,CDG24_Earth
+MCGG61,MCGG61_to_MCGG61_Phase,MCGG61_Phase
+swer_Ergon_A Line Recloser,swer_Ergon_A Line Recloser_to_E-Type Recloser,E-Type Recloser
+P142 090B 100B 150A 150C 170C 210G 300J,P142 090B 100B 150A 150C 170C 210G 300J_to_P142,P142
