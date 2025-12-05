@@ -43,7 +43,7 @@ def create_ids_dict(app, region):
     for row in rows:
         try:
             ids_dict_list.append(dict(row._asdict()))
-        except:  # noqa [E722]
+        except AttributeError:
             continue
     return ids_dict_list
 
@@ -135,7 +135,6 @@ def seq_get_ips_settings(app, set_id: str):
     for setting in settings:
         ips_settings[set_id].append(setting)
     return ips_settings
-
 
 
 def reg_get_ips_settings(app, set_id: str):

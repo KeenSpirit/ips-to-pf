@@ -59,15 +59,11 @@ def relay_settings(app, device_object, relay_types, updates):
         device_object.pf_obj.SetAttribute("outserv", 1)
         return [update_info, updates]
 
-    app.PrintInfo(f"Getting relay updates")
     updates = apply_settings(app, device_object, mapping_file, setting_dict, updates)
-    app.PrintInfo(f"updates {updates}")
     update_reclosing_logic(app, device_object, mapping_file, setting_dict)
     update_logic_elements(app, device_object.pf_obj, mapping_file, setting_dict)
     update_info = cs.update_ct(app, device_object, update_info)
     update_info = vs.update_vt(app, device_object, update_info)
-
-    app.PrintInfo(f"Updates {updates}")
 
     return update_info, updates
 
@@ -324,7 +320,7 @@ def update_reclosing_logic(app, device_object, mapping_file, setting_dictionary)
                 setting = setting_adjustment(
                     app, mapped_set, setting_dictionary, device_object
                 )
-        except:  # noqa [E722]
+        except (IndexError, KeyError, ValueError, TypeError):
             if mapped_set[3] == "ON":
                 trip_num = "ALL"
                 setting = trip_setting
@@ -488,11 +484,11 @@ def setting_adjustment(app, line, setting_dictionary, device_object):
     key = str().join(line[:3])
     try:
         setting = float(setting_dictionary[key])
-    except:  # noqa [E722]
+    except (KeyError, ValueError, TypeError):
         try:
             setting_value = determine_on_off(app, setting_dictionary[key], line[6])
             return setting_value
-        except:  # noqa [E722]
+        except  (KeyError, IndexError, ValueError, TypeError):
             setting = 0
     if line[-1] == "primary":
         primary = device_object.ct_primary

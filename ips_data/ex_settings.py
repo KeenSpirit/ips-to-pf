@@ -134,7 +134,7 @@ def create_new_devices(app, ids_dict_list, called_function):
             int(switch.loc_name[2])
             if switch.GetClassName() != "StaSwitch":
                 continue
-        except:  # noqa [E722]
+        except (ValueError, IndexError):
             pass
         if i % 10 == 0:
             # app.ClearOutputWindow()
@@ -155,11 +155,11 @@ def create_new_devices(app, ids_dict_list, called_function):
             called_function,
             cb_alt_name_list,
         )
-        logging.info(f"seq_get_setting_id.list_of_devices: {list_of_devices}")
         setting_ids += new_setting_ids
-        # Check if the switch does not have any protectino device
-        if len(setting_ids) == num_of_devices:
-            # If not, delete any protection device that already exists
+        # If a switch does not have any protection device in IPS, delete any existing pf protection devices
+        # under the switch and record that no devices were detected in IPS for this switch (i.e. failed CB).
+        # This indicates a possible mismatch between IPS and pf switch names.
+        if len(setting_ids) == num_of_devices: # No new setting IDs were found from IPS
             if switch.GetClassName() == "StaSwitch":
                 contents = switch.fold_id.GetContents()
             else:
@@ -170,7 +170,7 @@ def create_new_devices(app, ids_dict_list, called_function):
                     content.Delete()
             if (
                 switch.GetClassName() == "ElmCoup"
-                and switch.GetAttribute("e:aUsage") == "cbk"
+                and switch.GetAttribute("e:aUsage") == "cbk" # switch is a CB, not a disconnector
                 ):  # noqa [E501]
                 if switch not in failed_cbs:
                     failed_cbs.append(switch)
@@ -316,12 +316,7 @@ def seq_get_setting_id(
     if len(switch_name) < 4:
         return setting_ids, list_of_devices
 
-    logging.info(f"sub_code: {sub_code}")
-    logging.info(f"switch_name: {switch_name}")
-
     rows = match_switch_to_relays(sub_code, switch_name, ids_dict_list)
-
-    logging.info(f"Settings that matches the switch name (rows): {rows}")
 
     # For each RSR that matches the switch name, create a device object and assign attribute
     for row in rows:
@@ -360,7 +355,6 @@ def seq_get_setting_id(
             prot_dev.associated_settings(ips_settings)
         if "fuse" in list_of_devices[-1].device.lower():
             list_of_devices[-1].fuse_type = "Line Fuse"
-        # dev.log_device_atts(prot_dev)
 
     return setting_ids, list_of_devices
 

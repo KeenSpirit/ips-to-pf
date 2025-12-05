@@ -392,7 +392,7 @@ def setup_relay(
             try:
                 int(existing_name.replace(plant_no, "")[0])
                 relay.Delete()
-            except:
+            except (ValueError, IndexError):
                 logger.debug(f"{relay} was found for {plant_no}")
                 relay_exists = True
                 found_relay = relay

@@ -1,5 +1,3 @@
-import logging
-
 from update_powerfactory import get_objects as go
 
 def update_ct(app, device_object, update_info):

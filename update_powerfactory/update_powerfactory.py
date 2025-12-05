@@ -56,7 +56,7 @@ def update_pf(app, lst_of_devs, data_capture_list):
                 )
             else:
                 update_info = fs.fuse_setting(app, device_object, fuse_types)
-        except:  # noqa [E722]
+        except Exception:
             logging.info(f"{device_object.pf_obj.loc_name} Result = Script Failed")
             logging.exception(f"{device_object.pf_obj.loc_name} Result = Script Failed")
             devices.log_device_atts(device_object)
@@ -116,5 +116,5 @@ def switch_relay_oos(relays_oos, device_object):
     try:
         if device_object.switch.on_off == 0:
             device_object.pf_obj.SetAttribute("outserv", 1)
-    except:  # noqa [E722]
+    except AttributeError:
         pass

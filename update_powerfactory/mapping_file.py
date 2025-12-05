@@ -1,7 +1,6 @@
 import csv
-from pathlib import Path
 
-MAP_FILE_LOC = Path(r"\\ecasd01\WksMgmt\PowerFactory\ScriptsDEV\PSProtectionDeviceSettings\mapping")
+MAP_FILE_LOC = "\\\\ecasd01\\WksMgmt\\PowerFactory\\ScriptsDEV\\IPSProtectionDeviceSettings\\mapping"
 
 
 def get_cb_alt_name_list(app):

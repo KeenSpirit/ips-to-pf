@@ -263,7 +263,7 @@ def determine_fuse_type(app, fuse):
                 # Set the fuse to the smallest available fuse.
                 fuse_size = "3/10K"
             return ["Tx Fuse", fuse_size]
-    except:  # noqa [E722]
+    except (AttributeError, ValueError, TypeError):
         fuse_size = "3/10K"
         return ["Tx Fuse", fuse_size]
 

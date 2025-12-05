@@ -4,7 +4,6 @@ import csv
 from tkinter import *  # noqa [F403]
 import time
 import logging.config
-from logging_config import configure_logging as cl
 import user_inputs
 from importlib import reload
 
@@ -18,8 +17,6 @@ reload(up)
 def main(app=None, batch=False):
     """This Script Will be used to transfer Settings from IPS to PF."""
     start_time = time.strftime("%H:%M:%S")
-    # Record if the project has an setting updated
-
     if not app:
         # Change called_function to True if you want to mimic a batch update
         called_function = False
@@ -56,7 +53,7 @@ def main(app=None, batch=False):
         print_results(app, data_capture_list)
     stop_time = time.strftime("%H:%M:%S")
     app.PrintInfo(
-        "Script started at {} and finshed at {}".format(start_time, stop_time)
+        f"Script started at {start_time} and finshed at {stop_time}"
     )
     if updates:
         app.PrintInfo("Of the devices selected there were updated settings")
@@ -181,11 +178,11 @@ def print_results(app, data_capture_list):
 if __name__ == "__main__":
 
     # Configure logging
-    logging.basicConfig(
-        filename=cl.getpath() / 'ips_to_pf_log.txt',
-        level=logging.WARNING,
-        format='%(asctime)s - %(levelname)s - %(message)s'
-    )
+    # logging.basicConfig(
+    #     filename=cl.getpath() / 'ips_to_pf_log.txt',
+    #     level=logging.WARNING,
+    #     format='%(asctime)s - %(levelname)s - %(message)s',
+    # )
 
     updates = main()
 

@@ -186,7 +186,7 @@ def reg_get_setting_id(
                 None,
             )
             if not called_function:
-                ips_settings = reg_get_ips_settings(app, row["relaysettingid"])
+                ips_settings = qd.reg_get_ips_settings(app, row["relaysettingid"])
                 prot_dev.associated_settings(ips_settings)
             prot_dev.fuse_type = fuse_type
             prot_dev.fuse_size = fuse_size
@@ -225,7 +225,7 @@ def reg_get_setting_id(
             None,
         )
         if not called_function:
-            ips_settings = reg_get_ips_settings(app, row["relaysettingid"])
+            ips_settings = qd.reg_get_ips_settings(app, row["relaysettingid"])
             prot_dev.associated_settings(ips_settings)
         prot_dev.fuse_type = fuse_type
         prot_dev.fuse_size = fuse_size
@@ -238,18 +238,6 @@ def reg_get_setting_id(
         list_of_devices[-1].fuse_type = fuse_type
         list_of_devices[-1].fuse_size = fuse_size
     return [setting_ids, list_of_devices]
-
-
-def reg_get_ips_settings(app, set_id):
-    """Using the unique setting ID get the full setting file from the DB"""
-    ips_settings = {}
-    ips_settings[set_id] = []
-    settings = qd.get_data("Protection-SettingRelay-EE", "setting_id", set_id)
-    for setting in settings:
-        if not setting["proposedsetting"]:
-            continue
-        ips_settings[set_id].append(setting)
-    return ips_settings
 
 
 def info_dict(pf_device, result):

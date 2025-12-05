@@ -9,7 +9,6 @@ from ips_data import query_database as qd
 from ips_data import ee_settings as ee
 # from ips_data import add_protection_relay_skeletons as aprs
 from ips_data import ex_settings as ex
-from update_powerfactory import mapping_file as mf
 import devices as dev
 import user_inputs
 from importlib import reload
@@ -36,13 +35,8 @@ def get_ips_settings(app, region, batch, called_function):
     [set_ids, device_list, data_capture_list] = get_selected_devices(
         app, batch, region, data_capture_list, ids_dict_list, called_function
     )
-    logging.info(f"set_ids: {set_ids}")
-    logging.info(f"device_list: {device_list}")
-    logging.info(f"data_capture_list: {data_capture_list}")
 
     ips_settings, ips_it_settings = qd.batch_settings(app, region, called_function, set_ids)
-    logging.info(f"ips_settings (only if batch): {ips_settings}")
-    logging.info(f"ips_it_settings: {ips_it_settings}")
 
     # Load all CT and VT settings for each device.
     # If it's a batch update, load settings for every relay.
@@ -99,6 +93,7 @@ def get_selected_devices(app, batch, region, data_capture_list, ids_dict_list, c
         update_info["RESULT"] = "Failed to find match"
         data_capture_list.append(update_info)
 
+
     return [set_ids, lst_of_devs, data_capture_list]
 
 
@@ -110,7 +105,6 @@ def prot_dev_lst(app, region, data_capture_list, ids_dict_list):
     # User selection should be the same
     # Set up a database of the active devices in the PowerFactory model
     [devices, device_dict] = dev.prot_device(app)
-    logging.info(f"Active PowerFactory protection devices: {devices}")
 
     # Ask the user to select which protection devices they want to study
     selections = user_inputs.user_selection(app, device_dict)
