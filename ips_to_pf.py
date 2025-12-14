@@ -17,6 +17,7 @@ reload(up)
 def main(app=None, batch=False):
     """This Script Will be used to transfer Settings from IPS to PF."""
     start_time = time.strftime("%H:%M:%S")
+    start = time.time()
     if not app:
         # Change called_function to True if you want to mimic a batch update
         called_function = False
@@ -36,31 +37,52 @@ def main(app=None, batch=False):
 
     # Query the IPS data
     dev_list, data_capture_list = ips.get_ips_settings(app, region, batch, called_function)
-
-    logging.info(f"lst_of_devs: {dev_list}")
-
-    # Update PowerFactory
-    data_capture_list, updates = up.update_pf(app, dev_list, data_capture_list)
-    logging.info(f"data_capture_list: {data_capture_list}")
-    logging.info(f"updates: {updates}")
-
-    # Create file to save script information
-    save_file = create_save_file(app, prjt, called_function)
-    if not save_file:
-        return
-    write_data(app, data_capture_list, save_file)
-    if not batch:
-        print_results(app, data_capture_list)
-    stop_time = time.strftime("%H:%M:%S")
-    app.PrintInfo(
-        f"Script started at {start_time} and finshed at {stop_time}"
-    )
-    if updates:
-        app.PrintInfo("Of the devices selected there were updated settings")
-    else:
-        app.PrintInfo("Of the devices selected there were no updated settings")
+    for dev in dev_list:
+        app.PrintPlain(vars(dev))
     updates = None
+    end = time.time()
+    run_time = round(end - start, 6)
+    run_time = format_time(run_time)
+    app.PrintPlain(f"Query Script run time: {run_time}")
+
+    # logging.info(f"lst_of_devs: {dev_list}")
+    #
+    # # Update PowerFactory
+    # data_capture_list, updates = up.update_pf(app, dev_list, data_capture_list)
+    # logging.info(f"data_capture_list: {data_capture_list}")
+    # logging.info(f"updates: {updates}")
+    #
+    # # Create file to save script information
+    # save_file = create_save_file(app, prjt, called_function)
+    # if not save_file:
+    #     return
+    # write_data(app, data_capture_list, save_file)
+    # if not batch:
+    #     print_results(app, data_capture_list)
+    # stop_time = time.strftime("%H:%M:%S")
+    # app.PrintInfo(
+    #     f"Script started at {start_time} and finished at {stop_time}"
+    # )
+    # if updates:
+    #     app.PrintInfo("Of the devices selected there were updated settings")
+    # else:
+    #     app.PrintInfo("Of the devices selected there were no updated settings")
     return updates
+
+
+def format_time(seconds):
+    hours, remainder = divmod(int(seconds), 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    time_parts = []
+    if hours > 0:
+        time_parts.append(f"{hours} hour{'s' if hours > 1 else ''}")
+    if minutes > 0:
+        time_parts.append(f"{minutes} minute{'s' if minutes > 1 else ''}")
+    if seconds > 0 or not time_parts:
+        time_parts.append(f"{seconds} second{'s' if seconds > 1 else ''}")
+
+    return " ".join(time_parts)
 
 
 def log_devices():

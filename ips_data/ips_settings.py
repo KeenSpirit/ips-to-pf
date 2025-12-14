@@ -29,6 +29,9 @@ def get_ips_settings(app, region, batch, called_function):
     """
     data_capture_list = []
     # Create a dictionary of all device setting ids extracted from IPS
+    # ids_dict_list: List of rows of imported Report-Cache-ProtectionSettingIDs-EX.csv file.
+    # row["nameenu"] is the IPS device name (str). Example: "NIP10A"
+    # row["locationpathenu"] is the IPS location path (str). Example: "Energex/Substations/NIP/11 kV/NIP10A/
     ids_dict_list = qd.get_setting_ids(app, region)
     
     # Get the selected devices
@@ -62,6 +65,16 @@ def get_ips_settings(app, region, batch, called_function):
 
 
 def get_selected_devices(app, batch, region, data_capture_list, ids_dict_list, called_function):
+    """
+
+    :param app:
+    :param batch:
+    :param region:
+    :param data_capture_list:
+    :param ids_dict_list:
+    :param called_function:
+    :return:
+    """
 
     failed_cbs = []
     if not batch:

@@ -159,11 +159,11 @@ class DeviceSelection(Tk):
                     command=lambda key=sub: self.select_feeders(key),
                 ).pack(anchor=W, padx=0)
                 self.sub_dict[sub] = self.var[sub]
-                for device in list_of_devices:
+                for sub_device in list_of_devices:
                     # Record all the devices that belong to this substation
-                    if sub != self.device_dict[device][4]:
+                    if sub != self.device_dict[sub_device][4]:
                         continue
-                    feeder = self.device_dict[device][3]
+                    feeder = self.device_dict[sub_device][3]
                     if feeder not in self.feeder_dict:
                         self.var[feeder] = StringVar()
                         self.option_check = ttk.Checkbutton(
@@ -175,23 +175,23 @@ class DeviceSelection(Tk):
                             command=lambda key=feeder: self.select_devices(key),
                         ).pack(anchor=W, padx=30)
                         self.feeder_dict[feeder] = self.var[feeder]
-                        for device in list_of_devices:
+                        for feeder_device in list_of_devices:
                             # Record all the devices that belong to this feeder
-                            if feeder != self.device_dict[device][3]:
+                            if feeder != self.device_dict[feeder_device][3]:
                                 continue
-                            if device not in self.variables_dict:
+                            if feeder_device not in self.variables_dict:
                                 self.check = StringVar()
                                 self.option_check = ttk.Checkbutton(
                                     self.frame.interior,
-                                    text="{}".format(device),
+                                    text="{}".format(feeder_device),
                                     variable=self.check,
                                     onvalue="On",
                                     offvalue="Off",
                                 ).pack(anchor=W, padx=90)
                                 # Create a dictionary and an ordered list of
                                 # tree structure for use later in the script.
-                                self.variables_dict[device] = self.check
-                                self.device_ordered_list += [device]
+                                self.variables_dict[feeder_device] = self.check
+                                self.device_ordered_list += [feeder_device]
 
     def ok(self, event=None):
         """Modified OK button functionality"""

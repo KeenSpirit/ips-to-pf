@@ -3,7 +3,7 @@ from update_powerfactory import get_objects as go
 def update_vt(app, device_object, update_info):
     """VT elements are used to provide the relay with vt signals. VT are not always
     located in the same bay as the relay. Due to limitations of scripting a
-    VT that is associated with the relay will be plsaced into the same cubicle."""
+    VT that is associated with the relay will be placed into the same cubicle."""
     # If the Vt secondary is equal to 1 then it has been determined that no
     # VT is required.
     if device_object.vt_secondary == 1:
