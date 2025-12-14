@@ -1,140 +1,265 @@
+"""
+Main orchestration module for IPS settings retrieval.
+
+This module coordinates the retrieval of protection device settings from
+the IPS database and their association with PowerFactory devices. It handles
+both Energex (SEQ) and Ergon regional configurations.
+
+The module uses SettingIndex for efficient O(1) lookups instead of
+linear scans through raw setting lists.
+"""
+
 import logging
 import sys
+from typing import List, Tuple, Optional, Dict, Any
+
 sys.path.append(
-    r"\\ecasd01\WksMgmt\PowerFactory\ScriptsDEV\AddProtectionRelaySkeletons\addprotectionrelayskeletons"  # noqa [E501]
+    r"\\ecasd01\WksMgmt\PowerFactory\ScriptsDEV\AddProtectionRelaySkeletons\addprotectionrelayskeletons"
 )
 import add_protection_relay_skeletons
 
 from ips_data import query_database as qd
 from ips_data import ee_settings as ee
-# from ips_data import add_protection_relay_skeletons as aprs
 from ips_data import ex_settings as ex
+from ips_data.setting_index import SettingIndex
 import devices as dev
 import user_inputs
-from importlib import reload
-reload(qd)
-reload(ex)
-reload(ee)
-reload(ee)
-reload(user_inputs)
-# reload(aprs)
+
+logger = logging.getLogger(__name__)
 
 
-def get_ips_settings(app, region, batch, called_function):
+def get_ips_settings(
+    app,
+    region: str,
+    batch: bool,
+    called_function: bool
+) -> Tuple[List[dev.ProtectionDevice], List[Dict]]:
     """
-    Returns:
-    lst_of_devs: A list of devices stored as classes with setting data attributes
-    data_capture_list: a list for tracking data issues that were identified during the script run time.
-    It is printed to the output.
-    """
-    data_capture_list = []
-    # Create a dictionary of all device setting ids extracted from IPS
-    # ids_dict_list: List of rows of imported Report-Cache-ProtectionSettingIDs-EX.csv file.
-    # row["nameenu"] is the IPS device name (str). Example: "NIP10A"
-    # row["locationpathenu"] is the IPS location path (str). Example: "Energex/Substations/NIP/11 kV/NIP10A/
-    ids_dict_list = qd.get_setting_ids(app, region)
+    Retrieve IPS settings and create ProtectionDevice objects.
     
-    # Get the selected devices
-    [set_ids, device_list, data_capture_list] = get_selected_devices(
-        app, batch, region, data_capture_list, ids_dict_list, called_function
+    This is the main entry point for getting IPS data. It:
+    1. Creates an indexed lookup structure from IPS setting IDs
+    2. Gets the devices to process (either user-selected or all)
+    3. Loads detailed settings for each device
+    4. Associates CT/VT settings
+    
+    Args:
+        app: PowerFactory application object
+        region: "Energex" or "Ergon"
+        batch: True for batch update mode
+        called_function: True if called from another script
+        
+    Returns:
+        Tuple of (list_of_devices, data_capture_list) where:
+        - list_of_devices: ProtectionDevice objects with settings
+        - data_capture_list: Status/error records for reporting
+    """
+    data_capture_list: List[Dict] = []
+    
+    # Create indexed setting ID lookup (O(1) access)
+    setting_index = qd.get_setting_ids(app, region)
+    logger.info(f"Created setting index with {len(setting_index)} records")
+    
+    # Get selected devices and their setting IDs
+    set_ids, device_list, data_capture_list = _get_selected_devices(
+        app, batch, region, data_capture_list, setting_index, called_function
     )
-
-    ips_settings, ips_it_settings = qd.batch_settings(app, region, called_function, set_ids)
-
-    # Load all CT and VT settings for each device.
-    # If it's a batch update, load settings for every relay.
-    for i, device_object in enumerate(device_list):
-        if i % 10 == 0:
-            # app.ClearOutputWindow()
-            app.PrintInfo(
-                f"device number {i} of {len(device_list)} has had its"
-                " setting attributes assigned"
-            )
-        if device_object.device:
-            if called_function:
-                # Load relay settings for batch run
-                # Relay settings were only loaded in ex.create_new_devices() called_function = False
-                device_object.associated_settings(ips_settings)
-            if ips_it_settings:
-                # Load CT settings
-                if region == "Energex":
-                    device_object.seq_instrument_attributes(ips_it_settings)
-                else:
-                    device_object.reg_instrument_attributes(ips_it_settings)
+    
+    # Load detailed settings for all devices
+    ips_settings, ips_it_settings = qd.batch_settings(
+        app, region, called_function, set_ids
+    )
+    
+    # Associate settings with each device
+    _associate_device_settings(
+        app, device_list, ips_settings, ips_it_settings, 
+        region, called_function
+    )
+    
     return device_list, data_capture_list
 
 
-def get_selected_devices(app, batch, region, data_capture_list, ids_dict_list, called_function):
+def _get_selected_devices(
+    app,
+    batch: bool,
+    region: str,
+    data_capture_list: List[Dict],
+    setting_index: SettingIndex,
+    called_function: bool
+) -> Tuple[List[str], List[dev.ProtectionDevice], List[Dict]]:
     """
-
-    :param app:
-    :param batch:
-    :param region:
-    :param data_capture_list:
-    :param ids_dict_list:
-    :param called_function:
-    :return:
+    Get the list of devices to process based on mode and user selection.
+    
+    Args:
+        app: PowerFactory application object
+        batch: True for batch mode
+        region: "Energex" or "Ergon"
+        data_capture_list: List to append status records to
+        setting_index: Indexed IPS settings
+        called_function: True if called from another script
+        
+    Returns:
+        Tuple of (setting_ids, device_list, data_capture_list)
     """
-
-    failed_cbs = []
+    failed_cbs: List = []
+    set_ids: List[str] = []
+    device_list: List[dev.ProtectionDevice] = []
+    
     if not batch:
-        # Update selected existing devices in PowerFactory
-        [set_ids, lst_of_devs, data_capture_list] = prot_dev_lst(
-            app, region, data_capture_list, ids_dict_list
+        # Interactive mode - get user selection first
+        result = _get_user_selected_devices(
+            app, region, data_capture_list, setting_index
         )
+        set_ids, device_list, data_capture_list = result
+    
     if batch or set_ids == "Batch":
-        # Update PowerFactory with all relays found in IPS
+        # Batch mode - process all devices
         if region == "Energex":
-            app.PrintInfo("Creating a list of Setting IDs")
-            # Create a list of setting ids for each device in the active project
-            [lst_of_devs, failed_cbs, set_ids] = ex.create_new_devices(
-                app, ids_dict_list,  called_function
+            app.PrintInfo("Creating a list of Setting IDs for all Energex devices")
+            device_list, failed_cbs, set_ids = ex.create_new_devices(
+                app, setting_index, called_function
             )
         else:
-            # aprs.add_relay_skeletons(app)
+            # Add relay skeletons for Ergon
             add_protection_relay_skeletons.main(app)
             app.ClearOutputWindow()
-            app.PrintInfo("Creating a list of Setting IDs")
-            [set_ids, lst_of_devs, data_capture_list] = ee.ergon_all_dev_list(
-                app, data_capture_list, ids_dict_list, called_function
+            app.PrintInfo("Creating a list of Setting IDs for all Ergon devices")
+            set_ids, device_list, data_capture_list = ee.ergon_all_dev_list(
+                app, data_capture_list, setting_index, called_function
             )
-
+    
+    # Record failed CBs
     for cb in failed_cbs:
-        update_info = {}
-        update_info["SUBSTATION"] = cb.GetAttribute("r:cpGrid:e:loc_name")
-        update_info["CB_NAME"] = cb.loc_name
-        update_info["RESULT"] = "Failed to find match"
-        data_capture_list.append(update_info)
+        data_capture_list.append({
+            "SUBSTATION": cb.GetAttribute("r:cpGrid:e:loc_name"),
+            "CB_NAME": cb.loc_name,
+            "RESULT": "Failed to find match"
+        })
+    
+    return set_ids, device_list, data_capture_list
 
 
-    return [set_ids, lst_of_devs, data_capture_list]
-
-
-def prot_dev_lst(app, region, data_capture_list, ids_dict_list):
+def _get_user_selected_devices(
+    app,
+    region: str,
+    data_capture_list: List[Dict],
+    setting_index: SettingIndex
+) -> Tuple[Any, List[dev.ProtectionDevice], List[Dict]]:
     """
-    This function is used to create a list of devices to update.
-    The model configuration differs between the regional and SEQ models.
+    Get devices based on user selection through GUI.
+    
+    Args:
+        app: PowerFactory application object
+        region: "Energex" or "Ergon"
+        data_capture_list: List to append status records to
+        setting_index: Indexed IPS settings
+        
+    Returns:
+        Tuple of (setting_ids or "Batch", device_list, data_capture_list)
     """
-    # User selection should be the same
-    # Set up a database of the active devices in the PowerFactory model
-    [devices, device_dict] = dev.prot_device(app)
-
-    # Ask the user to select which protection devices they want to study
+    # Get all protection devices in the model
+    devices, device_dict = dev.prot_device(app)
+    
+    # Show selection dialog
     selections = user_inputs.user_selection(app, device_dict)
-
+    
     if not selections:
         message = "User has selected to exit the script"
-        logging.info(message)
+        logger.info(message)
         qd.error_message(app, message)
-    elif selections == "Batch":
-        return ["Batch", None, data_capture_list]
+    
+    if selections == "Batch":
+        return "Batch", [], data_capture_list
+    
+    # Process selections based on region
     if region == "Energex":
-        [setting_ids, list_of_devices] = ex.ex_device_list(
-            app, selections, device_dict, ids_dict_list
+        setting_ids, device_list = ex.ex_device_list(
+            app, selections, device_dict, setting_index
         )
-    elif region == "Ergon":
-        [setting_ids, list_of_devices, data_capture_list] = ee.ee_device_list(
-            app, selections, device_dict, ids_dict_list, data_capture_list
+    else:  # Ergon
+        setting_ids, device_list, data_capture_list = ee.ee_device_list(
+            app, selections, device_dict, setting_index, data_capture_list
         )
-    return [setting_ids, list_of_devices, data_capture_list]
+    
+    return setting_ids, device_list, data_capture_list
 
+
+def _associate_device_settings(
+    app,
+    device_list: List[dev.ProtectionDevice],
+    ips_settings: Dict[str, List[Dict]],
+    ips_it_settings: List,
+    region: str,
+    called_function: bool
+) -> None:
+    """
+    Associate detailed settings with each device.
+    
+    This includes relay settings and CT/VT instrument transformer settings.
+    
+    Args:
+        app: PowerFactory application object
+        device_list: List of ProtectionDevice objects
+        ips_settings: Dictionary of relay settings by setting ID
+        ips_it_settings: List of instrument transformer settings
+        region: "Energex" or "Ergon"
+        called_function: True if batch mode
+    """
+    total = len(device_list)
+    
+    for i, device_object in enumerate(device_list):
+        if i % 10 == 0:
+            app.PrintInfo(
+                f"Device {i} of {total} has had its setting attributes assigned"
+            )
+        
+        if not device_object.device:
+            continue
+        
+        # Load relay settings for batch runs
+        # (Non-batch runs already loaded settings during device creation)
+        if called_function and ips_settings:
+            device_object.associated_settings(ips_settings)
+        
+        # Load CT/VT settings
+        if ips_it_settings:
+            if region == "Energex":
+                device_object.seq_instrument_attributes(ips_it_settings)
+            else:
+                device_object.reg_instrument_attributes(ips_it_settings)
+
+
+# =============================================================================
+# Legacy compatibility - maintains old function signatures
+# =============================================================================
+
+def prot_dev_lst(
+    app,
+    region: str,
+    data_capture_list: List[Dict],
+    ids_dict_list: List[Dict]
+) -> Tuple[Any, List[dev.ProtectionDevice], List[Dict]]:
+    """
+    Legacy function for backward compatibility.
+    
+    DEPRECATED: This function creates a temporary index from the list.
+    The calling code should be updated to use get_ips_settings() directly.
+    
+    Args:
+        app: PowerFactory application object
+        region: "Energex" or "Ergon"
+        data_capture_list: List to append status records to
+        ids_dict_list: Raw list of setting dictionaries
+        
+    Returns:
+        Tuple of (setting_ids or "Batch", device_list, data_capture_list)
+    """
+    logger.warning(
+        "prot_dev_lst() is deprecated. "
+        "Use get_ips_settings() which handles indexing automatically."
+    )
+    
+    from ips_data.setting_index import create_setting_index
+    setting_index = create_setting_index(ids_dict_list, region)
+    
+    return _get_user_selected_devices(app, region, data_capture_list, setting_index)
