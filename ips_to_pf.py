@@ -39,34 +39,35 @@ def main(app=None, batch=False):
     dev_list, data_capture_list = ips.get_ips_settings(app, region, batch, called_function)
     for dev in dev_list:
         app.PrintPlain(vars(dev))
-    updates = None
+
+    logging.info(f"lst_of_devs: {dev_list}")
+
+    # Update PowerFactory
+    data_capture_list, updates = up.update_pf(app, dev_list, data_capture_list)
+    logging.info(f"data_capture_list: {data_capture_list}")
+    logging.info(f"updates: {updates}")
+
+    # Create file to save script information
+    save_file = create_save_file(app, prjt, called_function)
+    if not save_file:
+        return
+    write_data(app, data_capture_list, save_file)
+    if not batch:
+        print_results(app, data_capture_list)
+    stop_time = time.strftime("%H:%M:%S")
+    app.PrintInfo(
+        f"Script started at {start_time} and finished at {stop_time}"
+    )
+    if updates:
+        app.PrintInfo("Of the devices selected there were updated settings")
+    else:
+        app.PrintInfo("Of the devices selected there were no updated settings")
+
     end = time.time()
     run_time = round(end - start, 6)
     run_time = format_time(run_time)
     app.PrintPlain(f"Query Script run time: {run_time}")
 
-    # logging.info(f"lst_of_devs: {dev_list}")
-    #
-    # # Update PowerFactory
-    # data_capture_list, updates = up.update_pf(app, dev_list, data_capture_list)
-    # logging.info(f"data_capture_list: {data_capture_list}")
-    # logging.info(f"updates: {updates}")
-    #
-    # # Create file to save script information
-    # save_file = create_save_file(app, prjt, called_function)
-    # if not save_file:
-    #     return
-    # write_data(app, data_capture_list, save_file)
-    # if not batch:
-    #     print_results(app, data_capture_list)
-    # stop_time = time.strftime("%H:%M:%S")
-    # app.PrintInfo(
-    #     f"Script started at {start_time} and finished at {stop_time}"
-    # )
-    # if updates:
-    #     app.PrintInfo("Of the devices selected there were updated settings")
-    # else:
-    #     app.PrintInfo("Of the devices selected there were no updated settings")
     return updates
 
 
