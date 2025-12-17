@@ -15,6 +15,7 @@ import logging
 from typing import Dict, List, Optional, Any, Union, Tuple
 
 from update_powerfactory.type_index import FuseTypeIndex
+from update_powerfactory.update_result import UpdateResult
 
 logger = logging.getLogger(__name__)
 
@@ -23,91 +24,89 @@ def fuse_setting(
     app,
     device_object: Any,
     fuse_index: Union[FuseTypeIndex, List]
-) -> Dict[str, str]:
+) -> UpdateResult:
     """
     Configure a fuse device with settings from IPS.
-    
+
     Fuses can only be configured one way - by matching the curve type
     and rating from IPS to a PowerFactory fuse type.
-    
+
     Args:
         app: PowerFactory application object
         device_object: The ProtectionDevice to configure
         fuse_index: FuseTypeIndex for O(1) lookups, or list for backward compatibility
-        
+
     Returns:
-        Dictionary with update results
+        UpdateResult with update status
     """
-    update_info = {
-        "SUBSTATION": device_object.pf_obj.GetAttribute("r:cpGrid:e:loc_name"),
-        "PLANT_NUMBER": device_object.pf_obj.loc_name,
-    }
-    
+    # Create result from device
+    result = UpdateResult.from_device(device_object)
+
     # Initialize variables for fuse matching
     curve_type = ""
     rating = ""
-    
+
     # If device is a line fuse but has no matching setting
     if device_object.fuse_type == "Line Fuse" and not device_object.setting_id:
-        update_info["RESULT"] = "Not in IPS"
-        return update_info
-    
+        result.result = "Not in IPS"
+        return result
+
     # Extract curve type and rating from IPS settings
     if device_object.fuse_type == "Line Fuse":
-        curve_type, rating = _extract_fuse_parameters(device_object.settings, update_info)
-        if update_info.get("RESULT") == "Not in IPS":
-            return update_info
-    
+        curve_type, rating, extraction_failed = _extract_fuse_parameters(
+            device_object.settings
+        )
+        if extraction_failed:
+            result.result = "Not in IPS"
+            return result
+
     # Find matching fuse type
     fuse = _find_matching_fuse(
         fuse_index, curve_type, rating, device_object.fuse_size
     )
-    
+
     if not fuse:
-        update_info["RELAY_PATTERN"] = device_object.device
-        update_info["USED_PATTERN"] = device_object.device
-        update_info["RESULT"] = "Type Matching Error"
-        return update_info
-    
+        result.relay_pattern = device_object.device
+        result.used_pattern = device_object.device
+        result.result = "Type Matching Error"
+        return result
+
     # Apply fuse type and settings
-    _apply_fuse_type(device_object, fuse, update_info)
-    
-    return update_info
+    _apply_fuse_type(device_object, fuse, result)
+
+    return result
 
 
 def _extract_fuse_parameters(
-    settings: List[List],
-    update_info: Dict[str, str]
-) -> Tuple[str, str]:
+    settings: List[List]
+) -> Tuple[str, str, bool]:
     """
     Extract curve type and rating from IPS settings.
-    
+
     Args:
         settings: List of IPS setting rows
-        update_info: Dictionary to update if extraction fails
-        
+
     Returns:
-        Tuple of (curve_type, rating)
+        Tuple of (curve_type, rating, extraction_failed)
     """
     curve_type = ""
     rating = ""
-    
+
     for setting in settings:
         # Check if setting has sufficient data
         if len(setting) < 3:
-            update_info["RESULT"] = "Not in IPS"
-            return "", ""
-        
+            return "", "", True
+
         setting_name = setting[1].lower()
         setting_value = setting[2]
-        
+
         # Determine curve type
         if setting_name == "curve":
             if "Dual Rated" in setting_value:
                 curve_type = "K"
             else:
                 curve_type = setting_value
-        
+
         # Determine rating
         elif setting[1] == "MAX" and "Dual Rated" in setting_value:
             rating = f" {setting_value}/"
@@ -119,8 +118,8 @@ def _extract_fuse_parameters(
                     break
                 rate_set += char
             rating = f" {rate_set}A"
-    
-    return curve_type, rating
+
+    return curve_type, rating, False
 
 
 def _find_matching_fuse(
@@ -131,16 +130,16 @@ def _find_matching_fuse(
 ) -> Optional[Any]:
     """
     Find a matching fuse type using available criteria.
-    
+
     Uses O(1) indexed lookup if fuse_index is a FuseTypeIndex,
     otherwise falls back to O(n) linear search for backward compatibility.
-    
+
     Args:
         fuse_index: FuseTypeIndex for O(1) lookups, or list for compatibility
         curve_type: The curve type letter (e.g., "K", "T")
         rating: The rating string (e.g., " 100A")
         fuse_size: Optional fuse size for Tx fuses (e.g., "100K")
-        
+
     Returns:
         The matching PowerFactory TypFuse object, or None if not found
     """
@@ -151,66 +150,66 @@ def _find_matching_fuse(
             fuse = fuse_index.get_by_curve_and_rating(curve_type, rating)
             if fuse:
                 return fuse
-        
+
         # Fall back to fuse size
         if fuse_size:
             fuse = fuse_index.get_by_fuse_size(fuse_size)
             if fuse:
                 return fuse
-        
+
         return None
-    
+
     # Fall back to linear search for backward compatibility (O(n))
     for fuse in fuse_index:
         fuse_name = fuse.loc_name
         fuse_curve = fuse_name[-1].lower()
-        
+
         # Match by curve type and rating
         if curve_type and rating:
             if curve_type.lower() == fuse_curve and rating in fuse_name:
                 return fuse
-        
+
         # Match by fuse size (for Tx fuses)
         if fuse_size:
             size_curve = fuse_size[-1]
             size_rating = fuse_size[:-1]
             if size_curve == fuse_name[-1] and size_rating in fuse_name:
                 return fuse
-    
+
     return None
 
 
 def _apply_fuse_type(
     device_object: Any,
     fuse: Any,
-    update_info: Dict[str, str]
+    result: UpdateResult
 ) -> None:
     """
     Apply the fuse type to the PowerFactory device.
-    
+
     Args:
         device_object: The ProtectionDevice to update
         fuse: The PowerFactory TypFuse to apply
-        update_info: Dictionary to update with results
+        result: UpdateResult to update with status
     """
     pf_device = device_object.pf_obj
-    
+
     # Set the relay with the information about which setting from IPS was used
     pf_device.SetAttribute("e:chr_name", str(device_object.date))
-    update_info["DATE_SETTING"] = device_object.date
-    update_info["RELAY_PATTERN"] = device_object.device
-    update_info["USED_PATTERN"] = device_object.device
-    
+    result.date_setting = device_object.date
+    result.relay_pattern = device_object.device
+    result.used_pattern = device_object.device
+
     try:
         existing_type = pf_device.typ_id.loc_name
         if existing_type != fuse.loc_name:
             pf_device.typ_id = fuse
         else:
-            update_info["RESULT"] = "Type Correct"
+            result.result = "Type Correct"
     except AttributeError:
         # No existing type assigned
         pf_device.typ_id = fuse
-    
+
     # Ensure fuse is in service
     pf_device.SetAttribute("e:outserv", 0)
 
@@ -226,19 +225,20 @@ def fuse_setting_legacy(
 ) -> Dict[str, str]:
     """
     Legacy function signature for backward compatibility.
-    
+
     DEPRECATED: Use fuse_setting() with FuseTypeIndex instead.
-    
+
     Args:
         app: PowerFactory application object
         device_object: The ProtectionDevice to configure
         fuse_types: List of fuse type objects
-        
+
     Returns:
-        Dictionary with update results
+        Dictionary with update results (for backward compatibility)
     """
     logger.warning(
         "fuse_setting_legacy() is deprecated. "
         "Use fuse_setting() with FuseTypeIndex for O(1) lookups."
     )
-    return fuse_setting(app, device_object, fuse_types)
+    result = fuse_setting(app, device_object, fuse_types)
+    return result.to_dict()

@@ -21,26 +21,10 @@ from update_powerfactory import mapping_file as mf
 from update_powerfactory import ct_settings as cs
 from update_powerfactory import vt_settings as vs
 from update_powerfactory.type_index import RelayTypeIndex
+from update_powerfactory.update_result import UpdateResult
+import external_variables as ev
 
 logger = logging.getLogger(__name__)
-
-# Define the IPS name of all single phase and 2 phase relays 
-# so that they can be placed on the correct phase
-SINGLE_PHASE_RELAYS = [
-    "I>+ I>> 1Ph I in % + T in TMS_Energex",
-    "I> 1Ph I in A + I>> in xIs + T in %_Energex",
-    "I> 2Ph I in A + T in TMS_Energex",
-    "MCGG22",
-    "MCGG21",
-    "RXIDF",
-    "I> 1Ph I in A + I>> in xIs + T in %_Energex",
-]
-
-MULTI_PHASE_RELAYS = [
-    "I> 2Ph +IE>1Ph I in A + T in TMS_Energex",
-    "I>+ I>> 2Ph +IE>+IE>> I in A + T in TMS_Energex",
-    "CDG61",
-]
 
 
 def relay_settings(
@@ -48,10 +32,10 @@ def relay_settings(
     device_object: Any,
     relay_index: Union[RelayTypeIndex, List],
     updates: bool
-) -> Tuple[Dict[str, str], bool]:
+) -> Tuple[UpdateResult, bool]:
     """
     Configure a relay device with settings from IPS.
-    
+
     This is the main entry point for relay configuration. It handles:
     1. Device function determination (SWER/switch/sectionaliser)
     2. Mapping file lookup
@@ -60,32 +44,31 @@ def relay_settings(
     5. Setting application
     6. Reclosing logic configuration
     7. CT/VT updates
-    
+
     Args:
         app: PowerFactory application object
         device_object: The ProtectionDevice to configure
         relay_index: RelayTypeIndex for O(1) lookups, or list for backward compatibility
         updates: Current updates flag
-        
+
     Returns:
-        Tuple of (update_info dict, updated updates flag)
+        Tuple of (UpdateResult, updated updates flag)
     """
     # If the device is a SWER/switch/sectionaliser, update the device attribute
     update_device_function(device_object)
 
-    update_info = {
-        "SUBSTATION": device_object.pf_obj.GetAttribute("r:cpGrid:e:loc_name"),
-        "PLANT_NUMBER": device_object.pf_obj.loc_name,
-        "RELAY_PATTERN": device_object.device,
-        "USED_PATTERN": device_object.device,
-    }
+    # Create result object from device
+    result = UpdateResult.from_device(device_object)
+    # Update pattern after classification (may have been modified by update_device_function)
+    result.relay_pattern = device_object.device
+    result.used_pattern = device_object.device
 
     mapping_file, mapping_type = mf.read_mapping_file(
         app, device_object.device, device_object.pf_obj
     )
 
-    update_info = check_relay_type(
-        app, device_object, mapping_type, relay_index, update_info
+    result = check_relay_type(
+        app, device_object, mapping_type, relay_index, result
     )
 
     # Manage single pole and phase specific relays
@@ -100,31 +83,33 @@ def relay_settings(
             app, device_object.settings, mapping_file, device_object.pf_obj
         )
         # Set the relay with the information about which setting from IPS was used
-        update_info["DATE_SETTING"] = device_object.date
+        result.date_setting = device_object.date
         device_object.pf_obj.SetAttribute("e:sernum", str(device_object.date))
     else:
-        update_info["RESULT"] = "Not mapped"
+        result.result = "Not mapped"
         device_object.pf_obj.SetAttribute("outserv", 1)
-        return update_info, updates
+        return result, updates
 
     updates = apply_settings(app, device_object, mapping_file, setting_dict, updates)
     update_reclosing_logic(app, device_object, mapping_file, setting_dict)
     update_logic_elements(app, device_object.pf_obj, mapping_file, setting_dict)
-    update_info = cs.update_ct(app, device_object, update_info)
-    update_info = vs.update_vt(app, device_object, update_info)
 
-    return update_info, updates
+    # Update CT and VT settings
+    result = cs.update_ct(app, device_object, result)
+    result = vs.update_vt(app, device_object, result)
+
+    return result, updates
 
 
 def update_device_function(device_object: Any) -> None:
     """
     Determine whether the device is SWER, switch, or sectionaliser.
-    
+
     Updates the device.device attribute with appropriate prefix:
     - "swer_" for single/two phase devices
     - "switch_" for devices without protection settings
     - "sect_" for sectionaliser devices
-    
+
     Args:
         device_object: The ProtectionDevice to classify
     """
@@ -133,7 +118,7 @@ def update_device_function(device_object: Any) -> None:
         num_of_phases = device_object.pf_obj.GetAttribute("r:fold_id:e:nphase")
     except AttributeError:
         num_of_phases = 3
-    
+
     if num_of_phases < 3:
         device_object.device = f"swer_{device_object.device}"
 
@@ -158,24 +143,24 @@ def check_relay_type(
     device_object: Any,
     mapping_type: Optional[str],
     relay_index: Union[RelayTypeIndex, List],
-    update_info: Dict[str, str]
-) -> Dict[str, str]:
+    result: UpdateResult
+) -> UpdateResult:
     """
     Check that the relay type is correct and update if necessary.
-    
+
     If the relay type doesn't match the mapping type, attempts to find
     and assign the correct type. If the type cannot be found, places
     the relay out of service.
-    
+
     Args:
         app: PowerFactory application object
         device_object: The ProtectionDevice to check
         mapping_type: The expected relay type name from mapping file
         relay_index: RelayTypeIndex for O(1) lookups, or list for compatibility
-        update_info: Dictionary to update with results
-        
+        result: UpdateResult to update with status
+
     Returns:
-        Updated update_info dictionary
+        Updated UpdateResult
     """
     try:
         # Check if user has set the type, or if relay was previously configured
@@ -185,22 +170,22 @@ def check_relay_type(
     except AttributeError:
         exist_relay_type = "None"
         type_is_deleted = 0
-    
+
     if exist_relay_type != mapping_type or type_is_deleted == 1:
         updated = update_relay_type(
             app, device_object.pf_obj, mapping_type, relay_index
         )
         if not updated:
-            update_info["RESULT"] = "Unable to find the appropriate type"
+            result.result = "Unable to find the appropriate type"
             device_object.pf_obj.SetAttribute("e:outserv", 1)
-            return update_info
+            return result
         else:
             # Found a type and turn the relay in service
             device_object.pf_obj.SetAttribute("e:outserv", 0)
     else:
         device_object.pf_obj.SetAttribute("e:outserv", 0)
-    
-    return update_info
+
+    return result
 
 
 def update_relay_type(
@@ -211,22 +196,22 @@ def update_relay_type(
 ) -> bool:
     """
     Update the relay type if it doesn't match the mapping type.
-    
+
     Uses O(1) indexed lookup if relay_index is a RelayTypeIndex,
     otherwise falls back to O(n) linear search for backward compatibility.
-    
+
     Args:
         app: PowerFactory application object
         pf_device: The PowerFactory relay object
         mapping_type: The target relay type name
         relay_index: RelayTypeIndex for O(1) lookups, or list for compatibility
-        
+
     Returns:
         True if type was found and updated, False otherwise
     """
     if not mapping_type:
         return False
-    
+
     # Use indexed lookup if available (O(1))
     if isinstance(relay_index, RelayTypeIndex):
         relay_type = relay_index.get(mapping_type)
@@ -237,11 +222,11 @@ def update_relay_type(
             if rt.loc_name == mapping_type:
                 relay_type = rt
                 break
-    
+
     if not relay_type:
         logger.warning(f"Relay type not found: {mapping_type}")
         return False
-    
+
     pf_device.SetAttribute("e:typ_id", relay_type)
     pf_device.SlotUpdate()
     return True
@@ -250,22 +235,22 @@ def update_relay_type(
 def determine_phase(app, device_object: Any) -> Optional[int]:
     """
     Determine the phase for single-phase and phase-specific relays.
-    
+
     Single pole and phase specific relays need to be mapped correctly.
     This function analyzes the device name to determine the correct phase.
-    
+
     Args:
         app: PowerFactory application object
         device_object: The ProtectionDevice to analyze
-        
+
     Returns:
         Phase index (0=A, 1=B, 2=C), or None if not a single-phase relay
     """
     # Two phase relays have a unique type
-    if device_object.device in MULTI_PHASE_RELAYS:
+    if device_object.device in ev.MULTI_PHASE_RELAYS:
         return None
-    
-    if device_object.device not in SINGLE_PHASE_RELAYS:
+
+    if device_object.device not in ev.SINGLE_PHASE_RELAYS:
         return None
     
     try:
