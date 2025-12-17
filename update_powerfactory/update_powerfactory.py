@@ -18,12 +18,11 @@ Usage:
 """
 
 import logging
-from typing import List, Dict, Tuple, Any, Optional, Union
+from typing import List, Dict, Tuple, Any, Optional
 
 from update_powerfactory import relay_settings as rs
 from update_powerfactory import fuse_settings as fs
 from update_powerfactory.type_index import RelayTypeIndex, FuseTypeIndex
-from update_powerfactory.update_result import UpdateResult
 import devices
 import external_variables as ev
 
@@ -33,7 +32,7 @@ logger = logging.getLogger(__name__)
 def update_pf(
         app,
         lst_of_devs: List[Any],
-        data_capture_list: List[Union[Dict[str, str], UpdateResult]]
+        data_capture_list: List[Dict[str, str]]
 ) -> Tuple[List[Dict[str, str]], bool]:
     """
     Update PowerFactory relays and fuses with data from IPS.
@@ -48,11 +47,11 @@ def update_pf(
         data_capture_list: List to append update result records to
 
     Returns:
-        Tuple of (updated data_capture_list as dicts, has_updates flag)
+        Tuple of (updated data_capture_list, has_updates flag)
     """
     if not lst_of_devs:
         logger.warning("No devices to update")
-        return _convert_results_to_dicts(data_capture_list), False
+        return data_capture_list, False
 
     # Build type indexes once for O(1) lookups
     app.PrintInfo("Creating indexed database of PowerFactory Fuse and Relay Types")
@@ -64,8 +63,8 @@ def update_pf(
         f"{len(fuse_index)} fuse types"
     )
 
+    update_info: Dict[str, str] = {}
     updates = False
-    results: List[UpdateResult] = []
 
     # Enable write caching for better performance during batch updates
     app.SetWriteCacheEnabled(1)
@@ -82,13 +81,14 @@ def update_pf(
 
             # Handle devices not found in IPS
             if not device_object.setting_id and not device_object.fuse_type:
-                result = UpdateResult.not_in_ips(device_object)
-                results.append(result)
+                update_info = _create_not_in_ips_record(device_object)
+                data_capture_list.append(update_info)
+                update_info = {}
                 continue
 
             # Process device based on type
             try:
-                result, updates = _process_device(
+                update_info, updates = _process_device(
                     app,
                     device_object,
                     relay_index,
@@ -96,9 +96,10 @@ def update_pf(
                     updates
                 )
             except Exception as e:
-                result = _handle_device_error(app, device_object, e)
+                update_info = _handle_device_error(app, device_object, e)
 
-            results.append(result)
+            data_capture_list.append(update_info)
+            update_info = {}
 
             # Check if relay should be switched OOS
             _switch_relay_oos(ev.RELAYS_OOS, device_object)
@@ -110,13 +111,8 @@ def update_pf(
         # Always disable write cache when done
         app.SetWriteCacheEnabled(0)
 
-    logger.info(f"Update complete: {len(results)} devices processed")
-
-    # Convert any existing dict entries and new results to dicts for output
-    final_results = _convert_results_to_dicts(data_capture_list)
-    final_results.extend([r.to_dict() for r in results])
-
-    return final_results, updates
+    logger.info(f"Update complete: {len(data_capture_list)} devices processed")
+    return data_capture_list, updates
 
 
 def _process_device(
@@ -125,7 +121,7 @@ def _process_device(
         relay_index: RelayTypeIndex,
         fuse_index: FuseTypeIndex,
         updates: bool
-) -> Tuple[UpdateResult, bool]:
+) -> Tuple[Dict[str, str], bool]:
     """
     Process a single device based on its type.
 
@@ -140,27 +136,44 @@ def _process_device(
         updates: Current updates flag
 
     Returns:
-        Tuple of (UpdateResult, updated updates flag)
+        Tuple of (update_info dict, updated updates flag)
     """
     if device_object.pf_obj.GetClassName() == "ElmRelay":
         return rs.relay_settings(
             app, device_object, relay_index, updates
         )
     else:
-        result = fs.fuse_setting(app, device_object, fuse_index)
-        return result, updates
+        update_info = fs.fuse_setting(app, device_object, fuse_index)
+        return update_info, updates
+
+
+def _create_not_in_ips_record(device_object: Any) -> Dict[str, str]:
+    """
+    Create an update record for a device not found in IPS.
+
+    Args:
+        device_object: The ProtectionDevice not found in IPS
+
+    Returns:
+        Dictionary with substation, plant number, and result
+    """
+    return {
+        "SUBSTATION": device_object.pf_obj.GetAttribute("r:cpGrid:e:loc_name"),
+        "PLANT_NUMBER": device_object.pf_obj.loc_name,
+        "RESULT": "Not in IPS",
+    }
 
 
 def _handle_device_error(
         app,
         device_object: Any,
         error: Exception
-) -> UpdateResult:
+) -> Dict[str, str]:
     """
     Handle an error during device processing.
 
     Logs the error, sets the device out of service, and creates
-    an error result.
+    an error record.
 
     Args:
         app: PowerFactory application object
@@ -168,12 +181,17 @@ def _handle_device_error(
         error: The exception that occurred
 
     Returns:
-        UpdateResult with error information
+        Dictionary with error information
     """
     logger.exception(
         f"{device_object.pf_obj.loc_name} Result = Script Failed: {error}"
     )
     devices.log_device_atts(device_object)
+
+    try:
+        substation = device_object.pf_obj.GetAttribute("r:cpGrid:e:loc_name")
+    except AttributeError:
+        substation = "UNKNOWN"
 
     # Set device out of service due to error
     try:
@@ -181,7 +199,12 @@ def _handle_device_error(
     except Exception:
         pass
 
-    return UpdateResult.script_failed(device_object, error)
+    return {
+        "SUBSTATION": substation,
+        "PLANT_NUMBER": device_object.pf_obj.loc_name,
+        "RELAY_PATTERN": getattr(device_object, 'device', 'Unknown'),
+        "RESULT": "Script Failed",
+    }
 
 
 def _switch_relay_oos(relays_oos: List[str], device_object: Any) -> None:
@@ -207,32 +230,6 @@ def _switch_relay_oos(relays_oos: List[str], device_object: Any) -> None:
         pass
 
 
-def _convert_results_to_dicts(
-    results: List[Union[Dict[str, str], UpdateResult]]
-) -> List[Dict[str, str]]:
-    """
-    Convert a mixed list of results to dictionaries.
-
-    Handles both UpdateResult objects and existing dictionaries
-    for backward compatibility during migration.
-
-    Args:
-        results: List of UpdateResult objects or dictionaries
-
-    Returns:
-        List of dictionaries
-    """
-    converted = []
-    for item in results:
-        if isinstance(item, UpdateResult):
-            converted.append(item.to_dict())
-        elif isinstance(item, dict):
-            converted.append(item)
-        else:
-            logger.warning(f"Unknown result type: {type(item)}")
-    return converted
-
-
 # =============================================================================
 # Legacy compatibility - keep old function signature working
 # =============================================================================
@@ -252,3 +249,4 @@ def get_relay_types(app) -> RelayTypeIndex:
         RelayTypeIndex with all relay types indexed
     """
     return RelayTypeIndex.build(app)
+

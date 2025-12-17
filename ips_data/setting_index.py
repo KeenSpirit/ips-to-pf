@@ -15,6 +15,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Any
 import logging
+import external_variables as ev
 
 logger = logging.getLogger(__name__)
 
@@ -103,13 +104,7 @@ class SettingIndex:
         region: The region this index is configured for ("Energex" or "Ergon")
         records: List of all SettingRecord objects
     """
-    
-    # Relay patterns that should be filtered out during lookups
-    EXCLUDED_PATTERNS: Set[str] = {
-        "RTU",
-        "CMGR12",
-    }
-    
+
     def __init__(self, ids_dict_list: List[Dict[str, Any]], region: str):
         """
         Initialize the index from a list of setting dictionaries.
@@ -186,7 +181,7 @@ class SettingIndex:
             return False
             
         # Check for excluded pattern substrings
-        for excluded in self.EXCLUDED_PATTERNS:
+        for excluded in ev.EXCLUDED_PATTERNS:
             if excluded in record.patternname:
                 return True
         
@@ -240,10 +235,14 @@ class SettingIndex:
             parts = record.locationpathenu.split('/')
             if len(parts) > 2:
                 sub = parts[2]
-                # Only use if substation is alphabetic (skip numeric bulk supply codes)
+                # Only use if substation is alphabetic
                 if sub.isalpha():
                     substation = sub
-        
+                else:
+                    sub_map = ev.sub_mapping()
+                    if sub in sub_map:
+                        substation = sub_map[sub]
+
         # Index under each expanded name (or just the original if no expansion)
         for switch_name in expanded_names:
             self._by_switch_name[switch_name].append(record)
@@ -274,16 +273,8 @@ class SettingIndex:
         Returns:
             List of individual switch names
         """
-        # Define the suffixes and their expansions
-        # Order matters - check longer suffixes first
-        suffix_expansions = [
-            ("A+B+C", ["A", "B", "C"]),
-            ("A+B", ["A", "B"]),
-            ("A+C", ["A", "C"]),
-            ("B+C", ["B", "C"]),
-        ]
-        
-        for suffix, components in suffix_expansions:
+
+        for suffix, components in ev.suffix_expansions:
             if name.endswith(suffix):
                 base = name[:-len(suffix)]
                 return [base + comp for comp in components]
