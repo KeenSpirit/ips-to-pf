@@ -17,22 +17,9 @@ from ips_data import query_database as qd
 from update_powerfactory import mapping_file as mf
 import devices as dev
 from ips_data.setting_index import SettingIndex, SettingRecord
+import external_variables as ev
 
 logger = logging.getLogger(__name__)
-
-
-# IPS relay types with no protection settings - script ignores these
-NON_PROT_TYPES: Set[str] = {
-    "SEL2505_Energex",
-    "GenericRelayWithoutSetting_Energex",
-    "SEL-2505",
-    "GenericRelayWithoutSetting",
-    "T> in TMS no Current_Energex",
-    "I>> 3Ph no Time I>> in A_Energex",
-    "I> 1Ph no Time I in A_Energex",
-    "I> 1Ph no Time I in %_Energex",
-}
-
 
 def ex_device_list(
     app,
@@ -456,9 +443,6 @@ def _get_setting_id_indexed(
     
     # Create devices from matching records
     for record in records:
-        if record.patternname in NON_PROT_TYPES:
-            continue
-        
         device = _create_device_from_record(
             app, record, switch, called_function
         )

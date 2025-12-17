@@ -21,26 +21,9 @@ from update_powerfactory import mapping_file as mf
 from update_powerfactory import ct_settings as cs
 from update_powerfactory import vt_settings as vs
 from update_powerfactory.type_index import RelayTypeIndex
+import external_variables as ev
 
 logger = logging.getLogger(__name__)
-
-# Define the IPS name of all single phase and 2 phase relays 
-# so that they can be placed on the correct phase
-SINGLE_PHASE_RELAYS = [
-    "I>+ I>> 1Ph I in % + T in TMS_Energex",
-    "I> 1Ph I in A + I>> in xIs + T in %_Energex",
-    "I> 2Ph I in A + T in TMS_Energex",
-    "MCGG22",
-    "MCGG21",
-    "RXIDF",
-    "I> 1Ph I in A + I>> in xIs + T in %_Energex",
-]
-
-MULTI_PHASE_RELAYS = [
-    "I> 2Ph +IE>1Ph I in A + T in TMS_Energex",
-    "I>+ I>> 2Ph +IE>+IE>> I in A + T in TMS_Energex",
-    "CDG61",
-]
 
 
 def relay_settings(
@@ -262,10 +245,10 @@ def determine_phase(app, device_object: Any) -> Optional[int]:
         Phase index (0=A, 1=B, 2=C), or None if not a single-phase relay
     """
     # Two phase relays have a unique type
-    if device_object.device in MULTI_PHASE_RELAYS:
+    if device_object.device in ev.MULTI_PHASE_RELAYS:
         return None
     
-    if device_object.device not in SINGLE_PHASE_RELAYS:
+    if device_object.device not in ev.SINGLE_PHASE_RELAYS:
         return None
     
     try:

@@ -24,18 +24,9 @@ from update_powerfactory import relay_settings as rs
 from update_powerfactory import fuse_settings as fs
 from update_powerfactory.type_index import RelayTypeIndex, FuseTypeIndex
 import devices
+import external_variables as ev
 
 logger = logging.getLogger(__name__)
-
-# List of feeder disconnect relays to switch out of service
-# These relay types do not have protection settings in IPS
-RELAYS_OOS = [
-    "7PG21 (SOLKOR-RF)",
-    "7SG18 (SOLKOR-N)",
-    "RED615 2.6 - 2.8",
-    "SOLKOR-N_Energex",
-    "SOLKOR-RF_Energex",
-]
 
 
 def update_pf(
@@ -111,7 +102,7 @@ def update_pf(
             update_info = {}
 
             # Check if relay should be switched OOS
-            _switch_relay_oos(RELAYS_OOS, device_object)
+            _switch_relay_oos(ev.RELAYS_OOS, device_object)
 
         # Commit all changes
         app.WriteChangesToDb()
