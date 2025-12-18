@@ -14,7 +14,7 @@ from update_powerfactory.logging_utils import get_logger
 from typing import Any, Optional
 
 from update_powerfactory import get_objects as go
-from update_powerfactory.update_result import UpdateResult
+from core import UpdateResult
 
 logger = get_logger(__name__)
 
