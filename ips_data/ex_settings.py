@@ -14,10 +14,9 @@ import logging
 from typing import Dict, List, Optional, Tuple, Set, Any
 
 from ips_data import query_database as qd
-from update_powerfactory import mapping_file as mf
-import devices as dev
+from ips_data.cb_mapping import get_cb_alt_name_list
 from ips_data.setting_index import SettingIndex, SettingRecord
-import external_variables as ev
+from core import ProtectionDevice
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +25,7 @@ def ex_device_list(
     selections: List[str],
     device_dict: Dict[str, List],
     setting_index: SettingIndex
-) -> Tuple[List[str], List[dev.ProtectionDevice]]:
+) -> Tuple[List[str], List[ProtectionDevice]]:
     """
     Create device list for user-selected Energex devices.
     
@@ -49,8 +48,8 @@ def ex_device_list(
     switches = _get_switches_for_selections(app, selections, device_dict, raw_switches)
     
     # Convert switches to setting IDs and devices
-    cb_alt_name_list = mf.get_cb_alt_name_list(app)
-    list_of_devices: List[dev.ProtectionDevice] = []
+    cb_alt_name_list = get_cb_alt_name_list(app)
+    list_of_devices: List[ProtectionDevice] = []
     setting_ids: List[str] = []
     
     for switch in switches:
@@ -107,10 +106,10 @@ def _get_switches_for_selections(
 
 
 def _filter_to_selections(
-    list_of_devices: List[dev.ProtectionDevice],
+    list_of_devices: List[ProtectionDevice],
     selections: List[str],
     device_dict: Dict[str, List]
-) -> List[dev.ProtectionDevice]:
+) -> List[ProtectionDevice]:
     """
     Filter device list to only include explicitly selected devices.
     
@@ -149,7 +148,7 @@ def create_new_devices(
     app,
     setting_index: SettingIndex,
     called_function: bool
-) -> Tuple[List[dev.ProtectionDevice], List, List[str]]:
+) -> Tuple[List[ProtectionDevice], List, List[str]]:
     """
     Batch update for Energex (SEQ) models.
     
@@ -165,14 +164,14 @@ def create_new_devices(
         Tuple of (list_of_devices, failed_cbs, setting_ids)
     """
     prjt = app.GetActiveProject()
-    cb_alt_name_list = mf.get_cb_alt_name_list(app)
+    cb_alt_name_list = get_cb_alt_name_list(app)
     
     # Get all valid switches
     switches = _get_valid_switches(prjt)
     
     failed_cbs: List = []
     setting_ids: List[str] = []
-    list_of_devices: List[dev.ProtectionDevice] = []
+    list_of_devices: List[ProtectionDevice] = []
     
     for i, switch in enumerate(switches):
         if i % 10 == 0:
@@ -282,8 +281,8 @@ def _handle_unmatched_switch(switch, failed_cbs: List) -> None:
 
 
 def _assign_pf_objects(
-    list_of_devices: List[dev.ProtectionDevice]
-) -> List[dev.ProtectionDevice]:
+    list_of_devices: List[ProtectionDevice]
+) -> List[ProtectionDevice]:
     """
     Create or assign PowerFactory objects for all devices.
     
@@ -294,7 +293,7 @@ def _assign_pf_objects(
         Updated list with PF objects assigned
     """
     used_names: Set[str] = set()
-    result: List[dev.ProtectionDevice] = []
+    result: List[ProtectionDevice] = []
     
     for device in list_of_devices:
         device_name = _get_device_name(device, used_names)
@@ -312,7 +311,7 @@ def _assign_pf_objects(
     return result
 
 
-def _get_device_name(device: dev.ProtectionDevice, used_names: Set[str]) -> str:
+def _get_device_name(device: ProtectionDevice, used_names: Set[str]) -> str:
     """
     Generate the PowerFactory device name.
     
@@ -399,11 +398,11 @@ def _get_assoc_switch(pf_device, raw_switches: List):
 def _get_setting_id_indexed(
     app,
     switch,
-    list_of_devices: List[dev.ProtectionDevice],
+    list_of_devices: List[ProtectionDevice],
     setting_index: SettingIndex,
     called_function: bool,
     cb_alt_name_list: List[Dict],
-) -> Tuple[List[str], List[dev.ProtectionDevice]]:
+) -> Tuple[List[str], List[ProtectionDevice]]:
     """
     Find setting IDs for a switch using indexed lookup.
     
@@ -492,7 +491,7 @@ def _create_device_from_record(
     record: SettingRecord,
     switch,
     called_function: bool
-) -> Optional[dev.ProtectionDevice]:
+) -> Optional[ProtectionDevice]:
     """
     Create a ProtectionDevice from a SettingRecord.
     
@@ -511,7 +510,7 @@ def _create_device_from_record(
         for char in ": /,":
             device_id = device_id.replace(char, "")
     
-    prot_dev = dev.ProtectionDevice(
+    prot_dev = ProtectionDevice(
         app,
         record.patternname,
         record.nameenu,

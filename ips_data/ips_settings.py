@@ -13,17 +13,18 @@ import logging
 import sys
 from typing import List, Tuple, Optional, Dict, Any, Union
 
-sys.path.append(
-    r"\\ecasd01\WksMgmt\PowerFactory\ScriptsDEV\AddProtectionRelaySkeletons\addprotectionrelayskeletons"
-)
+# Import paths from config
+from config.paths import RELAY_SKELETONS_PATH
+
+sys.path.append(RELAY_SKELETONS_PATH)
 import add_protection_relay_skeletons
 
 from ips_data import query_database as qd
 from ips_data import ee_settings as ee
 from ips_data import ex_settings as ex
 from ips_data.setting_index import SettingIndex
-from update_powerfactory.update_result import UpdateResult
-import devices as dev
+from core import UpdateResult
+from core import ProtectionDevice
 import user_inputs
 
 logger = logging.getLogger(__name__)
@@ -34,7 +35,7 @@ def get_ips_settings(
     region: str,
     batch: bool,
     called_function: bool
-) -> Tuple[List[dev.ProtectionDevice], List[UpdateResult]]:
+) -> Tuple[List[ProtectionDevice], List[UpdateResult]]:
     """
     Retrieve IPS settings and create ProtectionDevice objects.
 
@@ -87,7 +88,7 @@ def _get_selected_devices(
     data_capture_list: List[UpdateResult],
     setting_index: SettingIndex,
     called_function: bool
-) -> Tuple[List[str], List[dev.ProtectionDevice], List[UpdateResult]]:
+) -> Tuple[List[str], List[ProtectionDevice], List[UpdateResult]]:
     """
     Get the list of devices to process based on mode and user selection.
 
@@ -104,7 +105,7 @@ def _get_selected_devices(
     """
     failed_cbs: List = []
     set_ids: List[str] = []
-    device_list: List[dev.ProtectionDevice] = []
+    device_list: List[ProtectionDevice] = []
 
     if not batch:
         # Interactive mode - get user selection first
@@ -141,7 +142,7 @@ def _get_user_selected_devices(
     region: str,
     data_capture_list: List[UpdateResult],
     setting_index: SettingIndex
-) -> Tuple[Any, List[dev.ProtectionDevice], List[UpdateResult]]:
+) -> Tuple[Any, List[ProtectionDevice], List[UpdateResult]]:
     """
     Get devices based on user selection through GUI.
 
@@ -183,7 +184,7 @@ def _get_user_selected_devices(
 
 def _associate_device_settings(
     app,
-    device_list: List[dev.ProtectionDevice],
+    device_list: List[ProtectionDevice],
     ips_settings: Dict[str, List[Dict]],
     ips_it_settings: List,
     region: str,
@@ -235,7 +236,7 @@ def prot_dev_lst(
     region: str,
     data_capture_list: List[Dict],
     ids_dict_list: List[Dict]
-) -> Tuple[Any, List[dev.ProtectionDevice], List[Dict]]:
+) -> Tuple[Any, List[ProtectionDevice], List[Dict]]:
     """
     Legacy function for backward compatibility.
 

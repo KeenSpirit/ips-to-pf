@@ -21,8 +21,10 @@ from update_powerfactory import mapping_file as mf
 from update_powerfactory import ct_settings as cs
 from update_powerfactory import vt_settings as vs
 from update_powerfactory.type_index import RelayTypeIndex
-from update_powerfactory.update_result import UpdateResult
-import external_variables as ev
+from core import UpdateResult
+
+# Import from config package
+from config.relay_patterns import SINGLE_PHASE_RELAYS, MULTI_PHASE_RELAYS
 
 logger = logging.getLogger(__name__)
 
@@ -247,10 +249,10 @@ def determine_phase(app, device_object: Any) -> Optional[int]:
         Phase index (0=A, 1=B, 2=C), or None if not a single-phase relay
     """
     # Two phase relays have a unique type
-    if device_object.device in ev.MULTI_PHASE_RELAYS:
+    if device_object.device in MULTI_PHASE_RELAYS:
         return None
     
-    if device_object.device not in ev.SINGLE_PHASE_RELAYS:
+    if device_object.device not in SINGLE_PHASE_RELAYS:
         return None
     
     try:

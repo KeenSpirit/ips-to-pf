@@ -23,9 +23,11 @@ from typing import List, Dict, Tuple, Any, Optional, Union
 from update_powerfactory import relay_settings as rs
 from update_powerfactory import fuse_settings as fs
 from update_powerfactory.type_index import RelayTypeIndex, FuseTypeIndex
-from update_powerfactory.update_result import UpdateResult
-import devices
-import external_variables as ev
+from core import UpdateResult
+from core import ProtectionDevice
+
+# Import from config package
+from config.relay_patterns import RELAYS_OOS
 
 logger = logging.getLogger(__name__)
 
@@ -101,7 +103,7 @@ def update_pf(
             results.append(result)
 
             # Check if relay should be switched OOS
-            _switch_relay_oos(ev.RELAYS_OOS, device_object)
+            _switch_relay_oos(RELAYS_OOS, device_object)
 
         # Commit all changes
         app.WriteChangesToDb()

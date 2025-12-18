@@ -15,7 +15,7 @@ import logging
 from typing import Dict, List, Optional, Any, Union, Tuple
 
 from update_powerfactory.type_index import FuseTypeIndex
-from update_powerfactory.update_result import UpdateResult
+from core import UpdateResult
 
 logger = logging.getLogger(__name__)
 

@@ -16,8 +16,18 @@ Performance optimizations:
 """
 
 import csv
+import os
 
-MAP_FILE_LOC = "\\\\ecasd01\\WksMgmt\\PowerFactory\\ScriptsDEV\\IPSProtectionDeviceSettings\\mapping"
+# Import path from config
+from config.paths import MAPPING_FILES_DIR
+
+# Use the centralized path
+MAP_FILE_LOC = MAPPING_FILES_DIR
+
+
+def get_mapping_file_path(filename: str) -> str:
+    """Get the full path to a mapping file."""
+    return os.path.join(MAP_FILE_LOC, filename)
 
 
 def get_cb_alt_name_list(app):
