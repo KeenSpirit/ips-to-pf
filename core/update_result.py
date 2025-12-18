@@ -20,9 +20,9 @@ Usage:
 
 from dataclasses import dataclass, field, asdict
 from typing import Optional, Dict, Any
-import logging
+from update_powerfactory.logging_utils import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 @dataclass

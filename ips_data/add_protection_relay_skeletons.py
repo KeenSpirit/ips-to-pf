@@ -5,11 +5,11 @@ sys.path.append(r"\\Ecasd01\WksMgmt\PowerFactory\Scripts\AssetClasses")
 import assetclasses
 from assetclasses.corporate_data import get_cached_data
 
-import logging  # noqa
+from update_powerfactory.logging_utils import get_logger  # noqa
 
 from ips_data import query_database as qd
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 DATA_SOURCE_STRING = "PRS"
 GAS_SWITCH_STRING = "Gas Switch"
 

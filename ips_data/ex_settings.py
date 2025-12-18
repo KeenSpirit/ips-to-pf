@@ -10,7 +10,7 @@ The module uses SettingIndex for efficient O(1) lookups instead of
 linear scans through the settings list.
 """
 
-import logging
+from update_powerfactory.logging_utils import get_logger
 from typing import Dict, List, Optional, Tuple, Set, Any
 
 from ips_data import query_database as qd
@@ -18,7 +18,7 @@ from ips_data.cb_mapping import get_cb_alt_name_list
 from ips_data.setting_index import SettingIndex, SettingRecord
 from core import ProtectionDevice
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 def ex_device_list(
     app,
@@ -91,7 +91,7 @@ def _get_switches_for_selections(
     
     for i, device in enumerate(selections):
         if i % 10 == 0:
-            app.PrintInfo(f"Finding switch for device {i} of {len(selections)}")
+            logger.info(f"Finding switch for device {i} of {len(selections)}")
         
         # Extract base device name (before underscore)
         device_name = device.split("_")[0]
@@ -175,7 +175,7 @@ def create_new_devices(
     
     for i, switch in enumerate(switches):
         if i % 10 == 0:
-            app.PrintInfo(f"IPS is being checked for switch {i} of {len(switches)}")
+            logger.info(f"IPS is being checked for switch {i} of {len(switches)}")
         
         # Skip certain ElmCoup switches
         if not _should_process_switch(switch):

@@ -4,10 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="96fe6cef-43fb-4a25-b50d-4782cbac27cd" name="Changes" comment="Fixed up all bare exceptions">
-      <change beforePath="$PROJECT_DIR$/.idea/IPSProtectionDeviceSettings - v1 (live).iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/IPSProtectionDeviceSettings - v2 (live).iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+    <list default="true" id="96fe6cef-43fb-4a25-b50d-4782cbac27cd" name="Changes" comment="new update_result module">
+      <change afterPath="$PROJECT_DIR$/update_powerfactory/logging_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/IPSProtectionDeviceSettings - v2 (live).iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/IPSProtectionDeviceSettings - v2 (live).iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ips_to_pf.py" beforeDir="false" afterPath="$PROJECT_DIR$/ips_to_pf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/update_powerfactory/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_powerfactory/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/update_powerfactory/relay_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_powerfactory/relay_settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/update_powerfactory/update_powerfactory.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_powerfactory/update_powerfactory.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,6 +29,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;KeenSpirit&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/KeenSpirit/ips-to-pf.git&quot;,
+    &quot;accountId&quot;: &quot;025e9b47-7c18-4d4c-b0c6-2535b8b059ed&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
 }</component>
@@ -38,7 +55,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;Y:/PROTECTION/STAFF/Dan Park/PowerFactory/Dan script development/IPSProtectionDeviceSettings - v2 (development)&quot;
+    &quot;last_opened_file_path&quot;: &quot;E:/Programming/_python_work/copy_convert&quot;
   }
 }</component>
   <component name="RecentsManager">
@@ -73,7 +90,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-b3d66beaba9a-c6efb3732140-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.26199.168" />
+        <option value="bundled-python-sdk-4f4e415b4190-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.26053.29" />
       </set>
     </attachedChunks>
   </component>
@@ -118,14 +135,57 @@
       <option name="project" value="LOCAL" />
       <updated>1765679246953</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="claude changes to ips_settings">
+      <option name="closed" value="true" />
+      <created>1765716642656</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1765716642656</updated>
+    </task>
+    <task id="LOCAL-00006" summary="claude changes to update_powerfactory.py">
+      <option name="closed" value="true" />
+      <created>1765834861131</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1765834861131</updated>
+    </task>
+    <task id="LOCAL-00007" summary="claude changes to update_powerfactory.py">
+      <option name="closed" value="true" />
+      <created>1765854228755</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1765854228755</updated>
+    </task>
+    <task id="LOCAL-00008" summary="new update_result module">
+      <option name="closed" value="true" />
+      <created>1765974098636</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1765974098636</updated>
+    </task>
+    <task id="LOCAL-00009" summary="new update_result module">
+      <option name="closed" value="true" />
+      <created>1765974910430</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1765974910430</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial commit" />
     <MESSAGE value="Code modularized&#10;Rebuilt user interface to be more intuitive&#10;Small bug fixes to SEQ functions&#10;Added logging module&#10;Does not support direct connection to IPS for batch updating." />
     <MESSAGE value="Fixed up all bare exceptions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed up all bare exceptions" />
+    <MESSAGE value="claude changes to ips_settings" />
+    <MESSAGE value="claude changes to update_powerfactory.py" />
+    <MESSAGE value="new update_result module" />
+    <option name="LAST_COMMIT_MESSAGE" value="new update_result module" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -135,7 +195,8 @@
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/ips_data/ex_settings.py</url>
+          <url>file://$PROJECT_DIR$/update_powerfactory/fuse_settings.py</url>
+          <line>13</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>

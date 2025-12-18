@@ -1,4 +1,4 @@
-import logging
+from update_powerfactory.logging_utils import get_logger
 
 class ProtectionDevice:
     """Each protection device will have its own object. They will have

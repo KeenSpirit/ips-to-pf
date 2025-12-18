@@ -10,7 +10,7 @@ The module uses SettingIndex for efficient O(1) lookups instead of
 linear scans through the settings list.
 """
 
-import logging
+from update_powerfactory.logging_utils import get_logger
 from typing import Dict, List, Optional, Tuple, Any, Union
 
 from core import ProtectionDevice
@@ -18,7 +18,7 @@ from ips_data import query_database as qd
 from ips_data.setting_index import SettingIndex, SettingRecord
 from core import UpdateResult
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 def ee_device_list(
@@ -49,7 +49,7 @@ def ee_device_list(
 
     for i, device_name in enumerate(selections):
         if i % 10 == 0:
-            app.PrintInfo(f"IPS is being checked for device {i} of {len(selections)}")
+            logger.info(f"IPS is being checked for device {i} of {len(selections)}")
 
         plant_number = get_plant_number(device_name)
         pf_device = device_dict[device_name][0]
@@ -118,7 +118,7 @@ def ergon_all_dev_list(
 
     for i, pf_device in enumerate(prot_devices):
         if i % 10 == 0:
-            app.PrintInfo(f"IPS is being checked for device {i} of {len(prot_devices)}")
+            logger.info(f"IPS is being checked for device {i} of {len(prot_devices)}")
 
         # Delete duplicate devices (names ending with parentheses)
         if pf_device.loc_name.endswith(")"):
