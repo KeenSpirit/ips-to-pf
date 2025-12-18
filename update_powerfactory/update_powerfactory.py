@@ -17,19 +17,28 @@ Usage:
     results, has_updates = up.update_pf(app, device_list, data_capture_list)
 """
 
-import logging
 from typing import List, Dict, Tuple, Any, Optional, Union
 
 from update_powerfactory import relay_settings as rs
 from update_powerfactory import fuse_settings as fs
 from update_powerfactory.type_index import RelayTypeIndex, FuseTypeIndex
 from update_powerfactory.update_result import UpdateResult
+from update_powerfactory.logging_utils import (
+    get_logger,
+    set_app,
+    LogContext,
+    BatchProgress,
+    log_performance,
+    log_exceptions,
+    timed_operation,
+)
 import devices
 import external_variables as ev
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
+@log_performance(operation_name="PowerFactory Update")
 def update_pf(
         app,
         lst_of_devs: List[Any],
@@ -50,18 +59,23 @@ def update_pf(
     Returns:
         Tuple of (updated data_capture_list as dicts, has_updates flag)
     """
+    # Set the app for logging context
+    set_app(app)
+
     if not lst_of_devs:
         logger.warning("No devices to update")
         return _convert_results_to_dicts(data_capture_list), False
 
     # Build type indexes once for O(1) lookups
-    app.PrintInfo("Creating indexed database of PowerFactory Fuse and Relay Types")
-    relay_index = RelayTypeIndex.build(app)
-    fuse_index = FuseTypeIndex.build(app)
+    with timed_operation("Type Index Build"):
+        logger.info("Creating indexed database of PowerFactory Fuse and Relay Types")
+        relay_index = RelayTypeIndex.build(app)
+        fuse_index = FuseTypeIndex.build(app)
 
     logger.info(
         f"Type indexes built: {len(relay_index)} relay types, "
-        f"{len(fuse_index)} fuse types"
+        f"{len(fuse_index)} fuse types",
+        pf_output=False
     )
 
     updates = False
@@ -71,40 +85,53 @@ def update_pf(
     app.SetWriteCacheEnabled(1)
 
     try:
-        for i, device_object in enumerate(lst_of_devs):
-            # Progress reporting
-            if i % 10 == 0:
-                app.PrintInfo(f"Device {i} of {len(lst_of_devs)} is being updated")
+        # Use BatchProgress for structured progress tracking
+        progress = BatchProgress(
+            app=app,
+            total=len(lst_of_devs),
+            item_name="device",
+            log_interval=10
+        )
 
+        for device_object in lst_of_devs:
             # Skip devices without PowerFactory object
             if not device_object.pf_obj:
+                progress.current += 1
                 continue
 
-            # Handle devices not found in IPS
-            if not device_object.setting_id and not device_object.fuse_type:
-                result = UpdateResult.not_in_ips(device_object)
+            device_name = getattr(device_object.pf_obj, 'loc_name', 'Unknown')
+
+            with progress.item(device_name):
+                # Handle devices not found in IPS
+                if not device_object.setting_id and not device_object.fuse_type:
+                    result = UpdateResult.not_in_ips(device_object)
+                    results.append(result)
+                    continue
+
+                # Process device based on type
+                try:
+                    result, updates = _process_device(
+                        app,
+                        device_object,
+                        relay_index,
+                        fuse_index,
+                        updates
+                    )
+                except Exception as e:
+                    result = _handle_device_error(app, device_object, e)
+
                 results.append(result)
-                continue
 
-            # Process device based on type
-            try:
-                result, updates = _process_device(
-                    app,
-                    device_object,
-                    relay_index,
-                    fuse_index,
-                    updates
-                )
-            except Exception as e:
-                result = _handle_device_error(app, device_object, e)
+                # Check if relay should be switched OOS
+                _switch_relay_oos(ev.RELAYS_OOS, device_object)
 
-            results.append(result)
-
-            # Check if relay should be switched OOS
-            _switch_relay_oos(ev.RELAYS_OOS, device_object)
+        # Log batch summary
+        summary = progress.finish()
+        logger.debug(f"Batch summary: {summary}", pf_output=False)
 
         # Commit all changes
-        app.WriteChangesToDb()
+        with timed_operation("Database Commit"):
+            app.WriteChangesToDb()
 
     finally:
         # Always disable write cache when done
@@ -142,15 +169,19 @@ def _process_device(
     Returns:
         Tuple of (UpdateResult, updated updates flag)
     """
-    if device_object.pf_obj.GetClassName() == "ElmRelay":
-        return rs.relay_settings(
-            app, device_object, relay_index, updates
-        )
-    else:
-        result = fs.fuse_setting(app, device_object, fuse_index)
-        return result, updates
+    device_class = device_object.pf_obj.GetClassName()
+
+    with LogContext(operation=f"process_{device_class}"):
+        if device_class == "ElmRelay":
+            return rs.relay_settings(
+                app, device_object, relay_index, updates
+            )
+        else:
+            result = fs.fuse_setting(app, device_object, fuse_index)
+            return result, updates
 
 
+@log_exceptions(reraise=False, default_return=None)
 def _handle_device_error(
         app,
         device_object: Any,
@@ -170,9 +201,14 @@ def _handle_device_error(
     Returns:
         UpdateResult with error information
     """
+    device_name = getattr(device_object.pf_obj, 'loc_name', 'Unknown')
+
     logger.exception(
-        f"{device_object.pf_obj.loc_name} Result = Script Failed: {error}"
+        f"Device processing failed: {error}",
+        pf_output=True
     )
+
+    # Log device attributes for debugging
     devices.log_device_atts(device_object)
 
     # Set device out of service due to error
@@ -198,11 +234,19 @@ def _switch_relay_oos(relays_oos: List[str], device_object: Any) -> None:
     # Check if device pattern is in OOS list
     if device_object.device in relays_oos:
         device_object.pf_obj.SetAttribute("outserv", 1)
+        logger.debug(
+            f"Set {device_object.device} out of service (in OOS list)",
+            pf_output=False
+        )
 
     # Check if associated switch is off
     try:
         if device_object.switch.on_off == 0:
             device_object.pf_obj.SetAttribute("outserv", 1)
+            logger.debug(
+                f"Set device out of service (switch is off)",
+                pf_output=False
+            )
     except AttributeError:
         pass
 
@@ -229,7 +273,7 @@ def _convert_results_to_dicts(
         elif isinstance(item, dict):
             converted.append(item)
         else:
-            logger.warning(f"Unknown result type: {type(item)}")
+            logger.warning(f"Unknown result type: {type(item)}", pf_output=False)
     return converted
 
 

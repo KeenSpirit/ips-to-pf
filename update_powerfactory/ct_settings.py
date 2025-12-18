@@ -10,13 +10,13 @@ It includes:
 - Measurement element configuration
 """
 
-import logging
+from update_powerfactory.logging_utils import get_logger
 from typing import Any, Optional
 
 from update_powerfactory import get_objects as go
 from update_powerfactory.update_result import UpdateResult
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 def update_ct(

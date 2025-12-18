@@ -11,13 +11,13 @@ Performance optimizations:
 - Uses FuseTypeIndex for O(1) fuse type lookups
 """
 
-import logging
+from update_powerfactory.logging_utils import get_logger
 from typing import Dict, List, Optional, Any, Union, Tuple
 
 from update_powerfactory.type_index import FuseTypeIndex
 from update_powerfactory.update_result import UpdateResult
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 def fuse_setting(

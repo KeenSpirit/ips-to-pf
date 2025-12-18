@@ -18,14 +18,14 @@ Usage:
     fuse_type = fuse_index.get_by_curve_and_rating("K", "100A")
 """
 
-import logging
+from update_powerfactory.logging_utils import get_logger
 import re
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Any, Tuple
 
 from update_powerfactory import get_objects as go
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -62,7 +62,7 @@ class RelayTypeIndex:
         Returns:
             RelayTypeIndex with all relay types indexed by name
         """
-        app.PrintInfo("Building relay type index...")
+        logger.info("Building relay type index...")
         index = cls()
         
         # 1. Get relay types from ErgonLibrary
@@ -113,7 +113,7 @@ class RelayTypeIndex:
             
             logger.info(f"Found {len(local_types)} local relay types")
         
-        app.PrintInfo(f"Relay type index built: {len(index._by_name)} types indexed")
+        logger.info(f"Relay type index built: {len(index._by_name)} types indexed")
         logger.info(f"RelayTypeIndex built with {len(index._by_name)} types")
         
         return index
@@ -184,7 +184,7 @@ class FuseTypeIndex:
         Returns:
             FuseTypeIndex with all fuse types indexed
         """
-        app.PrintInfo("Building fuse type index...")
+        logger.info("Building fuse type index...")
         index = cls()
         
         try:
@@ -211,12 +211,12 @@ class FuseTypeIndex:
                     index._by_curve[curve] = []
                 index._by_curve[curve].append(fuse_type)
             
-            app.PrintInfo(f"Fuse type index built: {len(index._by_name)} types indexed")
+            logger.info(f"Fuse type index built: {len(index._by_name)} types indexed")
             logger.info(f"FuseTypeIndex built with {len(index._by_name)} types")
             
         except AttributeError as e:
             logger.error(f"Error building fuse type index: {e}")
-            app.PrintError(f"Error building fuse type index: {e}")
+            logger.error(f"Error building fuse type index: {e}")
         
         return index
     

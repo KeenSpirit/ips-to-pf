@@ -9,7 +9,7 @@ The module uses SettingIndex for efficient O(1) lookups instead of
 linear scans through raw setting lists.
 """
 
-import logging
+from update_powerfactory.logging_utils import get_logger
 import sys
 from typing import List, Tuple, Optional, Dict, Any, Union
 
@@ -26,7 +26,7 @@ from update_powerfactory.update_result import UpdateResult
 import devices as dev
 import user_inputs
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 def get_ips_settings(
@@ -116,7 +116,7 @@ def _get_selected_devices(
     if batch or set_ids == "Batch":
         # Batch mode - process all devices
         if region == "Energex":
-            app.PrintInfo("Creating a list of Setting IDs for all Energex devices")
+            logger.info("Creating a list of Setting IDs for all Energex devices")
             device_list, failed_cbs, set_ids = ex.create_new_devices(
                 app, setting_index, called_function
             )
@@ -124,7 +124,7 @@ def _get_selected_devices(
             # Add relay skeletons for Ergon
             add_protection_relay_skeletons.main(app)
             app.ClearOutputWindow()
-            app.PrintInfo("Creating a list of Setting IDs for all Ergon devices")
+            logger.info("Creating a list of Setting IDs for all Ergon devices")
             set_ids, device_list, data_capture_list = ee.ergon_all_dev_list(
                 app, data_capture_list, setting_index, called_function
             )
@@ -206,7 +206,7 @@ def _associate_device_settings(
 
     for i, device_object in enumerate(device_list):
         if i % 10 == 0:
-            app.PrintInfo(
+            logger.info(
                 f"Device {i} of {total} has had its setting attributes assigned"
             )
 

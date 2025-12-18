@@ -14,10 +14,10 @@ O(n*m) to O(n+m).
 from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Any
-import logging
+from update_powerfactory.logging_utils import get_logger
 import external_variables as ev
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 @dataclass

@@ -13,7 +13,7 @@ setting data instead of linear scans through lists.
 
 import sys
 import time
-import logging
+from update_powerfactory.logging_utils import get_logger
 from typing import Dict, List, Optional, Tuple, Any
 
 sys.path.append(r"\\ecasd01\WksMgmt\PowerFactory\ScriptsLIB\NetDash-Reader")
@@ -26,7 +26,7 @@ from assetclasses.corporate_data import get_cached_data
 
 from ips_data.setting_index import SettingIndex, create_setting_index
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 # Cache for setting indexes to avoid rebuilding on repeated calls
 _index_cache: Dict[str, SettingIndex] = {}
@@ -50,7 +50,7 @@ def get_setting_ids(app, region: str) -> SettingIndex:
     Raises:
         SystemExit: If unable to retrieve data after multiple attempts
     """
-    app.PrintInfo("Creating the Setting ID Index")
+    logger.info("Creating the Setting ID Index")
     
     # Check cache first
     cache_key = f"setting_index_{region}"
@@ -178,7 +178,7 @@ def error_message(app, message: str) -> None:
         app: PowerFactory application object
         message: Error message to display
     """
-    app.PrintError(message)
+    logger.error(message)
     sys.exit(0)
 
 
