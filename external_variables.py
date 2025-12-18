@@ -9,8 +9,8 @@ from typing import Set, Dict
 def sub_mapping() -> Dict:
     """
     PowerFactory stores all SEQ sub names as three character alpha strings.
-    Some SEQ sub names include numerics. In order for switches at these subs to
-    be processed correctly, a mapping must be provided between the two
+    Some SEQ sub names include numerics. In order for switches at these subs
+    to be processed correctly, a mapping must be provided between the two
     naming conventions.
     Used in setting_index.py module
     :return: sub_map
