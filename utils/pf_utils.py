@@ -1,4 +1,3 @@
-<<<<<<<< HEAD:utils/pf_utils.py
 """
 PowerFactory utility functions.
 
@@ -16,9 +15,6 @@ Functions:
 
 import logging
 from typing import List, Dict, Any, Tuple, Optional
-========
-from update_powerfactory.logging_utils import get_logger
->>>>>>>> origin/master:devices.py
 
 logger = logging.getLogger(__name__)
 
