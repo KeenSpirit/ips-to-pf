@@ -2,13 +2,19 @@ import powerfactory as pf
 import os
 from tkinter import *  # noqa [F403]
 import logging.config
-import user_inputs
 from importlib import reload
 
 from ips_data import ips_settings as ips
 from update_powerfactory import orchestrator as up
 
 from config.paths import OUTPUT_BATCH_DIR, OUTPUT_LOCAL_DIR
+from config.validation import (
+    require_valid_config,
+    validate_for_batch_mode,
+    validate_for_interactive_mode,
+    ValidationConfig,
+    ValidationLevel,
+)
 from utils.time_utils import Timer, get_current_timestamp
 from utils.file_utils import (
     ensure_directory_exists,
@@ -18,12 +24,10 @@ from utils.file_utils import (
     safe_file_remove,
 )
 from utils.pf_utils import determine_region, get_all_protection_devices
-from update_powerfactory import mapping_file as mf
 
-
-reload(user_inputs)
 reload(ips)
 reload(up)
+
 
 def main(app=None, batch=False):
     """This Script Will be used to transfer Settings from IPS to PF."""
@@ -40,8 +44,32 @@ def main(app=None, batch=False):
         called_function = True
     app.ClearOutputWindow()
 
-    # Preload mapping caches (slight performance improvement - optional)
-    mf.preload_cache()
+    # ==========================================================================
+    # CONFIGURATION VALIDATION
+    # ==========================================================================
+    # Validate configuration before doing anything else.
+    # This catches issues early with clear error messages rather than
+    # failing mid-run with cryptic stack traces.
+
+    if batch or called_function:
+        # Batch mode: stricter validation, check database connectivity
+        result = validate_for_batch_mode(app)
+        if not result.is_valid:
+            app.PrintError("Configuration validation failed for batch mode")
+            for error in result.errors:
+                app.PrintError(f"  {error}")
+            return None
+        # Print warnings but continue
+        for warning in result.warnings:
+            app.PrintWarn(warning)
+    else:
+        # Interactive mode: standard validation, faster startup
+        # require_valid_config() will exit automatically if invalid
+        require_valid_config(app)
+
+    # ==========================================================================
+    # MAIN PROCESSING
+    # ==========================================================================
 
     # Determine which IPS database is to be queried
     prjt = app.GetActiveProject()
@@ -87,8 +115,8 @@ def main(app=None, batch=False):
 def log_devices():
     pass
 
-def create_save_file(app, prjt, called_function):
 
+def create_save_file(app, prjt, called_function):
     project_name = prjt.GetAttribute("loc_name")
     current_user = app.GetCurrentUser()
     current_user_name = current_user.GetAttribute("loc_name")
@@ -162,7 +190,6 @@ def print_results(app, data_capture_list):
 
 
 if __name__ == "__main__":
-
     # Configure logging
     # logging.basicConfig(
     #     filename=cl.getpath() / 'ips_to_pf_log.txt',
@@ -171,4 +198,3 @@ if __name__ == "__main__":
     # )
 
     updates = main()
-

@@ -212,33 +212,3 @@ def _apply_fuse_type(
 
     # Ensure fuse is in service
     pf_device.SetAttribute("e:outserv", 0)
-
-
-# =============================================================================
-# Legacy compatibility
-# =============================================================================
-
-def fuse_setting_legacy(
-    app,
-    device_object: Any,
-    fuse_types: List
-) -> Dict[str, str]:
-    """
-    Legacy function signature for backward compatibility.
-
-    DEPRECATED: Use fuse_setting() with FuseTypeIndex instead.
-
-    Args:
-        app: PowerFactory application object
-        device_object: The ProtectionDevice to configure
-        fuse_types: List of fuse type objects
-
-    Returns:
-        Dictionary with update results (for backward compatibility)
-    """
-    logger.warning(
-        "fuse_setting_legacy() is deprecated. "
-        "Use fuse_setting() with FuseTypeIndex for O(1) lookups."
-    )
-    result = fuse_setting(app, device_object, fuse_types)
-    return result.to_dict()

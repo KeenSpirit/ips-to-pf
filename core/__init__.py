@@ -11,10 +11,6 @@ Classes:
     ProtectionDevice: Represents a protection relay or fuse with its settings
     SettingRecord: Represents a single setting record from IPS
 
-Helper Functions:
-    dict_to_result: Convert dictionary to UpdateResult
-    result_to_dict: Convert UpdateResult to dictionary
-
 Usage:
     from core import UpdateResult, ProtectionDevice, SettingRecord
     
@@ -30,9 +26,7 @@ Usage:
 """
 
 from core.update_result import (
-    UpdateResult,
-    dict_to_result,
-    result_to_dict,
+    UpdateResult
 )
 
 from core.protection_device import ProtectionDevice
@@ -41,8 +35,6 @@ from core.setting_record import SettingRecord
 
 __all__ = [
     "UpdateResult",
-    "dict_to_result",
-    "result_to_dict",
     "ProtectionDevice",
     "SettingRecord",
 ]

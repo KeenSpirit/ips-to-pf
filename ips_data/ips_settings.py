@@ -25,7 +25,7 @@ from ips_data import ee_settings as ee
 from ips_data import ex_settings as ex
 from ips_data.setting_index import SettingIndex
 from utils.pf_utils import get_all_protection_devices
-import user_inputs
+from ui.device_selection import user_selection
 
 logger = logging.getLogger(__name__)
 
@@ -159,7 +159,7 @@ def _get_user_selected_devices(
     devices, device_dict = get_all_protection_devices(app)
 
     # Show selection dialog
-    selections = user_inputs.user_selection(app, device_dict)
+    selections = user_selection(app, device_dict)
 
     if not selections:
         message = "User has selected to exit the script"
@@ -225,55 +225,3 @@ def _associate_device_settings(
                 device_object.seq_instrument_attributes(ips_it_settings)
             else:
                 device_object.reg_instrument_attributes(ips_it_settings)
-
-
-# =============================================================================
-# Legacy compatibility - maintains old function signatures
-# =============================================================================
-
-def prot_dev_lst(
-    app,
-    region: str,
-    data_capture_list: List[Dict],
-    ids_dict_list: List[Dict]
-) -> Tuple[Any, List[ProtectionDevice], List[Dict]]:
-    """
-    Legacy function for backward compatibility.
-
-    DEPRECATED: This function creates a temporary index from the list.
-    The calling code should be updated to use get_ips_settings() directly.
-
-    Args:
-        app: PowerFactory application object
-        region: "Energex" or "Ergon"
-        data_capture_list: List to append status records to
-        ids_dict_list: Raw list of setting dictionaries
-
-    Returns:
-        Tuple of (setting_ids or "Batch", device_list, data_capture_list as dicts)
-    """
-    logger.warning(
-        "prot_dev_lst() is deprecated. "
-        "Use get_ips_settings() which handles indexing automatically."
-    )
-
-    from ips_data.setting_index import create_setting_index
-    setting_index = create_setting_index(ids_dict_list, region)
-
-    # Convert any existing dicts to UpdateResult objects
-    result_list: List[UpdateResult] = []
-    for item in data_capture_list:
-        if isinstance(item, dict):
-            from core.update_result import dict_to_result
-            result_list.append(dict_to_result(item))
-        else:
-            result_list.append(item)
-
-    set_ids, device_list, result_list = _get_user_selected_devices(
-        app, region, result_list, setting_index
-    )
-
-    # Convert back to dicts for legacy compatibility
-    dict_list = [r.to_dict() for r in result_list]
-
-    return set_ids, device_list, dict_list

@@ -12,6 +12,7 @@ Modules:
     paths: Network paths and file locations
     relay_patterns: Relay classification constants
     region_config: Region-specific settings (Energex/Ergon)
+    validation: Configuration validation at startup
 
 Usage:
     from config import paths, relay_patterns, region_config
@@ -25,6 +26,10 @@ Usage:
 
     # Access region config
     sub_map = region_config.get_substation_mapping()
+
+    # Validate configuration at startup
+    from config.validation import require_valid_config
+    require_valid_config(app)  # Exits if invalid
 """
 
 from config.paths import (
@@ -56,6 +61,29 @@ from config.region_config import (
     SUFFIX_EXPANSIONS,
 )
 
+from config.validation import (
+    # Main classes
+    ValidationResult,
+    ValidationConfig,
+    ValidationLevel,
+    # Primary functions
+    validate_startup,
+    require_valid_config,
+    quick_validate,
+    print_config_status,
+    # Configuration presets
+    get_minimal_config,
+    get_standard_config,
+    get_full_config,
+    get_strict_config,
+    # Context-specific validation
+    validate_for_batch_mode,
+    validate_for_interactive_mode,
+    # Custom validator registration
+    register_validator,
+    clear_custom_validators,
+)
+
 __all__ = [
     # Paths
     "SCRIPTS_BASE",
@@ -75,4 +103,20 @@ __all__ = [
     # Region config
     "get_substation_mapping",
     "SUFFIX_EXPANSIONS",
+    # Validation
+    "ValidationResult",
+    "ValidationConfig",
+    "ValidationLevel",
+    "validate_startup",
+    "require_valid_config",
+    "quick_validate",
+    "print_config_status",
+    "get_minimal_config",
+    "get_standard_config",
+    "get_full_config",
+    "get_strict_config",
+    "validate_for_batch_mode",
+    "validate_for_interactive_mode",
+    "register_validator",
+    "clear_custom_validators",
 ]
