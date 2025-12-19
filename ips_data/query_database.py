@@ -16,11 +16,14 @@ import time
 import logging
 from typing import Dict, List, Optional, Tuple, Any
 
-sys.path.append(r"\\ecasd01\WksMgmt\PowerFactory\ScriptsLIB\NetDash-Reader")
+# Import paths from config and add to sys.path
+from config.paths import NETDASH_READER_PATH, ASSET_CLASSES_PATH
+
+sys.path.append(NETDASH_READER_PATH)
 from netdashread import get_json_data
 from tenacity import retry, stop_after_attempt, wait_random_exponential
 
-sys.path.append(r"\\Ecasd01\WksMgmt\PowerFactory\Scripts\AssetClasses")
+sys.path.append(ASSET_CLASSES_PATH)
 import assetclasses
 from assetclasses.corporate_data import get_cached_data
 

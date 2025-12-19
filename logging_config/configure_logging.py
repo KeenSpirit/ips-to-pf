@@ -163,3 +163,27 @@ if __name__ == "__main__":
 
     # Cleanup happens automatically via atexit
 
+
+def log_device_atts(prot_dev):
+    """
+    Log the device attributes.
+    Settings attribute is logged as 'yes/no' to keep logged data to manageable levels
+    Args:
+        prot_dev:
+
+    Returns:
+    logged device attributes
+    """
+
+    logging.info(f"Attributes for protection device{prot_dev.device}:")
+    attributes = dir(prot_dev)
+    for attr in attributes:
+        if not attr.startswith('__'):
+            value = getattr(prot_dev, attr)
+            if attr == 'settings':
+                if len(value) > 0:
+                    value = 'settings loaded'
+                else:
+                    value = 'no settings loaded'
+            logging.info(f"{attr}: {value}")
+

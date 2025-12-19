@@ -15,73 +15,12 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Any
 import logging
-import external_variables as ev
+
+from core import SettingRecord
+from config.relay_patterns import EXCLUDED_PATTERNS
+from config.region_config import get_substation_mapping, SUFFIX_EXPANSIONS
 
 logger = logging.getLogger(__name__)
-
-
-@dataclass
-class SettingRecord:
-    """
-    Represents a single setting record from IPS.
-    
-    This dataclass provides named access to setting attributes instead of
-    dictionary key lookups, improving code readability and enabling IDE
-    support for attribute access.
-    
-    Attributes:
-        relaysettingid: Unique identifier for the relay setting
-        assetname: Name of the asset in IPS
-        patternname: The relay pattern/type name
-        datesetting: Date the setting was created/modified
-        active: Whether the setting is currently active (Ergon only)
-        nameenu: Switch/CB name (Energex only)
-        locationpathenu: Full location path (Energex only)
-        deviceid: Device identifier (Energex only)
-        raw_data: Original dictionary for accessing any additional fields
-    """
-    relaysettingid: str
-    assetname: str
-    patternname: str
-    datesetting: Optional[str] = None
-    active: Optional[bool] = None
-    nameenu: Optional[str] = None
-    locationpathenu: Optional[str] = None
-    deviceid: Optional[str] = None
-    raw_data: Dict[str, Any] = field(default_factory=dict, repr=False)
-    
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'SettingRecord':
-        """
-        Create a SettingRecord from a raw dictionary.
-        
-        Args:
-            data: Dictionary containing setting data from IPS query
-            
-        Returns:
-            SettingRecord instance with mapped attributes
-        """
-        return cls(
-            relaysettingid=data.get('relaysettingid', ''),
-            assetname=data.get('assetname', ''),
-            patternname=data.get('patternname', ''),
-            datesetting=data.get('datesetting'),
-            active=data.get('active'),
-            nameenu=data.get('nameenu'),
-            locationpathenu=data.get('locationpathenu'),
-            deviceid=data.get('deviceid'),
-            raw_data=data
-        )
-    
-    def to_dict(self) -> Dict[str, Any]:
-        """
-        Convert back to dictionary format for compatibility with existing code.
-        
-        Returns:
-            The original raw_data dictionary
-        """
-        return self.raw_data
-
 
 class SettingIndex:
     """
@@ -181,7 +120,7 @@ class SettingIndex:
             return False
             
         # Check for excluded pattern substrings
-        for excluded in ev.EXCLUDED_PATTERNS:
+        for excluded in EXCLUDED_PATTERNS:
             if excluded in record.patternname:
                 return True
         
@@ -235,11 +174,11 @@ class SettingIndex:
             parts = record.locationpathenu.split('/')
             if len(parts) > 2:
                 sub = parts[2]
-                # Only use if substation is alphabetic
+                # May only use if substation is alphabetic
                 if sub.isalpha():
                     substation = sub
                 else:
-                    sub_map = ev.sub_mapping()
+                    sub_map = get_substation_mapping()
                     if sub in sub_map:
                         substation = sub_map[sub]
 
@@ -274,7 +213,7 @@ class SettingIndex:
             List of individual switch names
         """
 
-        for suffix, components in ev.suffix_expansions:
+        for suffix, components in SUFFIX_EXPANSIONS:
             if name.endswith(suffix):
                 base = name[:-len(suffix)]
                 return [base + comp for comp in components]

@@ -13,10 +13,10 @@ linear scans through the settings list.
 import logging
 from typing import Dict, List, Optional, Tuple, Any, Union
 
-import devices as dev
+from core import ProtectionDevice, SettingRecord, UpdateResult
+from utils.pf_utils import determine_fuse_role
 from ips_data import query_database as qd
-from ips_data.setting_index import SettingIndex, SettingRecord
-from update_powerfactory.update_result import UpdateResult
+from ips_data.setting_index import SettingIndex
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ def ee_device_list(
     device_dict: Dict[str, List],
     setting_index: SettingIndex,
     data_capture_list: List[UpdateResult]
-) -> Tuple[List[str], List[dev.ProtectionDevice], List[UpdateResult]]:
+) -> Tuple[List[str], List[ProtectionDevice], List[UpdateResult]]:
     """
     Create device list for user-selected Ergon devices.
 
@@ -44,7 +44,7 @@ def ee_device_list(
     Returns:
         Tuple of (setting_ids, list_of_devices, data_capture_list)
     """
-    list_of_devices: List[dev.ProtectionDevice] = []
+    list_of_devices: List[ProtectionDevice] = []
     setting_ids: List[str] = []
 
     for i, device_name in enumerate(selections):
@@ -96,7 +96,7 @@ def ergon_all_dev_list(
     data_capture_list: List[UpdateResult],
     setting_index: SettingIndex,
     called_function: bool
-) -> Tuple[List[str], List[dev.ProtectionDevice], List[UpdateResult]]:
+) -> Tuple[List[str], List[ProtectionDevice], List[UpdateResult]]:
     """
     Process all protection devices in the active Ergon project.
 
@@ -113,7 +113,7 @@ def ergon_all_dev_list(
         Tuple of (setting_ids, list_of_devices, data_capture_list)
     """
     prot_devices = get_all_protection_devices(app)
-    list_of_devices: List[dev.ProtectionDevice] = []
+    list_of_devices: List[ProtectionDevice] = []
     setting_ids: List[str] = []
 
     for i, pf_device in enumerate(prot_devices):
@@ -167,7 +167,7 @@ def ergon_all_dev_list(
 def _process_fuse_device(
     app,
     pf_device,
-    list_of_devices: List[dev.ProtectionDevice]
+    list_of_devices: List[ProtectionDevice]
 ) -> Union[str, Tuple[str, str]]:
     """
     Process a fuse device and determine if it should be added to the list.
@@ -182,10 +182,10 @@ def _process_fuse_device(
         "failed" if fuse type couldn't be determined
         (fuse_type, fuse_size) tuple otherwise
     """
-    fuse_type, fuse_size = dev.determine_fuse_type(app, pf_device)
+    fuse_type, fuse_size = determine_fuse_role(app, pf_device)
 
     if fuse_type == "Tx Fuse":
-        prot_dev = dev.ProtectionDevice(
+        prot_dev = ProtectionDevice(
             app, fuse_type, pf_device.loc_name, None, None, pf_device, None
         )
         prot_dev.fuse_size = fuse_size
@@ -266,14 +266,14 @@ def get_all_protection_devices(app) -> List:
 def _get_setting_id_indexed(
     app,
     plant_number: str,
-    list_of_devices: List[dev.ProtectionDevice],
+    list_of_devices: List[ProtectionDevice],
     setting_ids: List[str],
     pf_device,
     fuse_type: Optional[str],
     fuse_size: Optional[str],
     setting_index: SettingIndex,
     called_function: bool,
-) -> Tuple[List[str], List[dev.ProtectionDevice]]:
+) -> Tuple[List[str], List[ProtectionDevice]]:
     """
     Find setting ID(s) for a device using the indexed lookup.
 
@@ -335,7 +335,7 @@ def _get_setting_id_indexed(
             return setting_ids, list_of_devices
 
     # No match found - create device without settings
-    no_setting_device = dev.ProtectionDevice(
+    no_setting_device = ProtectionDevice(
         app, None, None, None, None, pf_device, None
     )
     no_setting_device.fuse_type = fuse_type
@@ -352,7 +352,7 @@ def _create_device_from_record(
     fuse_type: Optional[str],
     fuse_size: Optional[str],
     called_function: bool
-) -> Optional[dev.ProtectionDevice]:
+) -> Optional[ProtectionDevice]:
     """
     Create a ProtectionDevice from a SettingRecord.
 
@@ -367,7 +367,7 @@ def _create_device_from_record(
     Returns:
         ProtectionDevice object or None if creation failed
     """
-    prot_dev = dev.ProtectionDevice(
+    prot_dev = ProtectionDevice(
         app,
         record.patternname,
         record.assetname,

@@ -1,23 +1,35 @@
 import powerfactory as pf
 import os
-import csv
 from tkinter import *  # noqa [F403]
-import time
 import logging.config
 import user_inputs
 from importlib import reload
 
 from ips_data import ips_settings as ips
-import devices as dev
-from update_powerfactory import update_powerfactory as up
+from update_powerfactory import orchestrator as up
+
+from config.paths import OUTPUT_BATCH_DIR, OUTPUT_LOCAL_DIR
+from utils.time_utils import Timer, get_current_timestamp
+from utils.file_utils import (
+    ensure_directory_exists,
+    get_citrix_adjusted_path,
+    write_dict_list_to_csv,
+    is_file_recent,
+    safe_file_remove,
+)
+from utils.pf_utils import determine_region, get_all_protection_devices
+
+
 reload(user_inputs)
 reload(ips)
 reload(up)
 
 def main(app=None, batch=False):
     """This Script Will be used to transfer Settings from IPS to PF."""
-    start_time = time.strftime("%H:%M:%S")
-    start = time.time()
+    timer = Timer(name="IPS to PF Transfer", auto_log=True)
+    timer.start()
+    start_time = get_current_timestamp()
+
     if not app:
         # Change called_function to True if you want to mimic a batch update
         called_function = False
@@ -37,8 +49,6 @@ def main(app=None, batch=False):
 
     # Query the IPS data
     dev_list, data_capture_list = ips.get_ips_settings(app, region, batch, called_function)
-    for dev in dev_list:
-        app.PrintPlain(vars(dev))
 
     logging.info(f"lst_of_devs: {dev_list}")
 
@@ -51,10 +61,12 @@ def main(app=None, batch=False):
     save_file = create_save_file(app, prjt, called_function)
     if not save_file:
         return
-    write_data(app, data_capture_list, save_file)
+    write_dict_list_to_csv(data_capture_list, save_file)
     if not batch:
         print_results(app, data_capture_list)
-    stop_time = time.strftime("%H:%M:%S")
+
+    timer.stop()
+    stop_time = get_current_timestamp()
     app.PrintInfo(
         f"Script started at {start_time} and finished at {stop_time}"
     )
@@ -63,27 +75,9 @@ def main(app=None, batch=False):
     else:
         app.PrintInfo("Of the devices selected there were no updated settings")
 
-    end = time.time()
-    run_time = round(end - start, 6)
-    run_time = format_time(run_time)
-    app.PrintPlain(f"Query Script run time: {run_time}")
+    app.PrintPlain(f"Query Script run time: {timer.formatted}")
 
     return updates
-
-
-def format_time(seconds):
-    hours, remainder = divmod(int(seconds), 3600)
-    minutes, seconds = divmod(remainder, 60)
-
-    time_parts = []
-    if hours > 0:
-        time_parts.append(f"{hours} hour{'s' if hours > 1 else ''}")
-    if minutes > 0:
-        time_parts.append(f"{minutes} minute{'s' if minutes > 1 else ''}")
-    if seconds > 0 or not time_parts:
-        time_parts.append(f"{seconds} second{'s' if seconds > 1 else ''}")
-
-    return " ".join(time_parts)
 
 
 def log_devices():
@@ -100,12 +94,12 @@ def create_save_file(app, prjt, called_function):
         "/", "_"
     )
     if called_function:
-        file_location = r"\\ecasd01\WksMgmt\PowerFactory\ScriptsDEV\IPSDataTransferMastering\Script_Results"  # noqa [E501]
+        file_location = OUTPUT_BATCH_DIR
         main_file_name = select_main_file(
             app, file_name, file_location, called_function
         )
     else:
-        file_location = r"C:\LocalData\PowerFactory Output Folders\IPS Data Transfer"
+        file_location = OUTPUT_LOCAL_DIR
         main_file_name = select_main_file(
             app, file_name, file_location, called_function
         )
@@ -115,67 +109,32 @@ def create_save_file(app, prjt, called_function):
 def select_main_file(app, file_name, location, called_function):
     """Check to see if a folder structure exists and create it if it doesn't.
     Create the csv file to publish all the data."""
-    citrix = os.path.isdir("\\\\Client\\C$\\localdata")
-    if citrix and "C:" in location:
-        location = "\\\\Client\\" + location.replace("C:", "C$")
-    protection_folder_check = os.path.isdir(location)
-    if not protection_folder_check:
-        os.makedirs(location)
-    set_file_name = location + "\\{}.csv".format(file_name)
+    # Adjust path for Citrix environment
+    location = get_citrix_adjusted_path(location)
+
+    # Ensure directory exists
+    ensure_directory_exists(location)
+
+    set_file_name = os.path.join(location, f"{file_name}.csv")
     print(set_file_name)
-    # Open the files
-    try:
-        last_mod_time = os.stat(set_file_name).st_mtime
-        if called_function:
-            check_time = time.time() - (24 * 60 * 60)
-        else:
-            check_time = last_mod_time
-        if check_time < last_mod_time:
+
+    # Check if file was recently modified
+    if called_function:
+        # For batch mode, skip if file was modified in last 24 hours
+        if is_file_recent(set_file_name, max_age_seconds=24 * 60 * 60):
             print("Project had already been studied")
             return None
-        os.remove(set_file_name)
-    except FileNotFoundError:
-        pass
+
+    # Remove existing file if present
+    safe_file_remove(set_file_name)
+
     return set_file_name
-
-
-def determine_region(prjt):
-    """This function relies on the file structure under the Publisher"""
-    base_prjt = prjt.der_baseproject
-    if not base_prjt:
-        base_prjt_fld = prjt.fold_id.loc_name
-    else:
-        base_prjt_fld = prjt.der_baseproject.fold_id.loc_name
-    if base_prjt_fld == "SEQ Models":
-        region = "Energex"
-    else:
-        region = "Ergon"
-    logging.info(f"region: {region}")
-    return region
-
-
-def write_data(app, update_info_list, main_file_name):
-    """This function records the results of the IPS to PF transfer."""
-    # Get Column names
-    col_headings = []
-    for update_dict in update_info_list:
-        for key in update_dict:
-            if key in col_headings:
-                continue
-            else:
-                col_headings.append(key)
-    # Open the CSV
-    with open(main_file_name, "a", newline="", encoding="UTF-8") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=col_headings)
-        writer.writeheader()
-        for data in update_info_list:
-            writer.writerow(data)
 
 
 def print_results(app, data_capture_list):
     """This is to provide information to the user about the results of the
     script."""
-    [devices, device_object_dict] = dev.prot_device(app)
+    devices, device_object_dict = get_all_protection_devices(app)
     print_string = str()
     # app.ClearOutputWindow()
     for i, info in enumerate(data_capture_list):

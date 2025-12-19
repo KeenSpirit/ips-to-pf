@@ -23,9 +23,9 @@ from typing import List, Dict, Tuple, Any, Optional, Union
 from update_powerfactory import relay_settings as rs
 from update_powerfactory import fuse_settings as fs
 from update_powerfactory.type_index import RelayTypeIndex, FuseTypeIndex
-from update_powerfactory.update_result import UpdateResult
-import devices
-import external_variables as ev
+from core import UpdateResult
+from config.relay_patterns import RELAYS_OOS
+from logging_config.configure_logging import log_device_atts
 
 logger = logging.getLogger(__name__)
 
@@ -101,7 +101,7 @@ def update_pf(
             results.append(result)
 
             # Check if relay should be switched OOS
-            _switch_relay_oos(ev.RELAYS_OOS, device_object)
+            _switch_relay_oos(RELAYS_OOS, device_object)
 
         # Commit all changes
         app.WriteChangesToDb()
@@ -173,7 +173,7 @@ def _handle_device_error(
     logger.exception(
         f"{device_object.pf_obj.loc_name} Result = Script Failed: {error}"
     )
-    devices.log_device_atts(device_object)
+    log_device_atts(device_object)
 
     # Set device out of service due to error
     try:

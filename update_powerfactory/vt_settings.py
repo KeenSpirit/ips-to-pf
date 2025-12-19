@@ -18,8 +18,8 @@ It includes:
 import logging
 from typing import Any, Optional
 
-from update_powerfactory import get_objects as go
-from update_powerfactory.update_result import UpdateResult
+from utils.pf_utils import all_relevant_objects
+from core import UpdateResult
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ def update_vt(
 
     # VTs have a type, assign the library folder containing these types to a
     # variable.
-    vt_library = go.all_relevant_objects(
+    vt_library = all_relevant_objects(
         app, [app.GetLocalLibrary()], "Voltage Transformers.IntFolder"
     )
     if not vt_library:

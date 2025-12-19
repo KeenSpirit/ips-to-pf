@@ -4,10 +4,39 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="96fe6cef-43fb-4a25-b50d-4782cbac27cd" name="Changes" comment="Fixed up all bare exceptions">
-      <change beforePath="$PROJECT_DIR$/.idea/IPSProtectionDeviceSettings - v1 (live).iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/IPSProtectionDeviceSettings - v2 (live).iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+    <list default="true" id="96fe6cef-43fb-4a25-b50d-4782cbac27cd" name="Changes" comment="core package added">
+      <change afterPath="$PROJECT_DIR$/config/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/paths.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/region_config.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/relay_patterns.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ips_data/cb_mapping.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/file_utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/pf_utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/time_utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/devices.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/external_variables.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ips_data/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/ips_data/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ips_data/ee_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/ips_data/ee_settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ips_data/ex_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/ips_data/ex_settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ips_data/ips_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/ips_data/ips_settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ips_data/query_database.py" beforeDir="false" afterPath="$PROJECT_DIR$/ips_data/query_database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ips_data/setting_index.py" beforeDir="false" afterPath="$PROJECT_DIR$/ips_data/setting_index.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ips_to_pf.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logging_config/configure_logging.py" beforeDir="false" afterPath="$PROJECT_DIR$/logging_config/configure_logging.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_module/test_module.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_module/test_module.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/update_powerfactory/ct_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_powerfactory/ct_settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/update_powerfactory/fuse_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_powerfactory/fuse_settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/update_powerfactory/get_objects.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/update_powerfactory/mapping_file.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_powerfactory/mapping_file.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/update_powerfactory/relay_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_powerfactory/relay_settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/update_powerfactory/type_index.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_powerfactory/type_index.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/update_powerfactory/update_powerfactory.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_powerfactory/orchestrator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/update_powerfactory/update_result.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/update_powerfactory/vt_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_powerfactory/vt_settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,6 +53,15 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {}
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/KeenSpirit/ips-to-pf.git&quot;,
+    &quot;accountId&quot;: &quot;49b245bb-1e86-474c-aa7a-dc6f88ecba8f&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
 }</component>
@@ -38,11 +76,12 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;Y:/PROTECTION/STAFF/Dan Park/PowerFactory/Dan script development/IPSProtectionDeviceSettings - v2 (development)&quot;
+    &quot;last_opened_file_path&quot;: &quot;Y:/PROTECTION/STAFF/Dan Park/PowerFactory/Dan script development/ips-to-pf&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="Y:\PROTECTION\STAFF\Dan Park\PowerFactory\Dan script development\ips-to-pf\core" />
       <recent name="Y:\PROTECTION\STAFF\Dan Park\PowerFactory\Dan script development\IPSProtectionDeviceSettings - v2 (live)\ips_data" />
     </key>
   </component>
@@ -118,14 +157,41 @@
       <option name="project" value="LOCAL" />
       <updated>1765679246953</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Rever mapping file changes">
+      <option name="closed" value="true" />
+      <created>1765888153440</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1765888153440</updated>
+    </task>
+    <task id="LOCAL-00006" summary="external variables file created.">
+      <option name="closed" value="true" />
+      <created>1765960360683</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1765960360683</updated>
+    </task>
+    <task id="LOCAL-00007" summary="core package added">
+      <option name="closed" value="true" />
+      <created>1766033829729</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1766033829729</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial commit" />
     <MESSAGE value="Code modularized&#10;Rebuilt user interface to be more intuitive&#10;Small bug fixes to SEQ functions&#10;Added logging module&#10;Does not support direct connection to IPS for batch updating." />
     <MESSAGE value="Fixed up all bare exceptions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed up all bare exceptions" />
+    <MESSAGE value="Rever mapping file changes" />
+    <MESSAGE value="external variables file created." />
+    <MESSAGE value="core package added" />
+    <option name="LAST_COMMIT_MESSAGE" value="core package added" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -135,8 +201,12 @@
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/ips_data/ex_settings.py</url>
+          <url>file://$PROJECT_DIR$/test_module/test_module.py</url>
           <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/user_inputs.py</url>
+          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

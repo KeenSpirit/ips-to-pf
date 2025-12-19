@@ -17,32 +17,11 @@ Performance optimizations:
 
 import csv
 
-MAP_FILE_LOC = "\\\\ecasd01\\WksMgmt\\PowerFactory\\ScriptsDEV\\IPSProtectionDeviceSettings\\mapping"
+# Import path from config
+from config.paths import MAPPING_FILES_DIR
 
-
-def get_cb_alt_name_list(app):
-    """Due to project creation in the SEQ space some CBs have not got a name
-    that maps to IPS. A csv contains the mappings for these CBs"""
-
-    csv_open = open(f"{MAP_FILE_LOC}\\CB_ALT_NAME.csv", "r")
-    cb_alt_name_list = []
-    for row in csv_open.readlines():
-        line_dict = {}
-        line = row.split(",")
-        line[-1] = line[-1].replace("\n", "")
-        if line[0] == "PROJECT" or line[-1].lower() in [
-            "not needed",
-            "no active setting",
-            "wrong sub name",
-            "unknown",
-        ]:
-            continue
-        for i, col in enumerate(
-            ["PROJECT", "GRID", "SUBSTATION", "CB_NAME", "NEW_NAME"]
-        ):
-            line_dict[col] = line[i]
-        cb_alt_name_list.append(line_dict)
-    return cb_alt_name_list
+# Use the centralized path
+MAP_FILE_LOC = MAPPING_FILES_DIR
 
 
 def get_pf_curve(app, setting_value, element):

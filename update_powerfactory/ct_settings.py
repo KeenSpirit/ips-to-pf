@@ -13,8 +13,8 @@ It includes:
 import logging
 from typing import Any, Optional
 
-from update_powerfactory import get_objects as go
-from update_powerfactory.update_result import UpdateResult
+from utils.pf_utils import all_relevant_objects
+from core import UpdateResult
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ def update_ct(
     # At this point the script needs to update the appropriate primary and
     # secondary turns. This means that the type needs to contain the appropriate
     # attributes.
-    ct_library = go.all_relevant_objects(
+    ct_library = all_relevant_objects(
         app, [app.GetLocalLibrary()], "Current Transformers.IntFolder"
     )
     if not ct_library:

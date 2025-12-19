@@ -1,6 +1,6 @@
 import powerfactory as pf
-import devices as dev
 
+from core import ProtectionDevice
 import logging.config
 from logging_config import configure_logging as cl
 
@@ -8,7 +8,7 @@ from logging_config import configure_logging as cl
 def main(app):
 
     # Energex device
-    # prot_dev = dev.ProtectionDevice(
+    # prot_dev = ProtectionDevice(
     #     app,
     #     row["patternname"],
     #     row["nameenu"],

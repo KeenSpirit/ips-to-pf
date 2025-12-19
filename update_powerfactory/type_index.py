@@ -23,7 +23,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Any, Tuple
 
-from update_powerfactory import get_objects as go
+from utils.pf_utils import all_relevant_objects
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +68,7 @@ class RelayTypeIndex:
         # 1. Get relay types from ErgonLibrary
         global_library = app.GetGlobalLibrary()
         protection_lib = global_library.GetContents("Protection")
-        ergon_types = go.all_relevant_objects(app, protection_lib, "*.TypRelay", None)
+        ergon_types = all_relevant_objects(app, protection_lib, "*.TypRelay", None)
         
         for relay_type in ergon_types or []:
             name = relay_type.loc_name
@@ -83,7 +83,7 @@ class RelayTypeIndex:
             dig_lib = database.GetContents("Lib")[0]
             prot_lib = dig_lib.GetContents("Prot")[0]
             relay_lib = prot_lib.GetContents("ProtRelay")
-            dig_types = go.all_relevant_objects(app, relay_lib, "*.TypRelay", None)
+            dig_types = all_relevant_objects(app, relay_lib, "*.TypRelay", None)
             
             for relay_type in dig_types or []:
                 name = relay_type.loc_name
@@ -98,7 +98,7 @@ class RelayTypeIndex:
         # 3. Get local relay types (these take precedence)
         current_user = app.GetCurrentUser()
         protection_folder = current_user.GetContents("Protection")
-        local_types = go.all_relevant_objects(app, protection_folder, "*.TypRelay", None)
+        local_types = all_relevant_objects(app, protection_folder, "*.TypRelay", None)
         
         if local_types:
             for relay_type in local_types:

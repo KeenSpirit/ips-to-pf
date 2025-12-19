@@ -1,186 +1,294 @@
+"""
+PowerFactory utility functions.
+
+This module provides utility functions for working with PowerFactory
+objects and data structures. These functions are used throughout
+the application for common PowerFactory operations.
+
+Functions:
+    all_relevant_objects: Recursively get objects from folder hierarchy
+    get_all_protection_devices: Get all relays and fuses from network model
+    get_all_switches: Get all switches/CBs from network model
+    get_active_feeders: Get all active feeders from network data
+    determine_region: Determine Energex/Ergon from project structure
+"""
+
 import logging
+from typing import List, Dict, Any, Tuple, Optional
 
-class ProtectionDevice:
-    """Each protection device will have its own object. They will have
-    IPS data attributed to them for use in configuring a device in PF."""
-
-    def __init__(
-        self, app, device, name, setting_id, date, pf_obj, device_id, *args, **kwargs
-    ):
-        self.app = app
-        self.device = device
-        self.device_id = device_id
-        self.name = name
-        self.setting_id = setting_id
-        self.date = date
-        self.pf_obj = pf_obj
-        self.ct_primary = 1
-        self.ct_secondary = 1
-        self.vt_primary = 1
-        self.vt_secondary = 1
-        self.ct_op_id = str()
-        self.vt_op_id = str()
-        self.multiple = False
-        self.fuse_type = None
-        self.fuse_size = None
-
-    # ips_settings = {relaysettingid: [setting, setting, setting...]}
-
-    # [self.setting_id] = [setting, setting, setting...]
-
-    # row = setting
-
-    # setting = {blockpathenu: value, paramnameenu: value, proposedsetting: unitenu}
+logger = logging.getLogger(__name__)
 
 
-    def associated_settings(self, all_settings):
-        """This function will go through the full list of settings and
-        determine all settings associated with that protection device."""
-        self.settings = []
-        if not self.setting_id:
-            return
-        for row in all_settings[self.setting_id]:
-            setting = []
-            setting.append(row["blockpathenu"])
-            setting.append(row["paramnameenu"])
-            setting.append(row["proposedsetting"])
-            setting.append(row["unitenu"])
-            self.settings.append(setting)
-            # based on settings determine CT ratios
-            try:
-                if str(row["paramnameenu"]) in ["0120", "Iprim", "0A07"]:
-                    self.ct_primary = int(float(row["proposedsetting"]))
-                elif str(row["paramnameenu"]) in ["0121", "In", "0A08"]:
-                    self.ct_secondary = int(float(row["proposedsetting"]))
-            except ValueError:
-                pass
+def all_relevant_objects(
+        app: Any,
+        folders: List[Any],
+        type_of_obj: str,
+        objects: Optional[List[Any]] = None
+) -> List[Any]:
+    """
+    Recursively retrieve all objects of a given type from folder hierarchy.
 
-    def seq_instrument_attributes(self, all_settings):
-        """This function will use the setting ID to assocaite a CT or VT to the
-        particular relay"""
-        for row in all_settings:
-            if row.relaysettingid == self.setting_id:
-                self.ct_settingid = row.relaysettingid
-                if not row.actualvalue:
-                    continue
-                if "Iprim" in row.nameenu:
-                    value = int(float(row.actualvalue))
-                    if value > self.ct_primary:
-                        self.ct_primary = value
-                elif "Isec" in row.nameenu:
-                    self.ct_secondary = int(float(row.actualvalue))
-                elif "Vprim" in row.nameenu:
-                    self.vt_primary = int(float(row.actualvalue))
-                elif "Vsec" in row.nameenu:
-                    self.vt_secondary = int(float(row.actualvalue))
+    This function performs a depth-first traversal of the folder structure,
+    collecting all objects matching the specified type. It's faster than
+    using GetContents with recursive=True on folders outside your own user.
 
-    def reg_instrument_attributes(self, all_settings):
-        """This function will use the setting ID to associate a CT or VT to the
-        particular relay"""
-        for row in all_settings:
-            if row.relaysettingid == self.setting_id and row.setting:
-                if not self.ct_op_id and "CT" in row.nameenu:
-                    self.ct_op_id = row.propvalue
-                    self.ct_settingid = row.itsettingid
-                    self.ct_datesetting = row.datesetting
-                if not self.vt_op_id and "VT" in row.nameenu:
-                    self.vt_op_id = row.propvalue
-                    self.vt_settingid = row.itsettingid
-                    self.vt_datesetting = row.datesetting
-                if "CT" in row.nameenu and "Primary" in row.paramnameenu:
-                    self.ct_primary = int(float(row.setting))
-                elif "CT" in row.nameenu and "Secondary" in row.paramnameenu:
-                    self.ct_secondary = int(float(row.setting))
-                elif "VT" in row.nameenu and "Primary" in row.paramnameenu:
-                    self.vt_primary = int(float(row.setting))
-                elif "VT" in row.nameenu and "Secondary" in row.paramnameenu:
-                    self.vt_secondary = int(float(row.setting))
+    Args:
+        app: PowerFactory application object
+        folders: List of folder objects to search
+        type_of_obj: Object type pattern (e.g., "*.ElmRelay", "*.RelFuse")
+        objects: Accumulator for recursive calls (internal use)
 
-def prot_device(app):
-    """Obtain all protection devices that currently existing in PowerFactory. """
-    # Create a list of relays in the model
-    # Relays belong in the network model project folder.
+    Returns:
+        List of all matching PowerFactory objects
+
+    Example:
+        >>> net_mod = app.GetProjectFolder("netmod")
+        >>> relays = all_relevant_objects(app, [net_mod], "*.ElmRelay")
+    """
+    if objects is None:
+        objects = []
+
+    for folder in folders:
+        # Get objects at this level (non-recursive)
+        folder_objects = folder.GetContents(type_of_obj, 0)
+        objects.extend(folder_objects)
+
+        # Get subfolders to recurse into
+        sub_folders = folder.GetContents("*.IntFolder", 0)
+        sub_folders += folder.GetContents("*.IntPrjfolder", 0)
+
+        if sub_folders:
+            all_relevant_objects(app, sub_folders, type_of_obj, objects)
+
+    return objects
+
+
+def get_all_protection_devices(app: Any) -> Tuple[List[Any], Dict[str, List]]:
+    """
+    Get all active protection devices (relays and fuses) from the network model.
+
+    This function retrieves all relays and fuses that are:
+    - Energized (connected terminal is energized)
+    - In service
+    - Calculation relevant
+    - In a valid cubicle (relays) or line position (fuses)
+
+    Args:
+        app: PowerFactory application object
+
+    Returns:
+        Tuple of (devices_list, device_dict) where:
+        - devices_list: List of relay and fuse objects
+        - device_dict: Dictionary mapping device name to [object, class, phases, feeder, grid]
+
+    Example:
+        >>> devices, device_dict = get_all_protection_devices(app)
+        >>> for device in devices:
+        ...     print(device.loc_name)
+    """
     net_mod = app.GetProjectFolder("netmod")
-    # Filter for for relays under network model recursively.
+
+    # Get all relays
     all_relays = net_mod.GetContents("*.ElmRelay", True)
     relays = [
-        relay
-        for relay in all_relays
+        relay for relay in all_relays
         if relay.HasAttribute("e:cpGrid")
         if relay.GetParent().GetClassName() == "StaCubic"
         if relay.fold_id.cterm.IsEnergized()
         if not relay.IsOutOfService()
         if relay.IsCalcRelevant()
     ]
-    # Create a list of active fuses
+
+    # Get all fuses
     all_fuses = net_mod.GetContents("*.RelFuse", True)
     fuses = [
-        fuse
-        for fuse in all_fuses
+        fuse for fuse in all_fuses
         if fuse.fold_id.HasAttribute("cterm")
         if fuse.fold_id.cterm.IsEnergized()
         if not fuse.IsOutOfService()
-        if determine_line_fuse(fuse)
+        if _is_line_fuse(fuse)
     ]
+
     devices = relays + fuses
-    # Create a list of all the feeders
+
+    # Get active feeders for device classification
     net_data = app.GetProjectFolder("netdat")
     active_feeders = [
-        feeder
-        for feeder in net_data.GetContents("*.ElmFeeder", True)
+        feeder for feeder in net_data.GetContents("*.ElmFeeder", True)
         if not feeder.IsOutOfService()
     ]
-    # Construct the dictionary of relays for use in the script
-    device_object_dict = {}
+
+    # Build device dictionary
+    device_dict = {}
     for device in devices:
         term = device.cbranch
+
+        # Find feeder containing this device
         feeder = [
-            feeder.loc_name for feeder in active_feeders if term in feeder.GetAll()
+            feeder.loc_name for feeder in active_feeders
+            if term in feeder.GetAll()
         ]
         if not feeder:
             feeder = ["Not in a Feeder"]
+
+        # Get number of phases
         try:
-            num_of_phases = device.GetAttribute("r:cbranch:r:bus1:e:nphase")
+            num_phases = device.GetAttribute("r:cbranch:r:bus1:e:nphase")
         except AttributeError:
-            num_of_phases = 3
-        device_object_dict[device.loc_name] = [
+            num_phases = 3
+
+        device_dict[device.loc_name] = [
             device,
             device.GetClassName(),
-            num_of_phases,
+            num_phases,
             feeder[0],
             device.cpGrid.loc_name,
         ]
-    return [devices, device_object_dict]
+
+    return devices, device_dict
 
 
-def determine_line_fuse(fuse):
-    """This function will observe the fuse location and determine if it is
-    a Distribution transformer fuse, SWER isolating fuse or a line fuse"""
-    # First check is that if the fuse exists in a terminal that is in the
-    # System Overiew then it will be a line fuse.
+def _is_line_fuse(fuse: Any) -> bool:
+    """
+    Determine if a fuse is a line fuse (not a transformer or SWER isolator fuse).
+
+    Args:
+        fuse: PowerFactory fuse object
+
+    Returns:
+        True if the fuse is a line fuse
+    """
+    # Check if fuse has active location
     fuse_active = fuse.HasAttribute("r:fold_id:r:obj_id:e:loc_name")
     if not fuse_active:
         return True
+
     fuse_grid = fuse.cpGrid
-    if (
-        fuse.GetAttribute("r:fold_id:r:cterm:r:fold_id:e:loc_name")
-        == fuse_grid.loc_name
-    ):  # noqa [E501]
-        # This would indicate it is in a line cubical
-        return True
-    if fuse.loc_name not in fuse.GetAttribute("r:fold_id:r:obj_id:e:loc_name"):
-        # This indicates that the fuse is not in a switch object
-        return True
-    secondary_sub = fuse.fold_id.cterm.fold_id
-    contents = secondary_sub.GetContents()
-    for content in contents:
-        if content.GetClassName() == "ElmTr2":
-            return False
+
+    # Check if in a line cubicle
+    try:
+        term_folder = fuse.GetAttribute("r:fold_id:r:cterm:r:fold_id:e:loc_name")
+        if term_folder == fuse_grid.loc_name:
+            return True
+    except AttributeError:
+        pass
+
+    # Check if fuse is in a switch object
+    try:
+        obj_name = fuse.GetAttribute("r:fold_id:r:obj_id:e:loc_name")
+        if fuse.loc_name not in obj_name:
+            return True
+    except AttributeError:
+        pass
+
+    # Check if connected to a transformer
+    try:
+        secondary_sub = fuse.fold_id.cterm.fold_id
+        contents = secondary_sub.GetContents()
+        for content in contents:
+            if content.GetClassName() == "ElmTr2":
+                return False
+    except AttributeError:
+        pass
+
+    return True
+
+
+def get_all_switches(app: Any) -> List[Any]:
+    """
+    Get all switch/circuit breaker objects from the network model.
+
+    Args:
+        app: PowerFactory application object
+
+    Returns:
+        List of switch objects
+    """
+    net_mod = app.GetProjectFolder("netmod")
+    return net_mod.GetContents("*.ElmCoup", True)
+
+
+def get_active_feeders(app: Any) -> List[Any]:
+    """
+    Get all active (in-service) feeders from the network data.
+
+    Args:
+        app: PowerFactory application object
+
+    Returns:
+        List of active feeder objects
+    """
+    net_data = app.GetProjectFolder("netdat")
+    all_feeders = net_data.GetContents("*.ElmFeeder", True)
+    return [f for f in all_feeders if not f.IsOutOfService()]
+
+
+def determine_region(prjt: Any) -> str:
+    """
+    Determine the region (Energex/Ergon) from project structure.
+
+    The region is determined by examining the base project folder name.
+    SEQ Models folder indicates Energex region.
+
+    Args:
+        prjt: PowerFactory project object
+
+    Returns:
+        "Energex" or "Ergon"
+
+    Example:
+        >>> prjt = app.GetActiveProject()
+        >>> region = determine_region(prjt)
+        >>> print(region)
+        'Energex'
+    """
+    base_prjt = prjt.der_baseproject
+
+    if not base_prjt:
+        base_prjt_fld = prjt.fold_id.loc_name
     else:
-        return True
+        base_prjt_fld = prjt.der_baseproject.fold_id.loc_name
+
+    if base_prjt_fld == "SEQ Models":
+        region = "Energex"
+    else:
+        region = "Ergon"
+
+    logger.info(f"Determined region: {region}")
+    return region
 
 
-def determine_fuse_type(app, fuse):
+def get_relay_types(app: Any) -> List[Any]:
+    """
+    Get all relay types from the equipment type library.
+
+    Args:
+        app: PowerFactory application object
+
+    Returns:
+        List of relay type objects
+    """
+    equip_type_lib = app.GetProjectFolder("equip")
+    folders = [equip_type_lib]
+    return all_relevant_objects(app, folders, "*.TypRelay")
+
+
+def get_fuse_types(app: Any) -> List[Any]:
+    """
+    Get all fuse types from the equipment type library.
+
+    Args:
+        app: PowerFactory application object
+
+    Returns:
+        List of fuse type objects
+    """
+    equip_type_lib = app.GetProjectFolder("equip")
+    folders = [equip_type_lib]
+    return all_relevant_objects(app, folders, "*.TypFuse")
+
+
+def determine_fuse_role(app, fuse):
     """This function will observe the fuse location and determine if it is
     a Distribution transformer fuse, SWER isolating fuse or a line fuse"""
     # Create the fuse dictionary for sizes based on transformer data
@@ -270,7 +378,7 @@ def determine_fuse_type(app, fuse):
 
 def create_fuse_dict():
     """This has been developed based on STNW1001. The key will be
-    transfomer type, Voltage level, rating"""
+    pf attribute for transfomer type, Voltage level, rating"""
     fuse_dict = {
         "21110": "3/10K",
         "21115": "3/10K",
@@ -373,27 +481,3 @@ def create_fuse_dict():
         "119.163": "6/20K",
     }
     return fuse_dict
-
-
-def log_device_atts(prot_dev):
-    """
-    Log the device attributes.
-    Settings attribute is logged as 'yes/no' to keep logged data to manageable levels
-    Args:
-        prot_dev:
-
-    Returns:
-    logged device attributes
-    """
-
-    logging.info(f"Attributes for protection device{prot_dev.device}:")
-    attributes = dir(prot_dev)
-    for attr in attributes:
-        if not attr.startswith('__'):
-            value = getattr(prot_dev, attr)
-            if attr == 'settings':
-                if len(value) > 0:
-                    value = 'settings loaded'
-                else:
-                    value = 'no settings loaded'
-            logging.info(f"{attr}: {value}")
