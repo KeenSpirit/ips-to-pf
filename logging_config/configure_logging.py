@@ -1,4 +1,3 @@
-from update_powerfactory.logging_utils import get_logger
 import logging.config
 import powerfactory as pf  # noqa
 from pathlib import Path

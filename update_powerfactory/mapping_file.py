@@ -6,16 +6,21 @@ are mapped to PowerFactory relay attributes. It provides:
 - Type mapping lookup (IPS pattern -> PF relay type + mapping file)
 - Detailed mapping file parsing
 - Curve mapping for IDMT characteristics
-- CB alternate name mapping
 
 Performance optimizations:
-- All CSV files are cached after first read
-- Type mapping is indexed by relay pattern for O(1) lookup
-- Mapping files are cached by filename
-- Curve mapping is loaded once and reused
+- Type mapping is loaded once and cached
+- Individual mapping files are cached after first read
+- Curve mapping is loaded once and cached
+- Cache can be cleared if files are updated during runtime
+
+Cache Statistics:
+    Call get_cache_stats() to see cache hit/miss statistics for
+    performance monitoring and debugging.
 """
 
 import csv
+import os
+from typing import Dict, List, Optional, Tuple, Any
 
 # Import path from config
 from config.paths import MAPPING_FILES_DIR
@@ -24,104 +29,419 @@ from config.paths import MAPPING_FILES_DIR
 MAP_FILE_LOC = MAPPING_FILES_DIR
 
 
-def get_pf_curve(app, setting_value, element):
-    """Curves are the one setting that requires another PF object to be assigned
-    to the attribute."""
+# =============================================================================
+# Cache Storage
+# =============================================================================
+
+# Type mapping cache: {pattern_name: (mapping_filename, relay_type)}
+_type_mapping_cache: Optional[Dict[str, Tuple[str, str]]] = None
+
+# Individual mapping file cache: {filename: list_of_rows}
+_mapping_file_cache: Dict[str, List[List[str]]] = {}
+
+# Curve mapping cache: list of [ips_name, code, pf_name] rows
+_curve_mapping_cache: Optional[List[List[str]]] = None
+
+# Cache statistics for monitoring
+_cache_stats = {
+    "type_mapping_hits": 0,
+    "type_mapping_misses": 0,
+    "mapping_file_hits": 0,
+    "mapping_file_misses": 0,
+    "curve_mapping_hits": 0,
+    "curve_mapping_misses": 0,
+}
+
+
+# =============================================================================
+# Cache Management
+# =============================================================================
+
+def clear_cache() -> None:
+    """
+    Clear all cached mapping data.
+
+    Call this if mapping files have been updated during runtime
+    and you need to reload them.
+    """
+    global _type_mapping_cache, _mapping_file_cache, _curve_mapping_cache
+    _type_mapping_cache = None
+    _mapping_file_cache.clear()
+    _curve_mapping_cache = None
+
+
+def get_cache_stats() -> Dict[str, Any]:
+    """
+    Get cache statistics for monitoring and debugging.
+
+    Returns:
+        Dictionary with cache hit/miss counts and current cache sizes
+    """
+    return {
+        **_cache_stats,
+        "type_mapping_loaded": _type_mapping_cache is not None,
+        "mapping_files_cached": len(_mapping_file_cache),
+        "curve_mapping_loaded": _curve_mapping_cache is not None,
+    }
+
+
+def preload_cache() -> None:
+    """
+    Preload all caches at startup.
+
+    Call this during initialization to front-load all file I/O
+    rather than incurring it during device processing.
+    """
+    _load_type_mapping()
+    _load_curve_mapping()
+    # Note: Individual mapping files are loaded on-demand since
+    # we may not need all of them for a given run
+
+
+# =============================================================================
+# Type Mapping (pattern -> mapping file + relay type)
+# =============================================================================
+
+def _load_type_mapping() -> Dict[str, Tuple[str, str]]:
+    """
+    Load and cache the type mapping from type_mapping.csv.
+
+    The type mapping file has the format:
+        pattern_name,mapping_filename,relay_type
+
+    Returns:
+        Dictionary mapping pattern names to (mapping_filename, relay_type) tuples
+    """
+    global _type_mapping_cache, _cache_stats
+
+    if _type_mapping_cache is not None:
+        _cache_stats["type_mapping_hits"] += 1
+        return _type_mapping_cache
+
+    _cache_stats["type_mapping_misses"] += 1
+    _type_mapping_cache = {}
+
+    filepath = os.path.join(MAP_FILE_LOC, "type_mapping.csv")
+
+    try:
+        with open(filepath, "r", encoding="utf-8") as f:
+            for row in f.readlines():
+                line = row.strip().split(",")
+                if len(line) >= 3:
+                    pattern_name = line[0]
+                    mapping_filename = line[1]
+                    relay_type = line[2]
+                    _type_mapping_cache[pattern_name] = (mapping_filename, relay_type)
+    except FileNotFoundError:
+        pass  # Return empty cache if file not found
+    except Exception:
+        pass  # Silently handle other errors
+
+    return _type_mapping_cache
+
+
+def get_type_mapping(pattern_name: str) -> Optional[Tuple[str, str]]:
+    """
+    Get the mapping file name and relay type for a pattern.
+
+    Args:
+        pattern_name: The IPS relay pattern name
+
+    Returns:
+        Tuple of (mapping_filename, relay_type) or None if not found
+    """
+    type_mapping = _load_type_mapping()
+    return type_mapping.get(pattern_name)
+
+
+# =============================================================================
+# Individual Mapping Files
+# =============================================================================
+
+def _load_mapping_file(filename: str) -> Optional[List[List[str]]]:
+    """
+    Load and cache an individual mapping file.
+
+    Args:
+        filename: The mapping file name (without .csv extension)
+
+    Returns:
+        List of rows from the mapping file, or None if file not found
+    """
+    global _mapping_file_cache, _cache_stats
+
+    if filename in _mapping_file_cache:
+        _cache_stats["mapping_file_hits"] += 1
+        return _mapping_file_cache[filename]
+
+    _cache_stats["mapping_file_misses"] += 1
+
+    filepath = os.path.join(MAP_FILE_LOC, f"{filename}.csv")
+
+    try:
+        with open(filepath, "r", encoding="utf-8") as f:
+            rows = []
+            reader = csv.reader(f, skipinitialspace=True)
+            for row in reader:
+                # Skip header row
+                if "FOLDER" in row[0] and "ELEMENT" in row[1]:
+                    continue
+                rows.append(row)
+
+            _mapping_file_cache[filename] = rows
+            return rows
+
+    except FileNotFoundError:
+        return None
+    except Exception:
+        return None
+
+
+# =============================================================================
+# Curve Mapping
+# =============================================================================
+
+def _load_curve_mapping() -> List[List[str]]:
+    """
+    Load and cache the curve mapping from curve_mapping.csv.
+
+    Returns:
+        List of [ips_curve_name, code, pf_curve_name] rows
+    """
+    global _curve_mapping_cache, _cache_stats
+
+    if _curve_mapping_cache is not None:
+        _cache_stats["curve_mapping_hits"] += 1
+        return _curve_mapping_cache
+
+    _cache_stats["curve_mapping_misses"] += 1
+    _curve_mapping_cache = []
+
+    filepath = os.path.join(MAP_FILE_LOC, "curve_mapping.csv")
+
+    try:
+        with open(filepath, "r", encoding="utf-8") as f:
+            for row in f.readlines():
+                line = row.strip().split(",")
+                if len(line) >= 3:
+                    _curve_mapping_cache.append(line)
+    except FileNotFoundError:
+        pass
+    except Exception:
+        pass
+
+    return _curve_mapping_cache
+
+
+def _find_curve_in_mapping(setting_value: str) -> Optional[str]:
+    """
+    Look up a curve name in the curve mapping.
+
+    Args:
+        setting_value: The IPS curve setting value
+
+    Returns:
+        The PowerFactory curve name, or None if not found
+    """
+    curve_mapping = _load_curve_mapping()
+
+    for line in curve_mapping:
+        mapping_value = line[1]
+
+        # Handle binary curve codes - pad with leading zeros
+        try:
+            int(mapping_value)
+            while len(mapping_value) < len(setting_value):
+                mapping_value = "0" + mapping_value
+        except ValueError:
+            pass
+
+        if setting_value == mapping_value:
+            return line[2]  # Return PF curve name
+
+    return None
+
+
+# =============================================================================
+# Public API - Main Functions
+# =============================================================================
+
+def get_pf_curve(app, setting_value: str, element) -> Any:
+    """
+    Get the PowerFactory curve object for an IPS curve setting.
+
+    Curves require a PowerFactory object to be assigned to the attribute.
+    This function finds the matching curve from the relay type's available
+    curves.
+
+    Args:
+        app: PowerFactory application object
+        setting_value: The curve name/code from IPS
+        element: The PowerFactory element (must have typ_id with pcharac)
+
+    Returns:
+        The PowerFactory curve object
+    """
     idmt_type = element.typ_id
     curves = idmt_type.GetAttribute("e:pcharac")
-    reduced_curves = []
+
+    # Try exact match first
     for curve in curves:
         if curve.loc_name == setting_value:
             return curve
+
+    # Try partial matches
+    reduced_curves = []
+    for curve in curves:
         if setting_value in curve.loc_name or curve.loc_name in setting_value:
             reduced_curves.append(curve)
+
     for curve in reduced_curves:
         if setting_value in curve.loc_name:
             return curve
+
     for curve in reduced_curves:
         if curve.loc_name in setting_value:
             return curve
-    # Import the mapping file for curves
-    csv_open = open("{}\\{}.csv".format(MAP_FILE_LOC, "curve_mapping"), "r")
-    for row in csv_open.readlines():
-        element_line = row.split(",")
-        element_line[-1] = element_line[-1].replace("\n", "")
-        try:
-            # If the setting is binary add zeros to the front to match the length
-            int(element_line[1])
-            while len(element_line[1]) < len(setting_value):
-                element_line[1] = "0" + element_line[1]
-        except ValueError:
-            pass  # noqa [E117]
-        if setting_value == element_line[1]:
-            csv_open.close()
-            for curve in curves:
-                if curve.loc_name == element_line[2]:
-                    return curve
-    csv_open.close()
-    for curve in curves:
-        if "Extreme" in curve.loc_name and "Extreme" in setting_value:
-            return curve
-        elif "Standard" in curve.loc_name and "Standard" in setting_value:
-            return curve
-        elif "Very" in curve.loc_name and "Very" in setting_value:
-            return curve
-        elif "Definite" in curve.loc_name and "DT" in setting_value:
-            return curve
-        elif "Curve A" in curve.loc_name and "Curve A" in setting_value:
-            return curve
-        elif "Curve B" in curve.loc_name and "Curve B" in setting_value:
-            return curve
-        elif "Curve C" in curve.loc_name and "Curve C" in setting_value:
-            return curve
-        elif "Curve D" in curve.loc_name and "Curve D" in setting_value:
-            return curve
-    else:
-        # By default if the curve can not be determined then set the curve to
-        # Standard Inverse.
+
+    # Try curve mapping lookup (cached)
+    mapped_curve_name = _find_curve_in_mapping(setting_value)
+    if mapped_curve_name:
         for curve in curves:
-            if "Standard" in curve.loc_name:
+            if curve.loc_name == mapped_curve_name:
                 return curve
 
+    # Try keyword-based matching as fallback
+    keyword_matches = [
+        ("Extreme", "Extreme"),
+        ("Standard", "Standard"),
+        ("Very", "Very"),
+        ("Definite", "DT"),
+        ("Curve A", "Curve A"),
+        ("Curve B", "Curve B"),
+        ("Curve C", "Curve C"),
+        ("Curve D", "Curve D"),
+    ]
 
-def read_mapping_file(app, rel_pattern, pf_device):
-    """Each line of the mapping csv will be bought in as a list."""
+    for curve in curves:
+        for curve_keyword, setting_keyword in keyword_matches:
+            if curve_keyword in curve.loc_name and setting_keyword in setting_value:
+                return curve
 
-    csv_open = open(f"{MAP_FILE_LOC}\\type_mapping.csv", "r")
-    # Determine the line that has the associated mapping details for the
-    # Relay pattern from IPS
-    for row in csv_open.readlines():
-        line = row.split(",")
-        line[-1] = line[-1].replace("\n", "")
-        if line[0] == rel_pattern:
-            csv_open.close()
-            break
-    else:
-        # The script is unable to match the Relay pattern to a mapping file
-        csv_open.close()
-        return [None, None]
-    try:
-        mapping_csv_open = open(f"{MAP_FILE_LOC}\\{line[1]}.csv", "r")
-    except FileNotFoundError:
-        # This relay pattern is mapped to a file that does not exist
-        return [None, None]
+    # Default to Standard Inverse if no match found
+    for curve in curves:
+        if "Standard" in curve.loc_name:
+            return curve
 
+    # Return first available curve as last resort
+    return curves[0] if curves else None
+
+
+def read_mapping_file(
+    app,
+    rel_pattern: str,
+    pf_device
+) -> Tuple[Optional[List[List[str]]], Optional[str]]:
+    """
+    Read the mapping file for a relay pattern.
+
+    Looks up the relay pattern in the type mapping, then loads and
+    processes the corresponding mapping file.
+
+    Args:
+        app: PowerFactory application object
+        rel_pattern: The IPS relay pattern name
+        pf_device: The PowerFactory device object (for name substitution)
+
+    Returns:
+        Tuple of (mapping_file_rows, relay_type) or (None, None) if not found
+    """
+    # Look up pattern in type mapping (cached)
+    type_info = get_type_mapping(rel_pattern)
+
+    if not type_info:
+        return None, None
+
+    mapping_filename, relay_type = type_info
+
+    # Load the mapping file (cached)
+    raw_rows = _load_mapping_file(mapping_filename)
+
+    if raw_rows is None:
+        return None, None
+
+    # Process the rows for this device
+    # Note: We create a new list here because we modify rows based on pf_device
     mapping_file = []
-    for row in list(csv.reader(mapping_csv_open, skipinitialspace=True)):
-        if "FOLDER" in row[0] and "ELEMENT" in row[1]:
+    device_name = pf_device.loc_name
+
+    for row in raw_rows:
+        # Skip rows without meaningful data
+        if len(row) < 4:
             continue
+
         if row[3] == "None" and "_dip" not in row[1]:
             if len(row) > 4:
                 if not row[4]:
                     continue
             else:
                 continue
-        if row[0] in ["Relay Model", "Default", "default"]:
-            row[0] = pf_device.loc_name
-        # Remove elements from the line that are empty. This deals with rows with
-        # less columns of information.
-        element_line = [element for element in row if element]
-        mapping_file.append(element_line)
-    mapping_csv_open.close()
-    # Return the mapping file and the relay type
-    return mapping_file, line[2]
+
+        # Create a copy of the row to avoid modifying the cache
+        processed_row = list(row)
+
+        # Replace placeholder folder names with device name
+        if processed_row[0] in ["Relay Model", "Default", "default"]:
+            processed_row[0] = device_name
+
+        # Remove trailing empty elements
+        while processed_row and processed_row[-1] == "":
+            processed_row.pop()
+
+        mapping_file.append(processed_row)
+
+    return mapping_file, relay_type
+
+
+# =============================================================================
+# Utility Functions
+# =============================================================================
+
+def get_available_patterns() -> List[str]:
+    """
+    Get all available relay patterns from the type mapping.
+
+    Returns:
+        List of pattern names that have mapping files configured
+    """
+    type_mapping = _load_type_mapping()
+    return list(type_mapping.keys())
+
+
+def is_pattern_mapped(pattern_name: str) -> bool:
+    """
+    Check if a relay pattern has a mapping file configured.
+
+    Args:
+        pattern_name: The IPS relay pattern name
+
+    Returns:
+        True if the pattern has a mapping configuration
+    """
+    return get_type_mapping(pattern_name) is not None
+
+
+def get_relay_type_for_pattern(pattern_name: str) -> Optional[str]:
+    """
+    Get the PowerFactory relay type name for a pattern.
+
+    Args:
+        pattern_name: The IPS relay pattern name
+
+    Returns:
+        The relay type name, or None if pattern not mapped
+    """
+    type_info = get_type_mapping(pattern_name)
+    if type_info:
+        return type_info[1]  # relay_type is second element
+    return None

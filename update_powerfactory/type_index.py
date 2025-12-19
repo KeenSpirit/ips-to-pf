@@ -18,7 +18,7 @@ Usage:
     fuse_type = fuse_index.get_by_curve_and_rating("K", "100A")
 """
 
-from update_powerfactory.logging_utils import get_logger
+from logging_config.logging_utils import get_logger
 import re
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Any, Tuple

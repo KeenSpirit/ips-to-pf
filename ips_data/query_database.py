@@ -13,8 +13,8 @@ setting data instead of linear scans through lists.
 
 import sys
 import time
-from update_powerfactory.logging_utils import get_logger
-from typing import Dict, List, Optional, Tuple, Any
+from logging_config.logging_utils import get_logger
+from typing import Dict, List, Tuple
 
 # Import paths from config and add to sys.path
 from config.paths import NETDASH_READER_PATH, ASSET_CLASSES_PATH

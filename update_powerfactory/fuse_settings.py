@@ -11,7 +11,7 @@ Performance optimizations:
 - Uses FuseTypeIndex for O(1) fuse type lookups
 """
 
-from update_powerfactory.logging_utils import get_logger
+from logging_config.logging_utils import get_logger
 from typing import Dict, List, Optional, Any, Union, Tuple
 
 from update_powerfactory.type_index import FuseTypeIndex

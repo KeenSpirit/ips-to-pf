@@ -18,9 +18,9 @@ Usage:
     data_capture_list.append(result.to_dict())
 """
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass
 from typing import Optional, Dict, Any
-from update_powerfactory.logging_utils import get_logger
+from logging_config.logging_utils import get_logger
 
 logger = get_logger(__name__)
 

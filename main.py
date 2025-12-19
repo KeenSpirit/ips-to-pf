@@ -18,6 +18,7 @@ from utils.file_utils import (
     safe_file_remove,
 )
 from utils.pf_utils import determine_region, get_all_protection_devices
+from update_powerfactory import mapping_file as mf
 
 
 reload(user_inputs)
@@ -38,6 +39,9 @@ def main(app=None, batch=False):
         # If another script is executing this script, it will pass the app argument to it
         called_function = True
     app.ClearOutputWindow()
+
+    # Preload mapping caches (slight performance improvement - optional)
+    mf.preload_cache()
 
     # Determine which IPS database is to be queried
     prjt = app.GetActiveProject()

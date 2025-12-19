@@ -5,9 +5,7 @@ sys.path.append(r"\\Ecasd01\WksMgmt\PowerFactory\Scripts\AssetClasses")
 import assetclasses
 from assetclasses.corporate_data import get_cached_data
 
-from update_powerfactory.logging_utils import get_logger  # noqa
-
-from ips_data import query_database as qd
+from logging_config.logging_utils import get_logger  # noqa
 
 logger = get_logger(__name__)
 DATA_SOURCE_STRING = "PRS"
