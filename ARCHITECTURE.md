@@ -24,14 +24,14 @@ The system transfers protection device settings from the IPS (Intelligent Protec
         │                    │                      │
         └────────────────────┼──────────────────────┘
                              │
-              ┌──────────────┼──────────────┐
-              │              │              │
-              ▼              ▼              ▼
-        ┌─────────┐    ┌──────────┐   ┌─────────┐
-        │  core/  │    │  config/ │   │  utils/ │
-        │ Shared  │    │  Config  │   │ Utility │
-        │ Objects │    │ Settings │   │Functions│
-        └─────────┘    └──────────┘   └─────────┘
+              ┌──────────────┼──────────────┬───────────────┐
+              │              │              │               │
+              ▼              ▼              ▼               ▼
+        ┌─────────┐    ┌──────────┐   ┌─────────┐   ┌──────────────┐
+        │  core/  │    │  config/ │   │  utils/ │   │logging_config/│
+        │ Shared  │    │  Config  │   │ Utility │   │   Logging    │
+        │ Objects │    │ Settings │   │Functions│   │   System     │
+        └─────────┘    └──────────┘   └─────────┘   └──────────────┘
 ```
 
 ## Package Descriptions
@@ -43,6 +43,8 @@ Contains domain objects shared between the data retrieval and application layers
 | Module | Purpose |
 |--------|---------|
 | `update_result.py` | `UpdateResult` dataclass for tracking device update status |
+| `protection_device.py` | `ProtectionDevice` class for device data |
+| `setting_record.py` | `SettingRecord` dataclass for IPS settings |
 
 **Why it exists**: Prevents circular dependencies between `ips_data/` and `update_powerfactory/`.
 
@@ -55,6 +57,7 @@ Centralizes all configuration, constants, and paths.
 | `paths.py` | Network paths, file locations, output directories |
 | `relay_patterns.py` | Relay classification (single-phase, multi-phase, OOS) |
 | `region_config.py` | Region-specific settings (substation mappings, suffix expansions) |
+| `validation.py` | Configuration validation at startup |
 
 **Why it exists**: Single source of truth for configuration. Easy to update paths when infrastructure changes.
 
@@ -69,6 +72,25 @@ General-purpose utility functions used throughout the application.
 | `time_utils.py` | Time formatting and performance measurement |
 
 **Why it exists**: Avoids code duplication and provides consistent interfaces.
+
+### logging_config/ - Logging System
+
+Centralized, queue-based logging for thread-safe concurrent writes.
+
+| Module | Purpose |
+|--------|---------|
+| `logging_utils.py` | Core logging setup with queue-based handler |
+| `configure_logging.py` | Device attribute logging helper |
+
+**Key Features**:
+- Queue-based logging for thread-safe concurrent writes
+- Rotating file handler (10MB max, 5 backups)
+- Automatic Citrix path handling
+- Username injection into log records
+
+**Why it exists**: Handles concurrent file writes from multiple processes safely.
+
+**Usage restricted to**: `ips_to_pf.py`, `orchestrator.py`, `query_database.py`
 
 ### ips_data/ - Data Retrieval Layer
 
@@ -91,7 +113,7 @@ Applies retrieved settings to PowerFactory models.
 
 | Module | Purpose |
 |--------|---------|
-| `update_powerfactory.py` | Main update orchestration |
+| `orchestrator.py` | Main update orchestration |
 | `relay_settings.py` | Relay device configuration |
 | `fuse_settings.py` | Fuse device configuration |
 | `ct_settings.py` | Current transformer configuration |
@@ -103,6 +125,7 @@ Applies retrieved settings to PowerFactory models.
 
 ```
 1. User starts script (ips_to_pf.py)
+   └── setup_logging() initializes logging system
         │
         ▼
 2. Determine region from project structure
@@ -110,6 +133,7 @@ Applies retrieved settings to PowerFactory models.
         ▼
 3. Query IPS database for setting IDs
    (ips_data/query_database.py)
+   └── Logs: index creation, retry attempts
         │
         ▼
 4. Build indexed lookups
@@ -125,11 +149,13 @@ Applies retrieved settings to PowerFactory models.
         │
         ▼
 7. Update PowerFactory models
-   (update_powerfactory/update_powerfactory.py)
+   (update_powerfactory/orchestrator.py)
+   └── Logs: type index build, errors, completion
         │
         ▼
 8. Generate results CSV
    (ips_to_pf.py)
+   └── Logs: script completion
 ```
 
 ## Key Design Patterns
@@ -177,6 +203,19 @@ from core.update_result import UpdateResult  # Re-export
 warnings.warn("Import from core instead", DeprecationWarning)
 ```
 
+### 5. Queue-Based Logging
+
+The logging system uses Python's `QueueHandler` and `QueueListener` for thread-safe writes:
+
+```python
+from logging_config import setup_logging, get_logger
+
+setup_logging()  # Initialize once at startup
+logger = get_logger(__name__)
+
+logger.info("Message")  # Thread-safe, non-blocking
+```
+
 ## Region-Specific Processing
 
 ### Energex (SEQ)
@@ -196,7 +235,7 @@ warnings.warn("Import from core instead", DeprecationWarning)
 - All update operations return `UpdateResult` objects
 - Errors are captured but don't stop batch processing
 - Results are written to CSV for review
-- Logging throughout for debugging
+- Logging in `orchestrator.py` captures exceptions with full device attributes
 
 ## Performance Considerations
 
@@ -204,6 +243,37 @@ warnings.warn("Import from core instead", DeprecationWarning)
 2. **Progress Reporting**: Every 10 devices to avoid UI freeze
 3. **Lazy Loading**: Mapping files loaded only when needed
 4. **Index Pre-computation**: Indexes built once, used for all lookups
+5. **Queue-Based Logging**: Non-blocking log writes for better performance
+
+## Logging Architecture
+
+### Log File Location
+
+```
+{user_home}/IPStoPFlog/ips_to_pf.log
+```
+
+For Citrix environments: `//client/c$/Users/{user}/IPStoPFlog/ips_to_pf.log`
+
+### Log Format
+
+```
+2024-01-15 10:30:45 - module_name - INFO - username - Message text
+```
+
+### What Gets Logged
+
+| Location | What is Logged |
+|----------|----------------|
+| `ips_to_pf.py` | Script start/end, overall timing |
+| `query_database.py` | Index creation, retry attempts, batch progress |
+| `orchestrator.py` | Type index build, device errors, completion summary |
+
+### Rotation Policy
+
+- Maximum file size: 10MB
+- Backup count: 5 files
+- Oldest logs automatically deleted
 
 ## Future Enhancements
 

@@ -88,9 +88,9 @@ def get_cb_alt_name_list(app=None) -> List[Dict[str, str]]:
                 cb_alt_name_list.append(line_dict)
 
     except FileNotFoundError:
-        logger.warning(f"CB alternate name file not found: {filepath}")
-    except Exception as e:
-        logger.error(f"Error reading CB alternate name file: {e}")
+        pass
+    except Exception:
+        pass
 
     _cb_alt_name_cache = cb_alt_name_list
     return cb_alt_name_list

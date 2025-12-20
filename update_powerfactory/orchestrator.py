@@ -17,17 +17,16 @@ Usage:
     results, has_updates = up.update_pf(app, device_list, data_capture_list)
 """
 
-import logging
-from typing import List, Dict, Tuple, Any, Optional, Union
+from typing import List, Dict, Tuple, Any, Union
 
 from update_powerfactory import relay_settings as rs
 from update_powerfactory import fuse_settings as fs
 from update_powerfactory.type_index import RelayTypeIndex, FuseTypeIndex
 from core import UpdateResult
 from config.relay_patterns import RELAYS_OOS
-from logging_config.configure_logging import log_device_atts
+from logging_config import get_logger, log_device_atts
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 def update_pf(

@@ -11,6 +11,7 @@ project/
 ├── core/              # Shared domain objects (NO external deps)
 ├── config/            # Configuration (NO external deps)
 ├── utils/             # Utilities (depends on: config)
+├── logging_config/    # Logging system (NO external deps)
 ├── ips_data/          # Data retrieval (depends on: core, config, utils)
 ├── update_powerfactory/  # Data application (depends on: core, config, utils)
 └── ips_to_pf.py       # Entry point (depends on: all packages)
@@ -19,10 +20,11 @@ project/
 ### Dependency Rules
 
 1. **core/** and **config/** must not depend on any other packages
-2. **utils/** may depend on **config/** only
-3. **ips_data/** may depend on **core/**, **config/**, **utils/** only
-4. **update_powerfactory/** may depend on **core/**, **config/**, **utils/** only
-5. **ips_data/** must NOT depend on **update_powerfactory/** (and vice versa)
+2. **logging_config/** must not depend on any other packages
+3. **utils/** may depend on **config/** only
+4. **ips_data/** may depend on **core/**, **config/**, **utils/** only
+5. **update_powerfactory/** may depend on **core/**, **config/**, **utils/** only
+6. **ips_data/** must NOT depend on **update_powerfactory/** (and vice versa)
 
 ## Coding Standards
 
@@ -79,6 +81,7 @@ from tenacity import retry
 from core import UpdateResult
 from config.paths import MAPPING_FILES_DIR
 from utils.pf_utils import all_relevant_objects
+from logging_config import get_logger
 
 # 4. Relative imports (within same package)
 from .setting_index import SettingIndex
@@ -86,19 +89,58 @@ from .setting_index import SettingIndex
 
 ### Logging
 
-Use module-level logger:
+The project uses a centralized, queue-based logging system for thread-safe concurrent writes.
+
+**Important**: Logging should only be used in these files:
+- `ips_to_pf.py` (main script)
+- `update_powerfactory/orchestrator.py`
+- `ips_data/query_database.py`
+
+**Do NOT add logging to other modules** - this keeps the codebase clean and logging focused on key operations.
+
+#### Setting Up Logging (main script only)
 
 ```python
-import logging
+from logging_config import setup_logging, get_logger
 
-logger = logging.getLogger(__name__)
+# Initialize at script startup
+setup_logging()
+
+# Get logger for this module
+logger = get_logger(__name__)
+
+def main():
+    logger.info("Script started")
+    # ... script logic ...
+    logger.info("Script completed")
+```
+
+#### Using Logging (in permitted modules)
+
+```python
+from logging_config import get_logger
+
+logger = get_logger(__name__)
 
 def some_function():
     logger.info("Processing started")
     logger.debug("Detailed debug info")
     logger.warning("Something unexpected")
     logger.error("Something failed")
+    logger.exception("Error with traceback")  # Use in except blocks
 ```
+
+#### What to Log
+
+- Script start/completion
+- Device processing errors (with full exception details)
+- Setting index creation
+- Retry attempts for database access
+- Update completion summaries
+
+#### Log File Location
+
+Logs are written to `{user_home}/IPStoPFlog/ips_to_pf.log` (handles Citrix environments automatically).
 
 ## Adding New Features
 
@@ -145,13 +187,15 @@ def get_substation_mapping():
 
 1. Test in interactive mode first:
    ```python
-   import main
+   import ips_to_pf
    ips_to_pf.main()
    ```
 
 2. Verify results CSV is generated correctly
 
 3. Check PowerFactory output window for errors
+
+4. Check log file at `{user_home}/IPStoPFlog/ips_to_pf.log`
 
 ### Test Cases to Cover
 
@@ -194,6 +238,13 @@ If relay/fuse types aren't found:
 - Check mapping CSV exists
 - Verify `type_mapping.csv` has correct entry
 - Check for typos in pattern name
+
+### Logging Issues
+
+If logs aren't appearing:
+- Ensure `setup_logging()` is called in main script
+- Check log file location: `{user_home}/IPStoPFlog/`
+- Verify write permissions to log directory
 
 ## Contact
 

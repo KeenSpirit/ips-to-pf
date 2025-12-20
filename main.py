@@ -1,8 +1,6 @@
 import powerfactory as pf
 import os
 from tkinter import *  # noqa [F403]
-import logging.config
-from logging_config import configure_logging as cl
 from importlib import reload
 
 from ips_data import ips_settings as ips
@@ -12,7 +10,6 @@ from config.paths import OUTPUT_BATCH_DIR, OUTPUT_LOCAL_DIR
 from config.validation import (
     require_valid_config,
     validate_for_batch_mode,
-    validate_for_interactive_mode,
     ValidationConfig,
     ValidationLevel,
 )
@@ -25,9 +22,14 @@ from utils.file_utils import (
     safe_file_remove,
 )
 from utils.pf_utils import determine_region, get_all_protection_devices
+from logging_config import setup_logging, get_logger
 
 reload(ips)
 reload(up)
+
+# Initialize logging at module level after imports
+setup_logging()
+logger = get_logger(__name__)
 
 
 def main(app=None, batch=False):
@@ -35,6 +37,8 @@ def main(app=None, batch=False):
     timer = Timer(name="IPS to PF Transfer", auto_log=True)
     timer.start()
     start_time = get_current_timestamp()
+
+    logger.info("IPS to PF Transfer script started")
 
     if not app:
         # Change called_function to True if you want to mimic a batch update
@@ -59,6 +63,7 @@ def main(app=None, batch=False):
             app.PrintError("Configuration validation failed for batch mode")
             for error in result.errors:
                 app.PrintError(f"  {error}")
+            logger.error(f"Configuration validation failed: {result.errors}")
             return None
         # Print warnings but continue
         for warning in result.warnings:
@@ -76,19 +81,23 @@ def main(app=None, batch=False):
     prjt = app.GetActiveProject()
     if prjt is None:
         app.PrintError("No active project selected. Activate a project to use this script")
-        logging.error(f"Script terminated because no active project was selected")
+        logger.error("Script terminated because no active project was selected")
         exit()
     region = determine_region(prjt)
+    logger.info(f"Processing region: {region}")
 
     # Query the IPS data
     dev_list, data_capture_list = ips.get_ips_settings(app, region, batch, called_function)
 
-    logging.info(f"lst_of_devs: {dev_list}")
+    logger.info(f"Devices found in IPS: {len(dev_list)}")
+    logger.debug(f"Device list: {dev_list}")
 
     # Update PowerFactory
     data_capture_list, updates = up.update_pf(app, dev_list, data_capture_list)
-    logging.info(f"data_capture_list: {data_capture_list}")
-    logging.info(f"updates: {updates}")
+
+    logger.info(f"Data capture list entries: {len(data_capture_list)}")
+    logger.debug(f"Data capture list: {data_capture_list}")
+    logger.info(f"Updates applied: {updates}")
 
     # Create file to save script information
     save_file = create_save_file(app, prjt, called_function)
@@ -105,10 +114,13 @@ def main(app=None, batch=False):
     )
     if updates:
         app.PrintInfo("Of the devices selected there were updated settings")
+        logger.info("Script completed with updated settings")
     else:
         app.PrintInfo("Of the devices selected there were no updated settings")
+        logger.info("Script completed with no updated settings")
 
     app.PrintPlain(f"Query Script run time: {timer.formatted}")
+    logger.info(f"Script run time: {timer.formatted}")
 
     return updates
 
@@ -191,11 +203,5 @@ def print_results(app, data_capture_list):
 
 
 if __name__ == "__main__":
-    # Configure logging
-    logging.basicConfig(
-        filename=cl.getpath() / 'ips_to_pf_log.txt',
-        level=logging.WARNING,
-        format='%(asctime)s - %(levelname)s - %(message)s',
-    )
-
+    # Logging is already configured via setup_logging() at module level
     updates = main()
