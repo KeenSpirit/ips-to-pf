@@ -10,13 +10,10 @@ The mapping data is loaded from CB_ALT_NAME.csv in the mapping directory.
 """
 
 import os
-import logging
 from typing import List, Dict, Optional
 
 # Import path from config
 from config.paths import MAPPING_FILES_DIR
-
-logger = logging.getLogger(__name__)
 
 # Cache for CB alternate names
 _cb_alt_name_cache: Optional[List[Dict[str, str]]] = None

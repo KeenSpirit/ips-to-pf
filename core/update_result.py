@@ -20,9 +20,6 @@ Usage:
 
 from dataclasses import dataclass
 from typing import Optional, Dict, Any
-from logging_config.logging_utils import get_logger
-
-logger = get_logger(__name__)
 
 
 @dataclass

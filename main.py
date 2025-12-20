@@ -2,6 +2,7 @@ import powerfactory as pf
 import os
 from tkinter import *  # noqa [F403]
 import logging.config
+from logging_config import configure_logging as cl
 from importlib import reload
 
 from ips_data import ips_settings as ips
@@ -191,10 +192,10 @@ def print_results(app, data_capture_list):
 
 if __name__ == "__main__":
     # Configure logging
-    # logging.basicConfig(
-    #     filename=cl.getpath() / 'ips_to_pf_log.txt',
-    #     level=logging.WARNING,
-    #     format='%(asctime)s - %(levelname)s - %(message)s',
-    # )
+    logging.basicConfig(
+        filename=cl.getpath() / 'ips_to_pf_log.txt',
+        level=logging.WARNING,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+    )
 
     updates = main()

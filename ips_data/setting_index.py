@@ -14,13 +14,10 @@ O(n*m) to O(n+m).
 from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Any
-import logging
 
 from core import SettingRecord
 from config.relay_patterns import EXCLUDED_PATTERNS
 from config.region_config import get_substation_mapping, SUFFIX_EXPANSIONS
-
-logger = logging.getLogger(__name__)
 
 class SettingIndex:
     """

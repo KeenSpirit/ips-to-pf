@@ -2,6 +2,13 @@ import logging.config
 import powerfactory as pf  # noqa
 from pathlib import Path
 
+import logging
+import logging.handlers
+import os
+import sys
+import threading
+import queue
+import atexit
 
 """
 logging aims:
@@ -39,15 +46,6 @@ def log_arguments(func):
         logging.info(f"Function {func.__name__} called with arguments: {arg_str}")
         return func(*args, **kwargs)
     return wrapper
-
-
-import logging
-import logging.handlers
-import os
-import sys
-import threading
-import queue
-import atexit
 
 
 class QueueLogger:

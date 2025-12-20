@@ -10,7 +10,6 @@ The module uses SettingIndex for efficient O(1) lookups instead of
 linear scans through the settings list.
 """
 
-import logging
 from typing import Dict, List, Optional, Tuple, Set, Any
 
 from core import ProtectionDevice, SettingRecord
@@ -18,8 +17,6 @@ from ips_data import query_database as qd
 from ips_data.cb_mapping import get_cb_alt_name_list
 from ips_data.setting_index import SettingIndex
 
-
-logger = logging.getLogger(__name__)
 
 def ex_device_list(
     app,
@@ -140,8 +137,7 @@ def _filter_to_selections(
         elif name_v2 and name_v2 in selections:
             device.pf_obj = device_dict[name_v2][0]
             filtered.append(device)
-    
-    logger.info(f"Filtered to {len(filtered)} devices from {len(list_of_devices)} found")
+
     return filtered
 
 

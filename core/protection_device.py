@@ -8,10 +8,7 @@ The ProtectionDevice class is the primary data transfer object between
 the IPS data retrieval layer and the PowerFactory update layer.
 """
 
-import logging
 from typing import Any, Dict, List, Optional
-
-logger = logging.getLogger(__name__)
 
 
 class ProtectionDevice:

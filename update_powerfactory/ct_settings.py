@@ -10,13 +10,10 @@ It includes:
 - Measurement element configuration
 """
 
-import logging
 from typing import Any, Optional
 
 from utils.pf_utils import all_relevant_objects
 from core import UpdateResult
-
-logger = logging.getLogger(__name__)
 
 
 def update_ct(

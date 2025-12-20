@@ -10,15 +10,12 @@ The module uses SettingIndex for efficient O(1) lookups instead of
 linear scans through the settings list.
 """
 
-import logging
 from typing import Dict, List, Optional, Tuple, Any, Union
 
 from core import ProtectionDevice, SettingRecord, UpdateResult
 from utils.pf_utils import determine_fuse_role
 from ips_data import query_database as qd
 from ips_data.setting_index import SettingIndex
-
-logger = logging.getLogger(__name__)
 
 
 def ee_device_list(
