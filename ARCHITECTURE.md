@@ -87,6 +87,7 @@ Centralized, queue-based logging for thread-safe concurrent writes.
 - Rotating file handler (10MB max, 5 backups)
 - Automatic Citrix path handling
 - Username injection into log records
+- External library log suppression (netdash, assetclasses, etc.)
 
 **Why it exists**: Handles concurrent file writes from multiple processes safely.
 

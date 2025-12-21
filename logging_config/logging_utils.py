@@ -5,6 +5,7 @@ This module provides a simple logging setup that:
 - Stores log files on a network drive
 - Handles multiple simultaneous file writes via queue-based logging
 - Logs script execution, device processing, and errors
+- Suppresses logs from external libraries
 
 Usage:
     from logging_config import setup_logging, get_logger
@@ -29,6 +30,26 @@ from typing import Optional
 _logging_initialized = False
 _log_queue: Optional[queue.Queue] = None
 _queue_listener: Optional[logging.handlers.QueueListener] = None
+
+# Application logger prefixes - only these will log at INFO level
+# All other loggers (external libraries) will be set to WARNING
+_APP_LOGGER_PREFIXES = (
+    "__main__",
+    "ips_data",
+    "update_powerfactory",
+    "logging_config",
+    "config",
+    "core",
+    "utils",
+)
+
+# External libraries to explicitly suppress (set to WARNING)
+_SUPPRESSED_LOGGERS = [
+    "netdash",
+    "netdash.query",
+    "netdash.getdata",
+    "assetclasses",
+]
 
 
 def get_log_path(subdir: str = "IPStoPFlog") -> Path:
@@ -61,10 +82,13 @@ def setup_logging(log_level: int = logging.INFO) -> None:
     Sets up a queue-based logging system that safely handles
     concurrent writes from multiple threads/processes.
 
+    External library logs are suppressed (set to WARNING level).
+    Only application loggers will log at INFO level.
+
     Call this once at the start of your script.
 
     Args:
-        log_level: Logging level (default: logging.INFO)
+        log_level: Logging level for application loggers (default: logging.INFO)
     """
     global _logging_initialized, _log_queue, _queue_listener
 
@@ -95,10 +119,14 @@ def setup_logging(log_level: int = logging.INFO) -> None:
     _log_queue = queue.Queue(-1)
     queue_handler = logging.handlers.QueueHandler(_log_queue)
 
-    # Configure root logger
+    # Configure root logger to WARNING to suppress external libraries by default
     root_logger = logging.getLogger()
-    root_logger.setLevel(log_level)
+    root_logger.setLevel(logging.WARNING)
     root_logger.addHandler(queue_handler)
+
+    # Explicitly suppress known external library loggers
+    for lib_name in _SUPPRESSED_LOGGERS:
+        logging.getLogger(lib_name).setLevel(logging.WARNING)
 
     # Start queue listener (processes log records in background thread)
     _queue_listener = logging.handlers.QueueListener(
@@ -136,6 +164,8 @@ def get_logger(name: str) -> logging.Logger:
     Get a logger instance.
 
     Automatically initializes logging if not already done.
+    Application loggers are set to INFO level, while external
+    library loggers remain at WARNING level.
 
     Args:
         name: Logger name (typically __name__)
@@ -146,4 +176,10 @@ def get_logger(name: str) -> logging.Logger:
     if not _logging_initialized:
         setup_logging()
 
-    return logging.getLogger(name)
+    logger = logging.getLogger(name)
+
+    # Set application loggers to INFO level
+    if name.startswith(_APP_LOGGER_PREFIXES) or name == "__main__":
+        logger.setLevel(logging.INFO)
+
+    return logger

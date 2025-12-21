@@ -142,6 +142,12 @@ def some_function():
 
 Logs are written to `{user_home}/IPStoPFlog/ips_to_pf.log` (handles Citrix environments automatically).
 
+#### External Library Suppression
+
+Logs from external libraries (e.g., `netdash`, `assetclasses`) are automatically suppressed to WARNING level. Only application loggers (`ips_data`, `update_powerfactory`, `config`, `core`, `utils`) log at INFO level.
+
+To add a new external library to suppress, add it to `_SUPPRESSED_LOGGERS` in `logging_config/logging_utils.py`.
+
 ## Adding New Features
 
 ### New Relay Pattern
