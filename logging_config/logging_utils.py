@@ -6,6 +6,7 @@ This module provides a simple logging setup that:
 - Handles multiple simultaneous file writes via queue-based logging
 - Logs script execution, device processing, and errors
 - Suppresses logs from external libraries
+- Outputs JSON Lines format for easy machine parsing
 
 Usage:
     from logging_config import setup_logging, get_logger
@@ -16,15 +17,33 @@ Usage:
     # Get logger in any module
     logger = get_logger(__name__)
     logger.info("Processing started")
+
+Log Format (JSON Lines):
+    Each line is a self-contained JSON object:
+    {"timestamp": "2024-01-15T10:30:45+00:00", "name": "module", "level": "INFO", "username": "user", "message": "text"}
+
+Parsing Logs:
+    import json
+
+    with open("ips_to_pf.log") as f:
+        for line in f:
+            record = json.loads(line)
+            print(record["timestamp"], record["level"], record["message"])
+
+    # Or with pandas:
+    import pandas as pd
+    df = pd.read_json("ips_to_pf.log", lines=True)
 """
 
 import logging
 import logging.handlers
+import json
 import os
 import queue
 import atexit
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Any, Dict
 
 # Module-level state
 _logging_initialized = False
@@ -44,11 +63,13 @@ _APP_LOGGER_PREFIXES = (
 )
 
 # External libraries to explicitly suppress (set to WARNING)
+# Note: netdashread loggers may still output if they configure their own
+# handlers before setup_logging() is called. This is a known limitation.
 _SUPPRESSED_LOGGERS = [
     "netdash",
     "netdashread",
-    "netdashread.getdata",
     "netdashread.query",
+    "netdashread.getdata",
     "assetclasses",
 ]
 
@@ -86,6 +107,8 @@ def setup_logging(log_level: int = logging.INFO) -> None:
     External library logs are suppressed (set to WARNING level).
     Only application loggers will log at INFO level.
 
+    Log output is in JSON Lines format for machine parsing.
+
     Call this once at the start of your script.
 
     Args:
@@ -108,13 +131,9 @@ def setup_logging(log_level: int = logging.INFO) -> None:
         delay=True
     )
 
-    # Format: timestamp - module - level - username - message
-    formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(username)s - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S"
-    )
+    # Use JSON Lines format for machine parsing
+    formatter = _JsonFormatter()
     file_handler.setFormatter(formatter)
-    file_handler.addFilter(_UsernameFilter())
 
     # Set up queue-based logging for thread safety
     _log_queue = queue.Queue(-1)
@@ -126,8 +145,11 @@ def setup_logging(log_level: int = logging.INFO) -> None:
     root_logger.addHandler(queue_handler)
 
     # Explicitly suppress known external library loggers
+    # Also remove any handlers they may have added
     for lib_name in _SUPPRESSED_LOGGERS:
-        logging.getLogger(lib_name).setLevel(logging.WARNING)
+        lib_logger = logging.getLogger(lib_name)
+        lib_logger.setLevel(logging.WARNING)
+        lib_logger.handlers.clear()
 
     # Start queue listener (processes log records in background thread)
     _queue_listener = logging.handlers.QueueListener(
@@ -152,12 +174,35 @@ def _shutdown_logging() -> None:
         _queue_listener = None
 
 
-class _UsernameFilter(logging.Filter):
-    """Filter that adds username to log records."""
+class _JsonFormatter(logging.Formatter):
+    """
+    Formatter that outputs JSON Lines format.
 
-    def filter(self, record: logging.LogRecord) -> bool:
-        record.username = os.getenv("USERNAME", os.getenv("USER", "unknown"))
-        return True
+    Each log record becomes a single JSON object on one line.
+    """
+
+    def format(self, record: logging.LogRecord) -> str:
+        """Format log record as JSON."""
+        # Build the log entry dictionary
+        log_entry: Dict[str, Any] = {
+            "timestamp": datetime.fromtimestamp(
+                record.created, tz=timezone.utc
+            ).isoformat(),
+            "name": record.name,
+            "level": record.levelname,
+            "username": os.getenv("USERNAME", os.getenv("USER", "unknown")),
+            "message": record.getMessage(),
+        }
+
+        # Add exception info if present
+        if record.exc_info:
+            log_entry["exc_info"] = self.formatException(record.exc_info)
+
+        # Add extra fields if any were passed
+        if hasattr(record, "extra_data"):
+            log_entry["extra"] = record.extra_data
+
+        return json.dumps(log_entry, ensure_ascii=False)
 
 
 def get_logger(name: str) -> logging.Logger:
