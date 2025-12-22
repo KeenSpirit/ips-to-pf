@@ -53,12 +53,10 @@ def get_setting_ids(app, region: str) -> SettingIndex:
     Raises:
         SystemExit: If unable to retrieve data after multiple attempts
     """
-    logger.info("Creating the Setting ID Index")
 
     # Check cache first
     cache_key = f"setting_index_{region}"
     if cache_key in _index_cache:
-        logger.info(f"Using cached SettingIndex for {region}")
         return _index_cache[cache_key]
 
     # Fetch raw data with retry logic
@@ -70,7 +68,6 @@ def get_setting_ids(app, region: str) -> SettingIndex:
     # Cache for future use
     _index_cache[cache_key] = index
 
-    logger.info(f"Setting ID Index successfully created for {region} with {len(index)} records")
     return index
 
 
@@ -141,38 +138,6 @@ def _create_ids_dict(region: str) -> List[Dict]:
     return ids_dict_list
 
 
-def get_setting_ids_legacy(app, region: str) -> List[Dict]:
-    """
-    Legacy function returning raw list format for backward compatibility.
-
-    DEPRECATED: Use get_setting_ids() which returns a SettingIndex instead.
-    This function is provided only for gradual migration of existing code.
-
-    Args:
-        app: PowerFactory application object
-        region: "Energex" or "Ergon"
-
-    Returns:
-        List of setting ID dictionaries (raw format)
-    """
-    logger.warning(
-        "get_setting_ids_legacy() is deprecated. "
-        "Use get_setting_ids() returning SettingIndex instead."
-    )
-    return _fetch_setting_ids_with_retry(app, region)
-
-
-def clear_index_cache() -> None:
-    """
-    Clear the cached setting indexes.
-
-    Call this if you need to force a refresh of the data from the database.
-    """
-    global _index_cache
-    _index_cache.clear()
-    logger.info("Setting index cache cleared")
-
-
 def error_message(app, message: str) -> None:
     """
     Display error message and terminate script.
@@ -222,8 +187,6 @@ def batch_settings(
                 app, set_ids, reg_get_ips_settings, batch_size=900
             )
         ips_it_settings = reg_get_ips_it_details(app, set_ids)
-
-    logger.info(f"Loaded settings for {len(ips_settings)} devices")
 
     return ips_settings, ips_it_settings
 

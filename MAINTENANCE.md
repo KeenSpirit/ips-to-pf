@@ -114,6 +114,13 @@ def some_function():
 
 3. Add entry to `mapping/type_mapping.csv`
 
+4. Add entry to `mapping/curve_mapping.csv` if
+   the relay curve names don't match PowerFactory defaults.
+
+### Unrecognised IPS Bay Name
+
+Map the bay name to a new name format in `mapping/CB_ALT_NAME.csv`:
+
 ### New Substation Mapping
 
 Add to `config/region_config.py`:

@@ -46,8 +46,9 @@ _APP_LOGGER_PREFIXES = (
 # External libraries to explicitly suppress (set to WARNING)
 _SUPPRESSED_LOGGERS = [
     "netdash",
-    "netdash.query",
-    "netdash.getdata",
+    "netdashread",
+    "netdashread.getdata",
+    "netdashread.query",
     "assetclasses",
 ]
 

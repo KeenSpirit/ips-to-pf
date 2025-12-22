@@ -84,20 +84,18 @@ def main(app=None, batch=False):
         logger.error("Script terminated because no active project was selected")
         exit()
     region = determine_region(prjt)
-    logger.info(f"Processing region: {region}")
 
     # Query the IPS data
     dev_list, data_capture_list = ips.get_ips_settings(app, region, batch, called_function)
 
     logger.info(f"Devices found in IPS: {len(dev_list)}")
-    logger.debug(f"Device list: {dev_list}")
 
     # Update PowerFactory
-    data_capture_list, updates = up.update_pf(app, dev_list, data_capture_list)
+    data_capture_list, updates_applied = up.update_pf(app, dev_list, data_capture_list)
 
     logger.info(f"Data capture list entries: {len(data_capture_list)}")
-    logger.debug(f"Data capture list: {data_capture_list}")
-    logger.info(f"Updates applied: {updates}")
+    logger.info(f"Data capture list: {config_log_result(data_capture_list)}")
+    logger.info(f"Updates applied: {updates_applied}")
 
     # Create file to save script information
     save_file = create_save_file(app, prjt, called_function)
@@ -112,7 +110,7 @@ def main(app=None, batch=False):
     app.PrintInfo(
         f"Script started at {start_time} and finished at {stop_time}"
     )
-    if updates:
+    if updates_applied:
         app.PrintInfo("Of the devices selected there were updated settings")
         logger.info("Script completed with updated settings")
     else:
@@ -120,13 +118,8 @@ def main(app=None, batch=False):
         logger.info("Script completed with no updated settings")
 
     app.PrintPlain(f"Query Script run time: {timer.formatted}")
-    logger.info(f"Script run time: {timer.formatted}")
 
-    return updates
-
-
-def log_devices():
-    pass
+    return updates_applied
 
 
 def create_save_file(app, prjt, called_function):
@@ -141,17 +134,17 @@ def create_save_file(app, prjt, called_function):
     if called_function:
         file_location = OUTPUT_BATCH_DIR
         main_file_name = select_main_file(
-            app, file_name, file_location, called_function
+            file_name, file_location, called_function
         )
     else:
         file_location = OUTPUT_LOCAL_DIR
         main_file_name = select_main_file(
-            app, file_name, file_location, called_function
+            file_name, file_location, called_function
         )
     return main_file_name
 
 
-def select_main_file(app, file_name, location, called_function):
+def select_main_file(file_name, location, called_function):
     """Check to see if a folder structure exists and create it if it doesn't.
     Create the csv file to publish all the data."""
     # Adjust path for Citrix environment
@@ -202,6 +195,30 @@ def print_results(app, data_capture_list):
     app.PrintInfo(print_string)
 
 
+def config_log_result(data_capture_list):
+    """
+    Only log results of interest
+    :param data_capture_list:
+    :return:
+    """
+
+    log_results = []
+
+    for info in data_capture_list:
+        log_result = {'SUBSTATION': info['SUBSTATION']}
+        try:
+            device_name = info["PLANT_NUMBER"]
+        except KeyError:
+            device_name = info["CB_NAME"]
+        log_result["DEVICE NAME"] = device_name
+        try:
+            log_result["RESULT"] = info["RESULT"]
+        except KeyError:
+            pass
+        log_results.append(log_result)
+    return log_results
+
+
 if __name__ == "__main__":
     # Logging is already configured via setup_logging() at module level
-    updates = main()
+    updates_applied = main()

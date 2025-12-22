@@ -119,17 +119,17 @@ class ValidationResult:
     def add_error(self, message: str) -> None:
         """Add an error message."""
         self.errors.append(message)
-        logger.error(f"Validation error: {message}")
+        # logger.error(f"Validation error: {message}")
 
     def add_warning(self, message: str) -> None:
         """Add a warning message."""
         self.warnings.append(message)
-        logger.warning(f"Validation warning: {message}")
+        # logger.warning(f"Validation warning: {message}")
 
     def add_info(self, key: str, value: Any) -> None:
         """Add informational data."""
         self.info[key] = value
-        logger.debug(f"Validation info: {key} = {value}")
+        # logger.debug(f"Validation info: {key} = {value}")
 
     def mark_check(self, check_name: str) -> None:
         """Mark a validation check as performed."""

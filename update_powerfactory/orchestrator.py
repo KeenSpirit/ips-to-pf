@@ -58,11 +58,6 @@ def update_pf(
     relay_index = RelayTypeIndex.build(app)
     fuse_index = FuseTypeIndex.build(app)
 
-    logger.info(
-        f"Type indexes built: {len(relay_index)} relay types, "
-        f"{len(fuse_index)} fuse types"
-    )
-
     updates = False
     results: List[UpdateResult] = []
 
@@ -108,8 +103,6 @@ def update_pf(
     finally:
         # Always disable write cache when done
         app.SetWriteCacheEnabled(0)
-
-    logger.info(f"Update complete: {len(results)} devices processed")
 
     # Convert any existing dict entries and new results to dicts for output
     final_results = _convert_results_to_dicts(data_capture_list)
@@ -230,24 +223,3 @@ def _convert_results_to_dicts(
         else:
             logger.warning(f"Unknown result type: {type(item)}")
     return converted
-
-
-# =============================================================================
-# Legacy compatibility - keep old function signature working
-# =============================================================================
-
-def get_relay_types(app) -> RelayTypeIndex:
-    """
-    Build relay type index.
-
-    Note: This now returns a RelayTypeIndex instead of a list.
-    The index supports both O(1) lookups via .get(name) and
-    list access via .get_all() for backward compatibility.
-
-    Args:
-        app: PowerFactory application object
-
-    Returns:
-        RelayTypeIndex with all relay types indexed
-    """
-    return RelayTypeIndex.build(app)

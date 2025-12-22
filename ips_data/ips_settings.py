@@ -27,8 +27,6 @@ from ips_data.setting_index import SettingIndex
 from utils.pf_utils import get_all_protection_devices
 from ui.device_selection import user_selection
 
-logger = logging.getLogger(__name__)
-
 
 def get_ips_settings(
     app,
@@ -60,7 +58,6 @@ def get_ips_settings(
 
     # Create indexed setting ID lookup (O(1) access)
     setting_index = qd.get_setting_ids(app, region)
-    logger.info(f"Created setting index with {len(setting_index)} records")
 
     # Get selected devices and their setting IDs
     set_ids, device_list, data_capture_list = _get_selected_devices(
@@ -163,7 +160,6 @@ def _get_user_selected_devices(
 
     if not selections:
         message = "User has selected to exit the script"
-        logger.info(message)
         qd.error_message(app, message)
 
     if selections == "Batch":
