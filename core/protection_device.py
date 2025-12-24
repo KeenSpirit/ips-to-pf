@@ -142,7 +142,6 @@ class ProtectionDevice:
                 self.ct_settingid = row.relaysettingid
                 if not row.actualvalue:
                     continue
-
                 try:
                     if "Iprim" in row.nameenu:
                         value = int(float(row.actualvalue))
@@ -169,18 +168,17 @@ class ProtectionDevice:
         for row in all_settings:
             if row.relaysettingid == self.setting_id:
                 self.ct_settingid = row.relaysettingid
-                if not row.currentvalue:
+                if not row.setting:
                     continue
-
                 try:
                     if "CT Primary" in row.nameenu:
-                        self.ct_primary = int(float(row.currentvalue))
+                        self.ct_primary = int(float(row.setting))
                     elif "CT Secondary" in row.nameenu:
-                        self.ct_secondary = int(float(row.currentvalue))
+                        self.ct_secondary = int(float(row.setting))
                     elif "VT Primary" in row.nameenu:
-                        self.vt_primary = int(float(row.currentvalue))
+                        self.vt_primary = int(float(row.setting))
                     elif "VT Secondary" in row.nameenu:
-                        self.vt_secondary = int(float(row.currentvalue))
+                        self.vt_secondary = int(float(row.setting))
                 except (ValueError, TypeError, AttributeError):
                     pass
 
