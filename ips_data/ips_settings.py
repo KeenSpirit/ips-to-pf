@@ -5,13 +5,14 @@ This module coordinates the retrieval of protection device settings from
 the IPS database and their association with PowerFactory devices. It handles
 both Energex (SEQ) and Ergon regional configurations.
 
-The module uses SettingIndex for efficient O(1) lookups instead of
+The module uses SettingIndex for efficient lookups instead of
 linear scans through raw setting lists.
 """
 
 import logging
 import sys
 from typing import List, Tuple, Optional, Dict, Any, Union
+from importlib import reload
 
 # Import paths from config
 from config.paths import RELAY_SKELETONS_PATH
@@ -27,6 +28,7 @@ from ips_data.setting_index import SettingIndex
 from utils.pf_utils import get_all_protection_devices
 from ui.device_selection import user_selection
 
+reload(ex)
 
 def get_ips_settings(
     app,
@@ -56,7 +58,7 @@ def get_ips_settings(
     """
     data_capture_list: List[UpdateResult] = []
 
-    # Create indexed setting ID lookup (O(1) access)
+    # Create indexed setting ID lookup
     setting_index = qd.get_setting_ids(app, region)
 
     # Get selected devices and their setting IDs

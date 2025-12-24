@@ -268,10 +268,11 @@ class SettingIndex:
         Returns:
             List of matching SettingRecord objects
         """
-        if substation_code and substation_code in self._by_substation_and_switch:
-            sub_index = self._by_substation_and_switch[substation_code]
-            if switch_name in sub_index:
-                return sub_index[switch_name]
+        if substation_code:
+            if substation_code in self._by_substation_and_switch:
+                sub_index = self._by_substation_and_switch[substation_code]
+                return sub_index.get(switch_name, [])
+            return []
 
         return self._by_switch_name.get(switch_name, [])
 

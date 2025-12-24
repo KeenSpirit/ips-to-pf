@@ -179,7 +179,8 @@ def create_new_devices(
             continue
         
         initial_count = len(setting_ids)
-        
+
+
         new_ids, list_of_devices = _get_setting_id_indexed(
             app=app,
             switch=switch,
@@ -196,6 +197,10 @@ def create_new_devices(
     
     # Create/assign PowerFactory objects for all devices
     list_of_devices = _assign_pf_objects(list_of_devices)
+
+    # Debug code:
+    # for device in list_of_devices:
+    #     app.PrintPlain(vars(device))
     
     return list_of_devices, failed_cbs, setting_ids
 
@@ -352,12 +357,16 @@ def _find_or_create_pf_device(switch, device_name: str):
     # Check for existing device
     contents = cubicle.GetContents(f"{device_name}.ElmRelay")
     contents += cubicle.GetContents(f"{device_name}.RelFuse")
-    
+
     if contents:
         return contents[0]
-    
+
     # Create new device
-    return cubicle.CreateObject("ElmRelay", device_name)
+    if "fuse" in device_name.lower():
+        new_device = cubicle.CreateObject("RelFuse", device_name)
+    else:
+        new_device = cubicle.CreateObject("ElmRelay", device_name)
+    return new_device
 
 
 def _get_assoc_switch(pf_device, raw_switches: List):
@@ -436,7 +445,10 @@ def _get_setting_id_indexed(
     # The index already handles "A+B" expansion, so "NIP1A+B" is indexed under
     # both "NIP1A" and "NIP1B"
     records = setting_index.get_by_switch_name(switch_name, sub_code)
-    
+    # Debug code:
+    # app.PrintPlain(f"switch_name: {switch_name}, sub_code: {sub_code}")
+    # app.PrintPlain(f"records: {records}")
+
     # Create devices from matching records
     for record in records:
         device = _create_device_from_record(

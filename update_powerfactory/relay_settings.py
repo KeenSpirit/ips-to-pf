@@ -88,7 +88,7 @@ def relay_settings(
         result.date_setting = device_object.date
         device_object.pf_obj.SetAttribute("e:sernum", str(device_object.date))
     else:
-        result.result = "Not mapped"
+        result.result = "Mapping file not found"
         device_object.pf_obj.SetAttribute("outserv", 1)
         return result, updates
 

@@ -182,7 +182,7 @@ class UpdateResult:
         return cls(
             substation=substation,
             cb_name=getattr(cb_object, 'loc_name', 'Unknown'),
-            result="Failed to find match"
+            result="No protection settings found in IPS"
         )
 
     @classmethod
