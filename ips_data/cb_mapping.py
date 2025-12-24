@@ -6,14 +6,14 @@ PowerFactory and IPS naming conventions. Some CBs in the SEQ space
 have names that don't directly map to IPS, so this module provides
 lookup functionality for alternate names.
 
-The mapping data is loaded from CB_ALT_NAME.csv in the mapping directory.
+The mapping data is loaded from CB_ALT_NAME.csv in the cb_alt_names directory.
 """
 
 import os
 from typing import List, Dict, Optional
 
 # Import path from config
-from config.paths import MAPPING_FILES_DIR
+from config.paths import get_cb_alt_name_file
 
 # Cache for CB alternate names
 _cb_alt_name_cache: Optional[List[Dict[str, str]]] = None
@@ -53,7 +53,7 @@ def get_cb_alt_name_list(app=None) -> List[Dict[str, str]]:
         return _cb_alt_name_cache
 
     cb_alt_name_list = []
-    filepath = os.path.join(MAPPING_FILES_DIR, "CB_ALT_NAME.csv")
+    filepath = get_cb_alt_name_file()
 
     # Values in NEW_NAME column that indicate the mapping should be skipped
     skip_values = {

@@ -11,7 +11,7 @@ The system transfers protection device settings from the IPS (Intelligent Protec
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                      Entry Point                             │
-│                      ips_to_pf.py                           │
+│                      main.py                                │
 └─────────────────────────────┬───────────────────────────────┘
                               │
         ┌─────────────────────┼─────────────────────┐
@@ -85,13 +85,15 @@ Centralized, queue-based logging for thread-safe concurrent writes.
 **Key Features**:
 - Queue-based logging for thread-safe concurrent writes
 - Rotating file handler (10MB max, 5 backups)
-- Automatic Citrix path handling
+- JSON Lines format for machine parsing
 - Username injection into log records
 - External library log suppression (netdash, assetclasses, etc.)
 
+**Log File Location**: `{project_root}/results_log/ips_to_pf.log`
+
 **Why it exists**: Handles concurrent file writes from multiple processes safely.
 
-**Usage restricted to**: `ips_to_pf.py`, `orchestrator.py`, `query_database.py`
+**Usage restricted to**: `main.py`, `orchestrator.py`, `query_database.py`
 
 ### ips_data/ - Data Retrieval Layer
 
@@ -121,6 +123,58 @@ Applies retrieved settings to PowerFactory models.
 | `vt_settings.py` | Voltage transformer configuration |
 | `mapping_file.py` | Settings mapping file handling |
 | `type_index.py` | Relay/fuse type indexes for O(1) lookups |
+
+## Mapping Files Structure
+
+All mapping files are stored in the project root under `mapping_files/`:
+
+```
+mapping_files/
+├── cb_alt_names/           # CB alternate name mappings
+│   └── CB_ALT_NAME.csv     # Maps PF CB names to IPS names
+├── curve_mapping/          # IDMT curve mappings
+│   └── curve_mapping.csv   # Maps IPS curve codes to PF curve names
+├── relay_maps/             # Relay pattern mapping files
+│   └── *.csv               # Individual relay pattern mappings
+└── type_mapping/           # Type mapping configuration
+    └── type_mapping.csv    # Maps IPS patterns to PF types + mapping files
+```
+
+### File Purposes
+
+| File | Purpose |
+|------|---------|
+| `CB_ALT_NAME.csv` | Maps PowerFactory CB names to IPS naming conventions |
+| `curve_mapping.csv` | Maps IPS IDMT curve codes to PowerFactory curve names |
+| `type_mapping.csv` | Maps IPS relay patterns to PF relay types and mapping files |
+| `relay_maps/*.csv` | Individual mapping files for each relay pattern |
+
+### Path Configuration
+
+Paths are configured in `config/paths.py`:
+
+```python
+# Project root directory
+PROJECT_ROOT = Path(__file__).parent.parent
+
+# Mapping file directories
+MAPPING_FILES_BASE = PROJECT_ROOT / "mapping_files"
+CB_ALT_NAMES_DIR = MAPPING_FILES_BASE / "cb_alt_names"
+CURVE_MAPPING_DIR = MAPPING_FILES_BASE / "curve_mapping"
+RELAY_MAPS_DIR = MAPPING_FILES_BASE / "relay_maps"
+TYPE_MAPPING_DIR = MAPPING_FILES_BASE / "type_mapping"
+```
+
+### Helper Functions
+
+```python
+from config.paths import (
+    get_cb_alt_name_file,    # Returns path to CB_ALT_NAME.csv
+    get_curve_mapping_file,  # Returns path to curve_mapping.csv
+    get_type_mapping_file,   # Returns path to type_mapping.csv
+    get_relay_map_file,      # Returns path to specific relay map file
+)
+```
 
 ## Data Flow
 
@@ -251,15 +305,17 @@ logger.info("Message")  # Thread-safe, non-blocking
 ### Log File Location
 
 ```
-{user_home}/IPStoPFlog/ips_to_pf.log
+{project_root}/results_log/ips_to_pf.log
 ```
 
-For Citrix environments: `//client/c$/Users/{user}/IPStoPFlog/ips_to_pf.log`
+The log file is stored in a `results_log` subdirectory within the project root directory.
 
 ### Log Format
 
-```
-2024-01-15 10:30:45 - module_name - INFO - username - Message text
+JSON Lines format - each line is a self-contained JSON object:
+
+```json
+{"timestamp": "2024-01-15T10:30:45+00:00", "name": "module_name", "level": "INFO", "username": "user", "message": "Message text"}
 ```
 
 ### What Gets Logged
@@ -275,6 +331,21 @@ For Citrix environments: `//client/c$/Users/{user}/IPStoPFlog/ips_to_pf.log`
 - Maximum file size: 10MB
 - Backup count: 5 files
 - Oldest logs automatically deleted
+
+### Parsing Logs
+
+```python
+import json
+
+with open("results_log/ips_to_pf.log") as f:
+    for line in f:
+        record = json.loads(line)
+        print(record["timestamp"], record["level"], record["message"])
+
+# Or with pandas:
+import pandas as pd
+df = pd.read_json("results_log/ips_to_pf.log", lines=True)
+```
 
 ## Future Enhancements
 

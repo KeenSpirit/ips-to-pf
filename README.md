@@ -21,21 +21,27 @@ This tool automates the transfer of relay and fuse protection settings between E
 ips_to_powerfactory/
 ├── core/                    # Shared domain objects
 │   ├── __init__.py
-│   └── protection_device.py # ProtectionDevice dataclass
-│   └── setting_record.py    # SettingRecord dataclass
+│   ├── protection_device.py # ProtectionDevice dataclass
+│   ├── setting_record.py    # SettingRecord dataclass
 │   └── update_result.py     # UpdateResult dataclass
 │
 ├── config/                  # Configuration management
 │   ├── __init__.py
 │   ├── paths.py            # Network paths and file locations
 │   ├── relay_patterns.py   # Relay classification constants
-│   └── region_config.py    # Region-specific settings
+│   ├── region_config.py    # Region-specific settings
+│   └── validation.py       # Configuration validation at startup
 │
 ├── utils/                   # Shared utilities
 │   ├── __init__.py
 │   ├── pf_utils.py         # PowerFactory utilities
 │   ├── file_utils.py       # File handling utilities
 │   └── time_utils.py       # Time formatting utilities
+│
+├── logging_config/         # Logging system
+│   ├── __init__.py
+│   ├── logging_utils.py    # Core logging setup
+│   └── configure_logging.py # Device attribute logging
 │
 ├── ips_data/               # IPS data retrieval layer
 │   ├── __init__.py
@@ -56,11 +62,28 @@ ips_to_powerfactory/
 │   ├── mapping_file.py     # Settings mapping files
 │   └── type_index.py       # Type lookup indexes
 │
-├── mapping/                # CSV mapping files
-│   └── *.csv              # Relay pattern mappings
+├── ui/                     # User interface
+│   ├── __init__.py
+│   ├── device_selection.py # Device selection dialog
+│   ├── widgets.py          # Reusable UI widgets
+│   ├── utils.py            # UI utilities
+│   └── constants.py        # UI constants
 │
-├── main.py           # Main entry point
-└── user_inputs.py         # User input handling
+├── mapping_files/          # CSV mapping files (project root)
+│   ├── cb_alt_names/       # CB alternate name mappings
+│   │   └── CB_ALT_NAME.csv
+│   ├── curve_mapping/      # IDMT curve mappings
+│   │   └── curve_mapping.csv
+│   ├── relay_maps/         # Relay pattern mapping files
+│   │   └── *.csv
+│   └── type_mapping/       # Type mapping configuration
+│       └── type_mapping.csv
+│
+├── results_log/            # Log files (project root)
+│   └── ips_to_pf.log
+│
+├── main.py                 # Main entry point
+└── user_inputs.py          # User input handling
 ```
 
 ## Installation
@@ -68,6 +91,7 @@ ips_to_powerfactory/
 1. Ensure PowerFactory Python environment is configured
 2. Clone or copy the project to your PowerFactory scripts directory
 3. Verify network paths in `config/paths.py` are accessible
+4. Ensure mapping file directories exist under `mapping_files/`
 
 ## Usage
 
@@ -77,7 +101,7 @@ ips_to_powerfactory/
 # In PowerFactory Python console
 import main
 
-ips_to_pf.main()
+main.main()
 ```
 
 ### Batch Mode (Multiple Projects)
@@ -86,10 +110,26 @@ ips_to_pf.main()
 # Called from batch update script
 import main
 
-ips_to_pf.main(app=app, batch=True)
+main.main(app=app, batch=True)
 ```
 
 ## Configuration
+
+### Mapping Files
+
+Mapping files are stored in the project root under `mapping_files/`:
+
+```
+mapping_files/
+├── cb_alt_names/           # CB alternate name mappings
+│   └── CB_ALT_NAME.csv
+├── curve_mapping/          # IDMT curve mappings
+│   └── curve_mapping.csv
+├── relay_maps/             # Relay pattern mapping files
+│   └── *.csv
+└── type_mapping/           # Type mapping configuration
+    └── type_mapping.csv
+```
 
 ### Network Paths
 
@@ -97,7 +137,6 @@ Edit `config/paths.py` to update network locations:
 
 ```python
 SCRIPTS_BASE = r"\\\\server\\path\\to\\PowerFactory"
-MAPPING_FILES_DIR = os.path.join(SCRIPTS_BASE, "mapping")
 ```
 
 ### Relay Patterns
@@ -130,15 +169,17 @@ The application follows a layered architecture:
 1. **Core Layer** (`core/`): Shared domain objects used across all layers
 2. **Config Layer** (`config/`): Centralized configuration management
 3. **Utils Layer** (`utils/`): Shared utility functions
-4. **Data Layer** (`ips_data/`): IPS database interactions and data retrieval
-5. **Application Layer** (`update_powerfactory/`): PowerFactory model updates
+4. **Logging Layer** (`logging_config/`): Centralized logging system
+5. **Data Layer** (`ips_data/`): IPS database interactions and data retrieval
+6. **Application Layer** (`update_powerfactory/`): PowerFactory model updates
+7. **UI Layer** (`ui/`): User interface components
 
 ### Dependency Flow
 
 ```
-ips_to_pf.py
+main.py
     ├── ips_data/     ──┐
-    └── update_powerfactory/ ──┼── core/, config/, utils/
+    └── update_powerfactory/ ──┼── core/, config/, utils/, logging_config/
 ```
 
 ## Performance
@@ -149,6 +190,13 @@ Key optimizations implemented:
 - **Type Indexes**: `RelayTypeIndex` and `FuseTypeIndex` for O(1) type matching
 - **Caching**: Mapping files and CB alternate names are cached after first load
 - **Write Caching**: PowerFactory write cache enabled during batch updates
+
+## Logging
+
+Log files are stored in `{project_root}/results_log/ips_to_pf.log`:
+- JSON Lines format for machine parsing
+- 10MB max file size with 5 backup files
+- Automatic rotation
 
 ## Contributing
 

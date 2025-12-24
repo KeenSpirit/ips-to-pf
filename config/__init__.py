@@ -18,7 +18,8 @@ Usage:
     from config import paths, relay_patterns, region_config
 
     # Access paths
-    mapping_dir = paths.MAPPING_FILES_DIR
+    cb_alt_file = paths.get_cb_alt_name_file()
+    type_mapping_file = paths.get_type_mapping_file()
 
     # Access relay patterns
     if pattern in relay_patterns.SINGLE_PHASE_RELAYS:
@@ -35,11 +36,18 @@ Usage:
 from config.paths import (
     # Base paths
     SCRIPTS_BASE,
+    PROJECT_ROOT,
     # External library paths
     NETDASH_READER_PATH,
     ASSET_CLASSES_PATH,
     RELAY_SKELETONS_PATH,
-    # Mapping files
+    # Mapping file directories
+    MAPPING_FILES_BASE,
+    CB_ALT_NAMES_DIR,
+    CURVE_MAPPING_DIR,
+    RELAY_MAPS_DIR,
+    TYPE_MAPPING_DIR,
+    # Legacy path (deprecated)
     MAPPING_FILES_DIR,
     # Output paths
     OUTPUT_BATCH_DIR,
@@ -47,6 +55,11 @@ from config.paths import (
     # Path helper functions
     get_output_directory,
     ensure_path_exists,
+    get_cb_alt_name_file,
+    get_curve_mapping_file,
+    get_type_mapping_file,
+    get_relay_map_file,
+    ensure_mapping_directories_exist,
 )
 
 from config.relay_patterns import (
@@ -85,16 +98,32 @@ from config.validation import (
 )
 
 __all__ = [
-    # Paths
+    # Base Paths
     "SCRIPTS_BASE",
+    "PROJECT_ROOT",
+    # External library paths
     "NETDASH_READER_PATH",
     "ASSET_CLASSES_PATH",
     "RELAY_SKELETONS_PATH",
+    # Mapping file directories
+    "MAPPING_FILES_BASE",
+    "CB_ALT_NAMES_DIR",
+    "CURVE_MAPPING_DIR",
+    "RELAY_MAPS_DIR",
+    "TYPE_MAPPING_DIR",
+    # Legacy (deprecated)
     "MAPPING_FILES_DIR",
+    # Output paths
     "OUTPUT_BATCH_DIR",
     "OUTPUT_LOCAL_DIR",
+    # Path helper functions
     "get_output_directory",
     "ensure_path_exists",
+    "get_cb_alt_name_file",
+    "get_curve_mapping_file",
+    "get_type_mapping_file",
+    "get_relay_map_file",
+    "ensure_mapping_directories_exist",
     # Relay patterns
     "SINGLE_PHASE_RELAYS",
     "MULTI_PHASE_RELAYS",

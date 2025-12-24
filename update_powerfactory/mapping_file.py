@@ -16,17 +16,24 @@ Performance optimizations:
 Cache Statistics:
     Call get_cache_stats() to see cache hit/miss statistics for
     performance monitoring and debugging.
+
+File Locations:
+    - Type mapping: {project_root}/mapping_files/type_mapping/type_mapping.csv
+    - Curve mapping: {project_root}/mapping_files/curve_mapping/curve_mapping.csv
+    - Relay maps: {project_root}/mapping_files/relay_maps/*.csv
 """
 
 import csv
 import os
 from typing import Dict, List, Optional, Tuple, Any
 
-# Import path from config
-from config.paths import MAPPING_FILES_DIR
-
-# Use the centralized path
-MAP_FILE_LOC = MAPPING_FILES_DIR
+# Import paths from config
+from config.paths import (
+    get_type_mapping_file,
+    get_curve_mapping_file,
+    get_relay_map_file,
+    RELAY_MAPS_DIR,
+)
 
 
 # =============================================================================
@@ -121,7 +128,7 @@ def _load_type_mapping() -> Dict[str, Tuple[str, str]]:
     _cache_stats["type_mapping_misses"] += 1
     _type_mapping_cache = {}
 
-    filepath = os.path.join(MAP_FILE_LOC, "type_mapping.csv")
+    filepath = get_type_mapping_file()
 
     try:
         with open(filepath, "r", encoding="utf-8") as f:
@@ -176,7 +183,7 @@ def _load_mapping_file(filename: str) -> Optional[List[List[str]]]:
 
     _cache_stats["mapping_file_misses"] += 1
 
-    filepath = os.path.join(MAP_FILE_LOC, f"{filename}.csv")
+    filepath = get_relay_map_file(filename)
 
     try:
         with open(filepath, "r", encoding="utf-8") as f:
@@ -217,7 +224,7 @@ def _load_curve_mapping() -> List[List[str]]:
     _cache_stats["curve_mapping_misses"] += 1
     _curve_mapping_cache = []
 
-    filepath = os.path.join(MAP_FILE_LOC, "curve_mapping.csv")
+    filepath = get_curve_mapping_file()
 
     try:
         with open(filepath, "r", encoding="utf-8") as f:

@@ -2,7 +2,7 @@
 Logging utilities for IPS to PowerFactory settings transfer.
 
 This module provides a simple logging setup that:
-- Stores log files on a network drive
+- Stores log files in the project's results_log directory
 - Handles multiple simultaneous file writes via queue-based logging
 - Logs script execution, device processing, and errors
 - Suppresses logs from external libraries
@@ -22,17 +22,20 @@ Log Format (JSON Lines):
     Each line is a self-contained JSON object:
     {"timestamp": "2024-01-15T10:30:45+00:00", "name": "module", "level": "INFO", "username": "user", "message": "text"}
 
+Log Location:
+    {project_root}/results_log/ips_to_pf.log
+
 Parsing Logs:
     import json
 
-    with open("ips_to_pf.log") as f:
+    with open("results_log/ips_to_pf.log") as f:
         for line in f:
             record = json.loads(line)
             print(record["timestamp"], record["level"], record["message"])
 
     # Or with pandas:
     import pandas as pd
-    df = pd.read_json("ips_to_pf.log", lines=True)
+    df = pd.read_json("results_log/ips_to_pf.log", lines=True)
 """
 
 import logging
@@ -74,25 +77,22 @@ _SUPPRESSED_LOGGERS = [
 ]
 
 
-def get_log_path(subdir: str = "IPStoPFlog") -> Path:
+def get_log_path(subdir: str = "results_log") -> Path:
     """
-    Get the path for log files, handling Citrix environments.
+    Get the path for log files in the project root directory.
+
+    The log directory is created in the project root (parent of logging_config/).
 
     Args:
-        subdir: Subdirectory name for log files
+        subdir: Subdirectory name for log files (default: "results_log")
 
     Returns:
         Path object for the log directory
     """
-    user = Path.home().name
+    # Get the project root directory (parent of logging_config/)
+    project_root = Path(__file__).parent.parent
 
-    # Try Citrix path first
-    citrix_path = Path("//client/c$/Users") / user
-    if citrix_path.exists():
-        log_path = citrix_path / subdir
-    else:
-        log_path = Path.home() / subdir
-
+    log_path = project_root / subdir
     log_path.mkdir(exist_ok=True)
     return log_path
 

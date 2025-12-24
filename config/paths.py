@@ -14,12 +14,19 @@ Network Paths:
     from the machine running the script.
 
 Local Paths:
-    Fallback paths used when network drives are unavailable (e.g., Citrix).
+    Project-relative paths for mapping files and logs.
 """
 
 import os
 from pathlib import Path
 from typing import Optional
+
+# =============================================================================
+# Project Root
+# =============================================================================
+
+# Get the project root directory (parent of config/)
+PROJECT_ROOT = Path(__file__).parent.parent
 
 # =============================================================================
 # Base Paths
@@ -47,10 +54,26 @@ RELAY_SKELETONS_PATH = os.path.join(
 )
 
 # =============================================================================
-# Mapping Files
+# Mapping Files - Project Root Structure
 # =============================================================================
 
-# Directory containing relay pattern mapping CSV files
+# Base directory for all mapping files (in project root)
+MAPPING_FILES_BASE = PROJECT_ROOT / "mapping_files"
+
+# CB alternate names mapping
+CB_ALT_NAMES_DIR = MAPPING_FILES_BASE / "cb_alt_names"
+
+# Curve mapping for IDMT characteristics
+CURVE_MAPPING_DIR = MAPPING_FILES_BASE / "curve_mapping"
+
+# Relay pattern mapping files
+RELAY_MAPS_DIR = MAPPING_FILES_BASE / "relay_maps"
+
+# Type mapping (pattern -> relay type + mapping file)
+TYPE_MAPPING_DIR = MAPPING_FILES_BASE / "type_mapping"
+
+# Legacy path - kept for backward compatibility during migration
+# This points to the old network location
 MAPPING_FILES_DIR = os.path.join(
     SCRIPTS_BASE,
     "ScriptsDEV",
@@ -127,9 +150,56 @@ def ensure_path_exists(path: str) -> str:
     return path
 
 
+def get_cb_alt_name_file() -> Path:
+    """
+    Get the full path to the CB alternate name mapping file.
+
+    Returns:
+        Path to CB_ALT_NAME.csv
+    """
+    return CB_ALT_NAMES_DIR / "CB_ALT_NAME.csv"
+
+
+def get_curve_mapping_file() -> Path:
+    """
+    Get the full path to the curve mapping file.
+
+    Returns:
+        Path to curve_mapping.csv
+    """
+    return CURVE_MAPPING_DIR / "curve_mapping.csv"
+
+
+def get_type_mapping_file() -> Path:
+    """
+    Get the full path to the type mapping file.
+
+    Returns:
+        Path to type_mapping.csv
+    """
+    return TYPE_MAPPING_DIR / "type_mapping.csv"
+
+
+def get_relay_map_file(filename: str) -> Path:
+    """
+    Get the full path to a relay mapping file.
+
+    Args:
+        filename: Name of the mapping file (with or without .csv extension)
+
+    Returns:
+        Full path to the mapping file
+    """
+    if not filename.endswith(".csv"):
+        filename = f"{filename}.csv"
+    return RELAY_MAPS_DIR / filename
+
+
 def get_mapping_file_path(filename: str) -> str:
     """
     Get the full path to a mapping file.
+
+    DEPRECATED: Use specific functions like get_relay_map_file() instead.
 
     Args:
         filename: Name of the mapping file (e.g., "type_mapping.csv")
@@ -163,6 +233,29 @@ def add_external_library_paths() -> None:
             sys.path.append(path)
 
 
+def ensure_mapping_directories_exist() -> None:
+    """
+    Ensure all mapping file directories exist.
+
+    Creates the directory structure if it doesn't exist:
+    - mapping_files/
+      - cb_alt_names/
+      - curve_mapping/
+      - relay_maps/
+      - type_mapping/
+    """
+    directories = [
+        MAPPING_FILES_BASE,
+        CB_ALT_NAMES_DIR,
+        CURVE_MAPPING_DIR,
+        RELAY_MAPS_DIR,
+        TYPE_MAPPING_DIR,
+    ]
+
+    for directory in directories:
+        directory.mkdir(parents=True, exist_ok=True)
+
+
 # =============================================================================
 # Path Validation
 # =============================================================================
@@ -180,7 +273,10 @@ def validate_paths() -> dict:
         ...     print(f"{name}: exists={exists}, accessible={accessible}")
     """
     paths_to_check = {
-        "MAPPING_FILES_DIR": MAPPING_FILES_DIR,
+        "CB_ALT_NAMES_DIR": str(CB_ALT_NAMES_DIR),
+        "CURVE_MAPPING_DIR": str(CURVE_MAPPING_DIR),
+        "RELAY_MAPS_DIR": str(RELAY_MAPS_DIR),
+        "TYPE_MAPPING_DIR": str(TYPE_MAPPING_DIR),
         "OUTPUT_BATCH_DIR": OUTPUT_BATCH_DIR,
         "NETDASH_READER_PATH": NETDASH_READER_PATH,
         "ASSET_CLASSES_PATH": ASSET_CLASSES_PATH,

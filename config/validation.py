@@ -57,8 +57,8 @@ class ValidationConfig:
         level: Validation strictness level
         check_database: Whether to test database connectivity (slow)
         treat_warnings_as_errors: If True, any warning fails validation
-        required_mapping_files: List of mapping files that must exist
-        optional_mapping_files: List of mapping files that should exist
+        required_mapping_files: Dict of {description: filepath} that must exist
+        optional_mapping_files: Dict of {description: filepath} that should exist
         skip_library_imports: If True, skip import testing (faster)
         timeout_seconds: Timeout for database connectivity test
         custom_paths: Additional paths to validate {name: path}
@@ -67,21 +67,45 @@ class ValidationConfig:
     level: ValidationLevel = ValidationLevel.STANDARD
     check_database: bool = False
     treat_warnings_as_errors: bool = False
-    required_mapping_files: List[str] = field(default_factory=lambda: [
-        "type_mapping.csv",
-        "CB_ALT_NAME.csv",
-    ])
-    optional_mapping_files: List[str] = field(default_factory=lambda: [
-        "curve_mapping.csv",
-    ])
+    required_mapping_files: Dict[str, str] = field(default_factory=dict)
+    optional_mapping_files: Dict[str, str] = field(default_factory=dict)
     skip_library_imports: bool = False
     timeout_seconds: int = 10
     custom_paths: Dict[str, str] = field(default_factory=dict)
     custom_files: Dict[str, str] = field(default_factory=dict)
 
+    def __post_init__(self):
+        """Initialize default mapping files if not provided."""
+        from config.paths import (
+            get_type_mapping_file,
+            get_cb_alt_name_file,
+            get_curve_mapping_file,
+        )
 
-# Default configuration instance
-DEFAULT_CONFIG = ValidationConfig()
+        # Set default required files if not provided
+        if not self.required_mapping_files:
+            self.required_mapping_files = {
+                "type_mapping.csv": str(get_type_mapping_file()),
+                "CB_ALT_NAME.csv": str(get_cb_alt_name_file()),
+            }
+
+        # Set default optional files if not provided
+        if not self.optional_mapping_files:
+            self.optional_mapping_files = {
+                "curve_mapping.csv": str(get_curve_mapping_file()),
+            }
+
+
+# Default configuration instance - created lazily to avoid import issues
+_default_config: Optional[ValidationConfig] = None
+
+
+def _get_default_config() -> ValidationConfig:
+    """Get or create the default configuration."""
+    global _default_config
+    if _default_config is None:
+        _default_config = ValidationConfig()
+    return _default_config
 
 
 # =============================================================================
@@ -216,7 +240,7 @@ def validate_startup(
 
     Args:
         app: PowerFactory application object (optional)
-        config: Validation configuration (uses DEFAULT_CONFIG if None)
+        config: Validation configuration (uses default if None)
         check_database: Override config's check_database setting
 
     Returns:
@@ -229,7 +253,7 @@ def validate_startup(
         ...     sys.exit(1)
     """
     if config is None:
-        config = DEFAULT_CONFIG
+        config = _get_default_config()
 
     # Allow override of database check
     if check_database is not None:
@@ -290,7 +314,10 @@ def _validate_paths(result: ValidationResult, config: ValidationConfig) -> None:
     # Import paths from config
     from config.paths import (
         SCRIPTS_BASE,
-        MAPPING_FILES_DIR,
+        CB_ALT_NAMES_DIR,
+        CURVE_MAPPING_DIR,
+        RELAY_MAPS_DIR,
+        TYPE_MAPPING_DIR,
         OUTPUT_BATCH_DIR,
         OUTPUT_LOCAL_DIR,
         NETDASH_READER_PATH,
@@ -298,19 +325,22 @@ def _validate_paths(result: ValidationResult, config: ValidationConfig) -> None:
         RELAY_SKELETONS_PATH,
     )
 
-    # Critical paths that must exist
+    # Critical paths that must exist (mapping directories in project)
     critical_paths = {
-        "SCRIPTS_BASE": SCRIPTS_BASE,
-        "MAPPING_FILES_DIR": MAPPING_FILES_DIR,
+        "CB_ALT_NAMES_DIR": str(CB_ALT_NAMES_DIR),
+        "TYPE_MAPPING_DIR": str(TYPE_MAPPING_DIR),
+        "RELAY_MAPS_DIR": str(RELAY_MAPS_DIR),
     }
 
     # Optional paths that should exist
     optional_paths = {
+        "CURVE_MAPPING_DIR": str(CURVE_MAPPING_DIR),
         "OUTPUT_BATCH_DIR": OUTPUT_BATCH_DIR,
         "OUTPUT_LOCAL_DIR": OUTPUT_LOCAL_DIR,
         "NETDASH_READER_PATH": NETDASH_READER_PATH,
         "ASSET_CLASSES_PATH": ASSET_CLASSES_PATH,
         "RELAY_SKELETONS_PATH": RELAY_SKELETONS_PATH,
+        "SCRIPTS_BASE": SCRIPTS_BASE,
     }
 
     # Check critical paths
@@ -361,28 +391,19 @@ def _validate_required_files(result: ValidationResult, config: ValidationConfig)
     """
     result.mark_check("required_files")
 
-    from config.paths import MAPPING_FILES_DIR
-
-    # Check if mapping directory exists first
-    if not os.path.exists(MAPPING_FILES_DIR):
-        # Already reported in path validation, skip file checks
-        return
-
     # Check required files
-    for filename in config.required_mapping_files:
-        filepath = os.path.join(MAPPING_FILES_DIR, filename)
+    for filename, filepath in config.required_mapping_files.items():
         if not os.path.exists(filepath):
-            result.add_error(f"Required mapping file not found: {filename}")
+            result.add_error(f"Required mapping file not found: {filename} at {filepath}")
         elif os.path.getsize(filepath) == 0:
             result.add_warning(f"Mapping file is empty: {filename}")
         else:
             result.add_info(f"file:{filename}", "OK")
 
     # Check optional files
-    for filename in config.optional_mapping_files:
-        filepath = os.path.join(MAPPING_FILES_DIR, filename)
+    for filename, filepath in config.optional_mapping_files.items():
         if not os.path.exists(filepath):
-            result.add_warning(f"Optional mapping file not found: {filename}")
+            result.add_warning(f"Optional mapping file not found: {filename} at {filepath}")
         elif os.path.getsize(filepath) == 0:
             result.add_warning(f"Optional mapping file is empty: {filename}")
         else:
@@ -594,7 +615,7 @@ def require_valid_config(
 
     Args:
         app: PowerFactory application object
-        config: Validation configuration (uses DEFAULT_CONFIG if None)
+        config: Validation configuration (uses default if None)
         exit_on_failure: If True, call sys.exit(1) on validation failure
         print_warnings: If True, print warnings even on success
 

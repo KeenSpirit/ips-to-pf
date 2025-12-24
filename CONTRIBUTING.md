@@ -14,6 +14,7 @@ project/
 ├── logging_config/    # Logging system (NO external deps)
 ├── ips_data/          # Data retrieval (depends on: core, config, utils)
 ├── update_powerfactory/  # Data application (depends on: core, config, utils)
+├── results_log/       # Log files directory
 └── ips_to_pf.py       # Entry point (depends on: all packages)
 ```
 
@@ -140,7 +141,30 @@ def some_function():
 
 #### Log File Location
 
-Logs are written to `{user_home}/IPStoPFlog/ips_to_pf.log` (handles Citrix environments automatically).
+Logs are written to `{project_root}/results_log/ips_to_pf.log`.
+
+#### Log Format
+
+JSON Lines format - each line is a self-contained JSON object:
+
+```json
+{"timestamp": "2024-01-15T10:30:45+00:00", "name": "module", "level": "INFO", "username": "user", "message": "text"}
+```
+
+#### Parsing Logs
+
+```python
+import json
+
+with open("results_log/ips_to_pf.log") as f:
+    for line in f:
+        record = json.loads(line)
+        print(record["timestamp"], record["level"], record["message"])
+
+# Or with pandas:
+import pandas as pd
+df = pd.read_json("results_log/ips_to_pf.log", lines=True)
+```
 
 #### External Library Suppression
 
@@ -160,9 +184,15 @@ To add a new external library to suppress, add it to `_SUPPRESSED_LOGGERS` in `l
    ]
    ```
 
-2. Create mapping CSV in `mapping/` directory
+2. Create mapping CSV in `mapping_files/relay_maps/` directory
 
-3. Add entry to `mapping/type_mapping.csv`
+3. Add entry to `mapping_files/type_mapping/type_mapping.csv`
+
+4. If the relay uses non-standard curve names, add entry to `mapping_files/curve_mapping/curve_mapping.csv`
+
+### Unrecognised IPS Bay Name
+
+Map the bay name to a new name format in `mapping_files/cb_alt_names/CB_ALT_NAME.csv`
 
 ### New Substation Mapping
 
@@ -201,7 +231,7 @@ def get_substation_mapping():
 
 3. Check PowerFactory output window for errors
 
-4. Check log file at `{user_home}/IPStoPFlog/ips_to_pf.log`
+4. Check log file at `results_log/ips_to_pf.log`
 
 ### Test Cases to Cover
 
@@ -249,7 +279,7 @@ If relay/fuse types aren't found:
 
 If logs aren't appearing:
 - Ensure `setup_logging()` is called in main script
-- Check log file location: `{user_home}/IPStoPFlog/`
+- Check log file location: `results_log/` in project root
 - Verify write permissions to log directory
 
 ## Contact
