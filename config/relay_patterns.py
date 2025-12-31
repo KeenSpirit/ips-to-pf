@@ -82,6 +82,26 @@ EXCLUDED_PATTERNS: FrozenSet[str] = frozenset({
 
 
 # =============================================================================
+# Noja Reclosers
+# =============================================================================
+
+# Noja do not have a specific number of trips to lockout setting.
+# The relay_settings.update_reclosing_logic function uses this list
+# to populate the reclosing logic table for the noja relay type. The
+# device_object.device value needs to match one of the values in
+# this list, otherwise the logic table is left blank.
+# This causes the PowerFactory application to
+# crash and automatically close when a short-circuit calculation is
+# performed.
+
+NOJA_RECLOSERS: List[str] = [
+    "RC01",
+    "RC10",
+    "RRC20",
+    "RC10-200",
+]
+
+# =============================================================================
 # Helper Functions
 # =============================================================================
 

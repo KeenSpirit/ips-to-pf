@@ -24,7 +24,7 @@ from update_powerfactory.type_index import RelayTypeIndex
 from core import UpdateResult
 
 # Import from config package
-from config.relay_patterns import SINGLE_PHASE_RELAYS, MULTI_PHASE_RELAYS
+from config.relay_patterns import SINGLE_PHASE_RELAYS, MULTI_PHASE_RELAYS, NOJA_RECLOSERS
 
 logger = logging.getLogger(__name__)
 
@@ -93,6 +93,12 @@ def relay_settings(
         return result, updates
 
     updates = apply_settings(app, device_object, mapping_file, setting_dict, updates)
+    app.PrintPlain("device object:")
+    app.PrintPlain(device_object)
+    app.PrintPlain("mapping_file:")
+    app.PrintPlain(mapping_file)
+    app.PrintPlain("setting_dict")
+    app.PrintPlain(setting_dict)
     update_reclosing_logic(app, device_object, mapping_file, setting_dict)
     update_logic_elements(app, device_object.pf_obj, mapping_file, setting_dict)
 
@@ -764,12 +770,15 @@ def update_reclosing_logic(
     """
     pf_device = device_object.pf_obj
     device_type = device_object.device
-    
-    # RC01 do not have a specific number of trips to lockout setting
+
     setting = None
     trip_setting = None
-    
-    if "RC01" in device_type:
+
+    # Noja do not have a specific number of trips to lockout setting
+    # If there is a noja recloser that isn't in the list below, the recloser
+    # logic will be left blank. When a short-circuit is performed,
+    # the PowerFactory application will crash and automatically close.
+    if any(device in device_type for device in NOJA_RECLOSERS):
         trip_setting = get_trip_num(app, mapping_file, setting_dictionary)
         element = find_element(
             app, pf_device, [pf_device.loc_name, "Reclosing Element"]
@@ -781,6 +790,7 @@ def update_reclosing_logic(
     element = None
     
     for mapped_set in mapping_file:
+        # Only look at the rows concerning reclose logic
         if "_logic" not in mapped_set[1]:
             continue
         
@@ -797,7 +807,8 @@ def update_reclosing_logic(
         
         if element.loc_name not in mapped_set[1]:
             continue
-        
+
+        # row_name is the logic table row, eg OC1+, OC2+, etc.
         row_name = mapped_set[2]
         
         try:
