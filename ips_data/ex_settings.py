@@ -488,9 +488,10 @@ def _get_switch_info(switch, cb_alt_name_list: List[Dict]) -> Tuple[str, Optiona
     switch_name = pf_switch_name.split("_")[0]
     
     # Get substation code for ElmCoup switches
-    sub_code = None
     if switch.GetClassName() == "ElmCoup":
         sub_code = switch.fold_id.loc_name
+    else:
+        sub_code = switch_name
     
     return switch_name, sub_code
 

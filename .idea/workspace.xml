@@ -4,39 +4,105 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="96fe6cef-43fb-4a25-b50d-4782cbac27cd" name="Changes" comment="core package added">
-      <change afterPath="$PROJECT_DIR$/config/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/config/paths.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/config/region_config.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/config/relay_patterns.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ips_data/cb_mapping.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/file_utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/pf_utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/time_utils.py" afterDir="false" />
+    <list default="true" id="96fe6cef-43fb-4a25-b50d-4782cbac27cd" name="Changes" comment="Fixed up bare exceptions">
+      <change beforePath="$PROJECT_DIR$/.idea/IPSProtectionDeviceSettings - v2 (live).iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ips_to_pf.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ARCHITECTURE.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASSUMPTIONS.md" beforeDir="false" afterPath="$PROJECT_DIR$/ASSUMPTIONS.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CONTRIBUTING.md" beforeDir="false" afterPath="$PROJECT_DIR$/CONTRIBUTING.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MAINTENANCE.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/devices.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/external_variables.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ips_data/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/ips_data/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ips_data/ee_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/ips_data/ee_settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VALIDATION.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/ips_data/ex_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/ips_data/ex_settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ips_data/ips_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/ips_data/ips_settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ips_data/query_database.py" beforeDir="false" afterPath="$PROJECT_DIR$/ips_data/query_database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ips_data/setting_index.py" beforeDir="false" afterPath="$PROJECT_DIR$/ips_data/setting_index.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ips_to_pf.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logging_config/configure_logging.py" beforeDir="false" afterPath="$PROJECT_DIR$/logging_config/configure_logging.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_module/test_module.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_module/test_module.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/update_powerfactory/ct_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_powerfactory/ct_settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/update_powerfactory/fuse_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_powerfactory/fuse_settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/update_powerfactory/get_objects.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/update_powerfactory/mapping_file.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_powerfactory/mapping_file.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/update_powerfactory/relay_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_powerfactory/relay_settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/update_powerfactory/type_index.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_powerfactory/type_index.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/update_powerfactory/update_powerfactory.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_powerfactory/orchestrator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/update_powerfactory/update_result.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/update_powerfactory/vt_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_powerfactory/vt_settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/2C136_SEF_to_Generic SEF Relay.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/7SG111 (ARGUS 1)_to_ARGUS1_DCD42_2P+E+SE.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/ADVC PTCC_to_ADVC N-Series Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/ADVC PTCC_to_ADVC N-Series Recloser_.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/ARGUS1 Compatibility_Energex_to_ARGUS1_DCD42_2P+E+SE.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/ARGUS1 ReyDisp Evolution v8_to_ARGUS1_DCD42_2P+E+SE.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/BBR ICM21N_to_BBR ICM21N.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/BBR ICM21_to_BBR ICM21.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/CAPM2_Energex_to_CAPM N-Series Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/CAPM2_to_CAPM N-Series Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/CAPM4 CAPM5_to_CAPM N-Series Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/CB_ALT_NAME.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/CDG21_Earth_to_CDG21_Earth.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/CDG21_to_CDG21_Phase.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/CDG24_Earth_to_CDG24_Earth.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/CDG24_to_CDG24_Phase.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/CDG26_N_to_CDG26-5A (0.5-2).csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/CDG26_to_CDG26.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/CDG31_Earth_to_CDG31 2_Phase &amp; Earth.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/CDG31_old2_Earth_to_CDG31 2_Phase &amp; Earth.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/CDG31_old2_to_CDG31 A&amp;B&amp;C.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/CDG31_to_CDG31 A&amp;B&amp;C.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/CDG61_to_CDG61.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/CMGR12_SEF_to_Generic SEF Relay.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/CMGR12_to_Generic SEF Relay.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/CMS_2.8.2_to_Noja Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/E-Type Recloser_to_E-Type Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/EQL_ADVC3_ADVC2_5.16_to_ADVC N-Series Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/EQL_ADVC3_ADVC2_5.16_to_ADVC N-Series Recloser_old.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/EQL_RC10_RC20_to_Noja Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/Ergon_CDG61_to_CDG61.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/Ergon_CMS_3.1.0.0_to_Noja Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/Ergon_CMU_to_Generic SEF Relay.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/Ergon_HR Recloser_to_Ergon_HR Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/Ergon_KF_KFE Recloser_to_Ergon_KF_KFE Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/Ergon_RI_to_ASEA RI 3OC.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/I 2Ph IE1Ph I in A  T in TMS_Energex_to_CDG31 A C.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/Idmt Inst 2Ph IE_to_CDG66 A C.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/KCGG142_Energex_to_KCGG142-1A.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/KCGG142_to_KCGG142.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/MCGG-22_to_MCGG22.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/MCGG22_E_to_MCGG-22 Earth.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/MCGG52_to_Ergon_MCGG-52.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/MCGG61_to_MCGG61_Phase.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/MCGG63_to_Ergon_MCGG63.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/MCSU 01_to_MCSU.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/NILSTAT_Energex_to_C21A1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/P123_Energex_to_P12x.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/P127 V3-V6 HEX_to_P127 57-130V.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/P142 050A_to_P142.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/P142 090B 100B 150A 150C 170C 210G 300J_to_P142.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/P142 090B 150A 150C 170C 210G 300J_to_P142.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/P142 320J 350J 360J 400J 410J 420J_to_P142.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/P142 430J 43J 440J 460J 46J 468J 469J 500J_obsolete_to_P14x 100-120 V.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/P142 430J 43J_to_P14x 100-120 V.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/P142 B00L B20L B2L B4L_to_P142.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/RC01ES_Energex_to_Noja Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/RC01ES_Energex_to_Noja Recloser_a.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/RED615 2.6 - 2.8_to_RED 615.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/REF615 2.6 - 2.12_to_REF 615.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/RXIDF_to_RXIDF 2H_Phase.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/SDND103_to_SDND103.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/SEL-351 -5 -6 -7_to_Generic SEL351 Relay.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/SEL-351-6_to_Generic SEL351 Relay.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/SEL-351A   003 - 008_to_Generic SEL351 Relay.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/SEL-351A   009 - 011_to_Generic SEL351 Relay.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/SEL-351S -5 -6 -7   001 - 010_to_Generic SEL351 Relay.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/SEL351-6 SEL5010_Energex_to_Generic SEL351 Relay.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/SOLKOR-N_Energex_to_Solkor N.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/SOLKOR-RF_Energex_to_Solkor R-Rf.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/SPAJ140_Energex_to_SPAJ 140C.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/SPAJ140_to_SPAJ 140C.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/TJM11_A_to_TJM11_A.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/TJM11_C_to_TJM11_C.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/TJM11_N_to_TJM11_N.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/WSOS4_Energex_to_CAPM N-Series Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/WSOS5_Energex_to_ADVC N-Series Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/curve_mapping.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/swer ADVC PTCC_to_ADVC W-Series Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/swer_CAPM4 CAPM5_to_CAPM N-Series Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/swer_CAPM4 CAPM5_to_CAPM W-Series Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/swer_E-Type Recloser_to_E-Type Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/swer_EQL_ADVC3_ADVC2_5.16_to_ADVC W-Series Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/swer_EQL_RC10_RC20_to_Noja Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/swer_Ergon_A Line Recloser_to_E-Type Recloser.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapping/type_mapping.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_module/test_module.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,13 +125,16 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/KeenSpirit/ips-to-pf.git&quot;,
-    &quot;accountId&quot;: &quot;49b245bb-1e86-474c-aa7a-dc6f88ecba8f&quot;
+    &quot;accountId&quot;: &quot;025e9b47-7c18-4d4c-b0c6-2535b8b059ed&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
 }</component>
   <component name="ProjectId" id="2x1tdMxdTcuiFRVJz2HrAVVqkPa" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -73,14 +142,16 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;Python.ips_to_pf.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;Y:/PROTECTION/STAFF/Dan Park/PowerFactory/Dan script development/ips-to-pf&quot;
+    &quot;last_opened_file_path&quot;: &quot;E:/Programming/_python_work/ips_to_pf&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\Programming\_python_work\ips-to-pf\logging_config" />
       <recent name="Y:\PROTECTION\STAFF\Dan Park\PowerFactory\Dan script development\ips-to-pf\core" />
       <recent name="Y:\PROTECTION\STAFF\Dan Park\PowerFactory\Dan script development\IPSProtectionDeviceSettings - v2 (live)\ips_data" />
     </key>
@@ -99,6 +170,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -112,7 +184,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-b3d66beaba9a-c6efb3732140-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.26199.168" />
+        <option value="bundled-python-sdk-f2b7a9f6281b-6e1f45a539f7-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.29346.142" />
       </set>
     </attachedChunks>
   </component>
@@ -181,8 +253,83 @@
       <option name="project" value="LOCAL" />
       <updated>1766033829729</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="added mapping file caching">
+      <option name="closed" value="true" />
+      <created>1766117591682</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1766117591682</updated>
+    </task>
+    <task id="LOCAL-00009" summary="legacy functions removed&#10;Added input validation &#10;Added ui package">
+      <option name="closed" value="true" />
+      <created>1766124817336</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1766124817336</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Redesigned logging package">
+      <option name="closed" value="true" />
+      <created>1766235607474</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1766235607474</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Suppress external library logging">
+      <option name="closed" value="true" />
+      <created>1766285032595</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1766285032595</updated>
+    </task>
+    <task id="LOCAL-00012" summary="convert logging file to json">
+      <option name="closed" value="true" />
+      <created>1766379650072</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1766379650072</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Refactored update_powerfactory package">
+      <option name="closed" value="true" />
+      <created>1767444263561</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1767444263561</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Add .gitignore file">
+      <option name="closed" value="true" />
+      <created>1767592622428</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1767592622428</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Fixed up bare exceptions">
+      <option name="closed" value="true" />
+      <created>1767596851384</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1767596851384</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial commit" />
@@ -191,7 +338,15 @@
     <MESSAGE value="Rever mapping file changes" />
     <MESSAGE value="external variables file created." />
     <MESSAGE value="core package added" />
-    <option name="LAST_COMMIT_MESSAGE" value="core package added" />
+    <MESSAGE value="added mapping file caching" />
+    <MESSAGE value="legacy functions removed&#10;Added input validation &#10;Added ui package" />
+    <MESSAGE value="Redesigned logging package" />
+    <MESSAGE value="Suppress external library logging" />
+    <MESSAGE value="convert logging file to json" />
+    <MESSAGE value="Refactored update_powerfactory package" />
+    <MESSAGE value="Add .gitignore file" />
+    <MESSAGE value="Fixed up bare exceptions" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed up bare exceptions" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -199,14 +354,6 @@
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/ips_data/add_protection_relay_skeletons.py</url>
           <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test_module/test_module.py</url>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/user_inputs.py</url>
-          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
