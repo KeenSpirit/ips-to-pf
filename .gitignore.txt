@@ -1,0 +1,58 @@
+# =============================================================================
+# IPS to PowerFactory Settings Transfer - Git Ignore File
+# =============================================================================
+
+# Mapping files directory - contains CSV mapping files that should not be
+# version controlled as they may contain site-specific or sensitive data
+/mapping_files/
+
+# Alternative: If you want to track the directory structure but not contents:
+# mapping_files/**/*.csv
+# mapping_files/**/*.xlsx
+
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# IDE settings
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Log files
+results_log/*.log
+*.log
+
+# Output files
+*.csv
+!mapping_files/**/*.csv
+
+# PowerFactory temporary files
+*.pfd.bak
+*.pfdx
+*.IntPrj
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Test outputs
+test_output/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
