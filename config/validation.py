@@ -659,8 +659,8 @@ def _print_validation_failure(result: ValidationResult, app=None) -> None:
             app.PrintError("Configuration validation failed. See output for details.")
             for error in result.errors:
                 app.PrintError(f"  {error}")
-        except Exception:
-            pass
+        except (AttributeError, RuntimeError, TypeError):
+            pass # PowerFactory API error or method not available
 
 
 def _print_validation_warnings(result: ValidationResult, app=None) -> None:
@@ -673,8 +673,8 @@ def _print_validation_warnings(result: ValidationResult, app=None) -> None:
         try:
             for warning in result.warnings:
                 app.PrintWarn(warning)
-        except Exception:
-            pass
+        except (AttributeError, RuntimeError, TypeError):
+            pass # PowerFactory API error or method not available
 
 
 def print_config_status(

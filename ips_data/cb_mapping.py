@@ -89,7 +89,7 @@ def get_cb_alt_name_list(app=None) -> List[Dict[str, str]]:
 
     except FileNotFoundError:
         pass
-    except Exception:
+    except (PermissionError, UnicodeDecodeError, IndexError, OSError):
         pass
 
     _cb_alt_name_cache = cb_alt_name_list

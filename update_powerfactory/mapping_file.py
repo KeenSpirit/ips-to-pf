@@ -141,8 +141,8 @@ def _load_type_mapping() -> Dict[str, Tuple[str, str]]:
                     _type_mapping_cache[pattern_name] = (mapping_filename, relay_type)
     except FileNotFoundError:
         pass  # Return empty cache if file not found
-    except Exception:
-        pass  # Silently handle other errors
+    except (PermissionError, UnicodeDecodeError, OSError):
+        pass  # File access or encoding issues - return empty cache
 
     return _type_mapping_cache
 
@@ -200,7 +200,7 @@ def _load_mapping_file(filename: str) -> Optional[List[List[str]]]:
 
     except FileNotFoundError:
         return None
-    except Exception:
+    except (PermissionError, UnicodeDecodeError, csv.Error, OSError):
         return None
 
 
@@ -234,7 +234,7 @@ def _load_curve_mapping() -> List[List[str]]:
                     _curve_mapping_cache.append(line)
     except FileNotFoundError:
         pass
-    except Exception:
+    except (PermissionError, UnicodeDecodeError, OSError):
         pass
 
     return _curve_mapping_cache

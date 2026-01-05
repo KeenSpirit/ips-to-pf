@@ -170,8 +170,8 @@ def _handle_device_error(
     # Set device out of service due to error
     try:
         device_object.pf_obj.SetAttribute("outserv", 1)
-    except Exception:
-        pass
+    except (AttributeError, RuntimeError, TypeError):
+        pass # PowerFactory API error or missing object
 
     return UpdateResult.script_failed(device_object, error)
 
