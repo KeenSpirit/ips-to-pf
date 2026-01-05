@@ -1,7 +1,6 @@
 import powerfactory as pf
 import os
 from tkinter import *  # noqa [F403]
-from importlib import reload
 
 from ips_data import ips_settings as ips
 from update_powerfactory import orchestrator as up
@@ -23,9 +22,6 @@ from utils.file_utils import (
 )
 from utils.pf_utils import determine_region, get_all_protection_devices
 from logging_config import setup_logging, get_logger
-
-reload(ips)
-reload(up)
 
 # Initialize logging at module level after imports
 setup_logging()

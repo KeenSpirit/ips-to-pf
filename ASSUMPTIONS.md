@@ -1,4 +1,0 @@
-Assumptions
-===============
-
-Under Construction.

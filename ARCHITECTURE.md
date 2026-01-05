@@ -351,6 +351,4 @@ df = pd.read_json("results_log/ips_to_pf.log", lines=True)
 
 Potential improvements identified:
 
-1. **Strategy Pattern**: For region-specific logic (currently using if/else branches)
-2. **Async Processing**: For large batch updates
-3. **Unit Test Suite**: Comprehensive testing with mocked PowerFactory
+1. **Unit Test Suite**: Comprehensive testing with mocked PowerFactory

@@ -86,7 +86,7 @@ EXCLUDED_PATTERNS: FrozenSet[str] = frozenset({
 # =============================================================================
 
 # Noja do not have a specific number of trips to lockout setting.
-# The relay_settings.update_reclosing_logic function uses this list
+# The relay_settings.update_reclosing_logic function uses the list below
 # to populate the reclosing logic table for the noja relay type. The
 # device_object.device value needs to match one of the values in
 # this list, otherwise the logic table is left blank.

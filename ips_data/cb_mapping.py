@@ -9,7 +9,6 @@ lookup functionality for alternate names.
 The mapping data is loaded from CB_ALT_NAME.csv in the cb_alt_names directory.
 """
 
-import os
 from typing import List, Dict, Optional
 
 # Import path from config

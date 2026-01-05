@@ -55,7 +55,10 @@ ips_to_powerfactory/
 ├── update_powerfactory/    # PowerFactory update layer
 │   ├── __init__.py
 │   ├── orchestrator.py     # Main update orchestration
-│   ├── relay_settings.py   # Relay configuration
+│   ├── relay_settings.py   # Relay configuration entry point
+│   ├── relay_reclosing.py   # Reclosing logic configuration
+│   ├── relay_logic_elements.py   # Dip switch logic configuration
+│   ├── setting_utils.py   # Shared utility functions
 │   ├── fuse_settings.py    # Fuse configuration
 │   ├── ct_settings.py      # CT configuration
 │   ├── vt_settings.py      # VT configuration
@@ -201,11 +204,3 @@ Log files are stored in `{project_root}/results_log/ips_to_pf.log`:
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for version history.
-
-## License
-
-Internal Energy Queensland use only.
