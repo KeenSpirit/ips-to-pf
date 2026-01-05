@@ -13,7 +13,8 @@ This tool automates the transfer of relay and fuse protection settings between E
 - **Performance Optimized**: Uses indexed lookups (O(1)) instead of linear scans
 - **Batch Processing**: Supports both interactive and batch update modes
 - **CT/VT Configuration**: Automatically configures instrument transformers
-- **Result Logging**: Generates CSV reports of all updates
+- **Configuration Validation**: Validates all paths and dependencies at startup
+- **Result Logging**: Generates CSV reports and JSON Lines log files for all updates
 
 ## Project Structure
 
@@ -55,7 +56,10 @@ ips_to_powerfactory/
 ├── update_powerfactory/    # PowerFactory update layer
 │   ├── __init__.py
 │   ├── orchestrator.py     # Main update orchestration
-│   ├── relay_settings.py   # Relay configuration
+│   ├── relay_settings.py   # Relay configuration entry point
+│   ├── relay_reclosing.py  # Reclosing logic configuration
+│   ├── relay_logic_elements.py # Dip switch logic configuration
+│   ├── setting_utils.py    # Shared utility functions
 │   ├── fuse_settings.py    # Fuse configuration
 │   ├── ct_settings.py      # CT configuration
 │   ├── vt_settings.py      # VT configuration
@@ -104,6 +108,12 @@ import main
 main.main()
 ```
 
+This will:
+1. Validate configuration at startup
+2. Present a device selection dialog
+3. Transfer settings for selected devices
+4. Generate a results CSV file
+
 ### Batch Mode (Multiple Projects)
 
 ```python
@@ -113,30 +123,31 @@ import main
 main.main(app=app, batch=True)
 ```
 
+Batch mode:
+- Skips device selection dialog
+- Processes all devices in the active project
+- Uses stricter configuration validation
+- Outputs results to network location
+
 ## Configuration
 
 ### Mapping Files
 
 Mapping files are stored in the project root under `mapping_files/`:
 
-```
-mapping_files/
-├── cb_alt_names/           # CB alternate name mappings
-│   └── CB_ALT_NAME.csv
-├── curve_mapping/          # IDMT curve mappings
-│   └── curve_mapping.csv
-├── relay_maps/             # Relay pattern mapping files
-│   └── *.csv
-└── type_mapping/           # Type mapping configuration
-    └── type_mapping.csv
-```
+| Directory | File | Purpose |
+|-----------|------|---------|
+| `cb_alt_names/` | `CB_ALT_NAME.csv` | Maps PowerFactory CB names to IPS naming conventions |
+| `curve_mapping/` | `curve_mapping.csv` | Maps IPS IDMT curve codes to PowerFactory curve names |
+| `relay_maps/` | `*.csv` | Individual mapping files for each relay pattern |
+| `type_mapping/` | `type_mapping.csv` | Maps IPS relay patterns to PF relay types and mapping files |
 
 ### Network Paths
 
 Edit `config/paths.py` to update network locations:
 
 ```python
-SCRIPTS_BASE = r"\\\\server\\path\\to\\PowerFactory"
+SCRIPTS_BASE = r"\\server\path\to\PowerFactory"
 ```
 
 ### Relay Patterns
@@ -162,50 +173,43 @@ def get_substation_mapping():
     }
 ```
 
-## Architecture
+## Output
 
-The application follows a layered architecture:
+### Results CSV
 
-1. **Core Layer** (`core/`): Shared domain objects used across all layers
-2. **Config Layer** (`config/`): Centralized configuration management
-3. **Utils Layer** (`utils/`): Shared utility functions
-4. **Logging Layer** (`logging_config/`): Centralized logging system
-5. **Data Layer** (`ips_data/`): IPS database interactions and data retrieval
-6. **Application Layer** (`update_powerfactory/`): PowerFactory model updates
-7. **UI Layer** (`ui/`): User interface components
+Each run generates a CSV file containing update results for all processed devices, including:
+- Substation and plant number
+- Relay pattern and date setting
+- Update result status
+- CT/VT configuration results
+- Any error details
 
-### Dependency Flow
-
-```
-main.py
-    ├── ips_data/     ──┐
-    └── update_powerfactory/ ──┼── core/, config/, utils/, logging_config/
-```
-
-## Performance
-
-Key optimizations implemented:
-
-- **Indexed Lookups**: `SettingIndex` provides O(1) lookups by asset name, switch name, etc.
-- **Type Indexes**: `RelayTypeIndex` and `FuseTypeIndex` for O(1) type matching
-- **Caching**: Mapping files and CB alternate names are cached after first load
-- **Write Caching**: PowerFactory write cache enabled during batch updates
-
-## Logging
+### Log Files
 
 Log files are stored in `{project_root}/results_log/ips_to_pf.log`:
 - JSON Lines format for machine parsing
 - 10MB max file size with 5 backup files
 - Automatic rotation
 
+To parse logs:
+
+```python
+import json
+
+with open("results_log/ips_to_pf.log") as f:
+    for line in f:
+        record = json.loads(line)
+        print(record["timestamp"], record["level"], record["message"])
+```
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
 
-## Changelog
+## Architecture
 
-See [CHANGELOG.md](CHANGELOG.md) for version history.
+See [Assumptions.md](Assumptions.md) for detailed architecture documentation and engineering assumptions.
 
-## License
+## Contact
 
-Internal Energy Queensland use only.
+For questions about the codebase, contact dan.park@energyq.com.au
